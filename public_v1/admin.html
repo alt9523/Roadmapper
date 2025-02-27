@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AM Roadmap Admin Panel</title>
+  <style>
+    /* =====================================================
+       GLOBAL STYLES
+    ====================================================== */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #eef;
+      text-align: center;
+    }
+    h1, h2, h3 { color: #333; }
+    .nav-buttons {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .nav-buttons button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #00269A;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 1000px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      text-align: left;
+      display: none;
+    }
+    .section.active { display: block; }
+    .back-button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #00269A;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    label { display: block; margin: 8px 0; }
+    input[type="text"], input[type="date"], textarea, select {
+      width: 90%;
+      padding: 4px;
+      margin: 4px 0;
+    }
+    .field-group { margin-bottom: 12px; }
+    .inline { display: inline-block; vertical-align: top; }
+    .list-container { margin: 8px 0; border: 1px solid #ccc; padding: 5px; }
+    .list-item { margin: 4px 0; }
+    .list-item input[type="text"] { width: 70%; }
+    .list-item select { width: 25%; }
+    .add-button { padding: 4px 8px; margin-top: 4px; }
+    /* =====================================================
+       END GLOBAL STYLES
+    ====================================================== */
+  </style>
+</head>
+<body>
+  <h1>AM Roadmap Admin Panel</h1>
+  <div class="nav-buttons">
+    <button id="adminProductsBtn">Edit Products</button>
+    <button id="adminMaterialsBtn">Edit Materials</button>
+    <button id="adminCradBtn">Edit CRAD Opportunities</button>
+    <button id="adminSuppliersBtn">Edit Suppliers</button>
+  </div>
+
+  <!-- ================= ADMIN NAVIGATION SECTIONS ================= -->
+  <!-- Products List -->
+  <div id="adminProductsSection" class="section">
+    <h2>Products</h2>
+    <div id="adminProductsList"></div>
+    <button id="newProductBtn">New Product</button>
+    <button class="back-button" onclick="adminGoBack()">Back</button>
+  </div>
+
+  <!-- Edit Product Form -->
+  <div id="editProductSection" class="section">
+    <h2>Edit Product</h2>
+    <form id="productForm">
+      <div class="field-group">
+        <label>Title: <input type="text" id="productTitle"></label>
+      </div>
+      <div class="field-group">
+        <label>Driving Characteristics: <textarea id="productDriving"></textarea></label>
+      </div>
+      <div class="field-group">
+        <label>Divisions:</label>
+        <label><input type="checkbox" name="productDivisions" value="SSSD"> SSSD</label>
+        <label><input type="checkbox" name="productDivisions" value="TSSD"> TSSD</label>
+        <label><input type="checkbox" name="productDivisions" value="LMDS"> LMDS</label>
+        <label><input type="checkbox" name="productDivisions" value="PGSD"> PGSD</label>
+      </div>
+      <!-- Digital Tools & References Roadmap (will appear in the Design Tools & References swimlane) -->
+      <div class="field-group">
+        <label>Design Tools & References Roadmap:</label>
+        <div id="productDigitalToolsReferencesContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addDigitalToolReferenceRow()">Add Digital Tool/Reference Task</button>
+      </div>
+      <!-- Part Acceptance Roadmap -->
+      <div class="field-group">
+        <label>Part Acceptance Roadmap:</label>
+        <div id="productPartAcceptanceRoadmapContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addPartAcceptanceRoadmapRow()">Add Part Acceptance Task</button>
+      </div>
+      <!-- Material Systems (checkboxes from available materials) -->
+      <div class="field-group">
+        <label>Material Systems:</label>
+        <div id="productMaterialSystemsContainer"></div>
+      </div>
+      <button type="submit">Save Product</button>
+      <button type="button" onclick="adminGoBack()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Materials List -->
+  <div id="adminMaterialsSection" class="section">
+    <h2>Materials</h2>
+    <div id="adminMaterialsList"></div>
+    <button id="newMaterialBtn">New Material</button>
+    <button class="back-button" onclick="adminGoBack()">Back</button>
+  </div>
+
+  <!-- Edit Material Form -->
+  <div id="editMaterialSection" class="section">
+    <h2>Edit Material</h2>
+    <form id="materialForm">
+      <div class="field-group">
+        <label>Name: <input type="text" id="materialName"></label>
+      </div>
+      <div class="field-group">
+        <label>Divisions:</label>
+        <label><input type="checkbox" name="materialDivisions" value="SSSD"> SSSD</label>
+        <label><input type="checkbox" name="materialDivisions" value="TSSD"> TSSD</label>
+        <label><input type="checkbox" name="materialDivisions" value="LMDS"> LMDS</label>
+        <label><input type="checkbox" name="materialDivisions" value="PGSD"> PGSD</label>
+      </div>
+      <div class="field-group">
+        <label>Description: <textarea id="materialDescription"></textarea></label>
+      </div>
+      <div class="field-group">
+        <label>Printing Process: <input type="text" id="materialPrintingProcess"></label>
+      </div>
+      <!-- Roadmap Tasks (dynamic list with discrete inputs) -->
+      <div class="field-group">
+        <label>Roadmap Tasks:</label>
+        <div id="materialRoadmapTasksContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addMaterialTaskRow()">Add Roadmap Task</button>
+      </div>
+      <!-- Milestones (dynamic list with discrete inputs) -->
+      <div class="field-group">
+        <label>Milestones:</label>
+        <div id="materialMilestonesContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addMaterialMilestoneRow()">Add Milestone</button>
+      </div>
+      <!-- Machines (dynamic list with discrete inputs) -->
+      <div class="field-group">
+        <label>Machines:</label>
+        <div id="materialMachinesContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addMachineRow()">Add Machine</button>
+      </div>
+      <!-- Production Attributes – Printers (example) -->
+      <div class="field-group">
+        <label>Production Attributes - Printers:</label>
+        <div id="productionPrintersContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addProductionPrinterRow()">Add Printer</button>
+      </div>
+      <!-- Supply Chain Attributes – Powder Supplier (example) -->
+      <div class="field-group">
+        <label>Supply Chain Attributes - Powder Supplier:</label>
+        <div id="supplyChainPowderContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addSupplyChainPowderRow()">Add Powder Supplier</button>
+      </div>
+      <button type="submit">Save Material</button>
+      <button type="button" onclick="adminGoBack()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- CRAD Opportunities List -->
+  <div id="adminCradSection" class="section">
+    <h2>CRAD Opportunities</h2>
+    <div id="adminCradList"></div>
+    <button id="newCradBtn">New CRAD Opportunity</button>
+    <button class="back-button" onclick="adminGoBack()">Back</button>
+  </div>
+
+  <!-- Edit CRAD Form -->
+  <div id="editCradSection" class="section">
+    <h2>Edit CRAD Opportunity</h2>
+    <form id="cradForm">
+      <div class="field-group">
+        <label>Program Name: <input type="text" id="cradProgramName"></label>
+      </div>
+      <div class="field-group">
+        <label>Department/Agency: <input type="text" id="cradDepartment"></label>
+      </div>
+      <div class="field-group">
+        <label>Expected Funding: <input type="text" id="cradFunding"></label>
+      </div>
+      <div class="field-group">
+        <label>Period of Performance: <input type="text" id="cradPeriod"></label>
+      </div>
+      <!-- Applicable Products (checkboxes from all products) -->
+      <div class="field-group">
+        <label>Applicable Products:</label>
+        <div id="cradApplicableProductsContainer"></div>
+      </div>
+      <!-- Applicable Material Systems (checkboxes from all materials) -->
+      <div class="field-group">
+        <label>Applicable Material Systems:</label>
+        <div id="cradApplicableMaterialsContainer"></div>
+      </div>
+      <div class="field-group">
+        <label>RFP Close Date: <input type="date" id="cradCloseDate"></label>
+      </div>
+      <div class="field-group">
+        <label>Contract Type: <input type="text" id="cradContractType"></label>
+      </div>
+      <div class="field-group">
+        <label>Cost Share Percentage: <input type="text" id="cradCostShare"></label>
+      </div>
+      <div class="field-group">
+        <label>RFP Link: <input type="text" id="cradLink"></label>
+      </div>
+      <div class="field-group">
+        <label>Notes: <textarea id="cradNotes"></textarea></label>
+      </div>
+      <button type="submit">Save CRAD Opportunity</button>
+      <button type="button" onclick="adminGoBack()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Suppliers List -->
+  <div id="adminSuppliersSection" class="section">
+    <h2>Suppliers</h2>
+    <div id="adminSuppliersList"></div>
+    <button id="newSupplierBtn">New Supplier</button>
+    <button class="back-button" onclick="adminGoBack()">Back</button>
+  </div>
+
+  <!-- Edit Supplier Form -->
+  <div id="editSupplierSection" class="section">
+    <h2>Edit Supplier</h2>
+    <form id="supplierForm">
+      <div class="field-group">
+        <label>Name: <input type="text" id="supplierNameInput"></label>
+      </div>
+      <div class="field-group">
+        <label>Additional Capabilities: <textarea id="supplierCapabilities"></textarea></label>
+      </div>
+      <div class="field-group">
+        <label>Supplier Notes: <textarea id="supplierNotesInput"></textarea></label>
+      </div>
+      <!-- Materials Supplied (checkboxes from all materials) -->
+      <div class="field-group">
+        <label>Materials Supplied:</label>
+        <div id="supplierMaterialsContainer"></div>
+      </div>
+      <!-- Machines Supplied (checkboxes from a fixed list) -->
+      <div class="field-group">
+        <label>Machines Supplied:</label>
+        <div id="supplierMachinesContainer"></div>
+      </div>
+      <!-- Supplier Roadmap Tasks (dynamic list) -->
+      <div class="field-group">
+        <label>Supplier Roadmap Tasks:</label>
+        <div id="supplierRoadmapTasksContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addSupplierTaskRow()">Add Task</button>
+      </div>
+      <!-- Supplier Roadmap Milestones (dynamic list) -->
+      <div class="field-group">
+        <label>Supplier Roadmap Milestones:</label>
+        <div id="supplierMilestonesContainer" class="list-container"></div>
+        <button type="button" class="add-button" onclick="addSupplierMilestoneRow()">Add Milestone</button>
+      </div>
+      <button type="submit">Save Supplier</button>
+      <button type="button" onclick="adminGoBack()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- =====================================================
+       ADMIN COMMON FUNCTIONS & INITIALIZATION
+  ====================================================== -->
+  <script>
+    // Global admin navigation history
+    let adminNavStack = [];
+    let adminCurrentSection = "adminProductsSection";
+    function adminShowSection(id) {
+      if (adminCurrentSection && adminCurrentSection !== id) {
+        adminNavStack.push(adminCurrentSection);
+      }
+      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      adminCurrentSection = id;
+    }
+    function adminGoBack() {
+      if (adminNavStack.length > 0) {
+        const prev = adminNavStack.pop();
+        adminShowSection(prev);
+      } else {
+        adminShowSection("adminProductsSection");
+      }
+    }
+    window.adminShowSection = adminShowSection;
+    window.adminGoBack = adminGoBack;
+
+    // Helper functions to get/set admin data (keys match index.html)
+    function getAdminData(key, defaultData) {
+      let data = localStorage.getItem(key);
+      if (!data) {
+        localStorage.setItem(key, JSON.stringify(defaultData));
+        data = JSON.stringify(defaultData);
+      }
+      return JSON.parse(data);
+    }
+    function setAdminData(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    /* ---------- PRODUCTS ADMIN ---------- */
+    function loadAdminProducts() {
+      const products = getAdminData("amProducts", []);
+      const container = document.getElementById("adminProductsList");
+      container.innerHTML = "";
+      products.forEach((prod, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${prod.title}</strong> <button onclick="editAdminProduct(${index})">Edit</button>`;
+        container.appendChild(div);
+      });
+    }
+    function editAdminProduct(index) {
+      const products = getAdminData("amProducts", []);
+      const prod = products[index];
+      document.getElementById("productTitle").value = prod.title || "";
+      document.getElementById("productDriving").value = prod.drivingCharacteristics || "";
+      document.querySelectorAll("input[name='productDivisions']").forEach(cb => {
+        cb.checked = prod.divisions && prod.divisions.includes(cb.value);
+      });
+      // Digital Tools & References Roadmap (for Design Tools & References swimlane)
+      const dtrContainer = document.getElementById("productDigitalToolsReferencesContainer");
+      dtrContainer.innerHTML = "";
+      if (prod.digitalToolsReferences) {
+        prod.digitalToolsReferences.forEach(task => {
+          addDigitalToolReferenceRow(task.name, task.start, task.end, task.status, task.fundingDetails, task.details);
+        });
+      }
+      // Part Acceptance Roadmap
+      const parContainer = document.getElementById("productPartAcceptanceRoadmapContainer");
+      parContainer.innerHTML = "";
+      if (prod.partAcceptanceRoadmap) {
+        prod.partAcceptanceRoadmap.forEach(task => {
+          addPartAcceptanceRoadmapRow(task.name, task.start, task.end, task.status, task.fundingDetails, task.details);
+        });
+      }
+      // Material Systems as checkboxes from all materials
+      const msContainer = document.getElementById("productMaterialSystemsContainer");
+      msContainer.innerHTML = "";
+      const allMaterials = getAdminData("amMaterials", []);
+      allMaterials.forEach(mat => {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = mat.id;
+        checkbox.name = "productMaterialSystem";
+        if (prod.materialSystems && prod.materialSystems.includes(mat.id)) {
+          checkbox.checked = true;
+        }
+        const label = document.createElement("label");
+        label.textContent = mat.name;
+        label.prepend(checkbox);
+        msContainer.appendChild(label);
+        msContainer.appendChild(document.createElement("br"));
+      });
+      document.getElementById("productForm").dataset.editIndex = index;
+      adminShowSection("editProductSection");
+    }
+    document.getElementById("productForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let products = getAdminData("amProducts", []);
+      const index = parseInt(this.dataset.editIndex);
+      const title = document.getElementById("productTitle").value;
+      const driving = document.getElementById("productDriving").value;
+      const divisions = Array.from(document.querySelectorAll("input[name='productDivisions']:checked")).map(cb => cb.value);
+      const digitalToolsReferences = [];
+      document.querySelectorAll("#productDigitalToolsReferencesContainer .list-item").forEach(row => {
+        digitalToolsReferences.push({
+          name: row.querySelector(".dtrName").value,
+          start: row.querySelector(".dtrStart").value,
+          end: row.querySelector(".dtrEnd").value,
+          status: row.querySelector(".dtrStatus").value,
+          fundingDetails: row.querySelector(".dtrFunding").value,
+          details: row.querySelector(".dtrDetails").value
+        });
+      });
+      const partAcceptanceRoadmap = [];
+      document.querySelectorAll("#productPartAcceptanceRoadmapContainer .list-item").forEach(row => {
+        partAcceptanceRoadmap.push({
+          name: row.querySelector(".parName").value,
+          start: row.querySelector(".parStart").value,
+          end: row.querySelector(".parEnd").value,
+          status: row.querySelector(".parStatus").value,
+          fundingDetails: row.querySelector(".parFunding").value,
+          details: row.querySelector(".parDetails").value
+        });
+      });
+      const materialSystems = Array.from(document.querySelectorAll("input[name='productMaterialSystem']:checked")).map(cb => parseInt(cb.value));
+      products[index] = {
+        ...products[index],
+        title: title,
+        drivingCharacteristics: driving,
+        divisions: divisions,
+        digitalToolsReferences: digitalToolsReferences,
+        partAcceptanceRoadmap: partAcceptanceRoadmap,
+        materialSystems: materialSystems
+      };
+      setAdminData("amProducts", products);
+      adminShowSection("adminProductsSection");
+      loadAdminProducts();
+    });
+    document.getElementById("newProductBtn").addEventListener("click", function() {
+      let products = getAdminData("amProducts", []);
+      products.push({
+        id: Date.now(),
+        title: "",
+        drivingCharacteristics: "",
+        digitalToolsReferences: [],
+        partAcceptanceRoadmap: [],
+        materialSystems: [],
+        divisions: []
+      });
+      setAdminData("amProducts", products);
+      editAdminProduct(products.length - 1);
+    });
+
+    /* ---------- END PRODUCTS ADMIN ---------- */
+
+    /* ---------- MATERIALS ADMIN ---------- */
+    function loadAdminMaterials() {
+      const materials = getAdminData("amMaterials", []);
+      const container = document.getElementById("adminMaterialsList");
+      container.innerHTML = "";
+      materials.forEach((mat, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${mat.name}</strong> <button onclick="editAdminMaterial(${index})">Edit</button>`;
+        container.appendChild(div);
+      });
+    }
+    function editAdminMaterial(index) {
+      const materials = getAdminData("amMaterials", []);
+      const mat = materials[index];
+      document.getElementById("materialName").value = mat.name || "";
+      document.querySelectorAll("input[name='materialDivisions']").forEach(cb => {
+        cb.checked = mat.divisions && mat.divisions.includes(cb.value);
+      });
+      document.getElementById("materialDescription").value = mat.description || "";
+      document.getElementById("materialPrintingProcess").value = mat.printingProcess || "";
+      // Roadmap Tasks dynamic list
+      const rtContainer = document.getElementById("materialRoadmapTasksContainer");
+      rtContainer.innerHTML = "";
+      if (mat.roadmap) {
+        mat.roadmap.forEach(task => {
+          addMaterialTaskRow(task.category, task.task, task.start, task.end, task.status, task.fundingDetails, task.details, task.milestoneId);
+        });
+      }
+      // Milestones dynamic list
+      const msContainer = document.getElementById("materialMilestonesContainer");
+      msContainer.innerHTML = "";
+      if (mat.milestones) {
+        mat.milestones.forEach(ms => {
+          addMaterialMilestoneRow(ms.name, ms.description, ms.date, ms.fundingDetails, ms.notes);
+        });
+      }
+      // Machines dynamic list
+      const machContainer = document.getElementById("materialMachinesContainer");
+      machContainer.innerHTML = "";
+      if (mat.machines) {
+        mat.machines.forEach(m => {
+          addMachineRow(m.model, m.status);
+        });
+      }
+      // Production Attributes – printers
+      const prodPrinters = document.getElementById("productionPrintersContainer");
+      prodPrinters.innerHTML = "";
+      if (mat.productionAttributes && mat.productionAttributes.printers) {
+        mat.productionAttributes.printers.forEach(item => {
+          addProductionPrinterRow(item.item, item.status);
+        });
+      }
+      // Supply Chain Attributes – powder supplier
+      const scPowder = document.getElementById("supplyChainPowderContainer");
+      scPowder.innerHTML = "";
+      if (mat.supplyChainAttributes && mat.supplyChainAttributes.powderSupplier) {
+        mat.supplyChainAttributes.powderSupplier.forEach(item => {
+          addSupplyChainPowderRow(item.item, item.status);
+        });
+      }
+      document.getElementById("materialForm").dataset.editIndex = index;
+      adminShowSection("editMaterialSection");
+    }
+    document.getElementById("materialForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let materials = getAdminData("amMaterials", []);
+      const index = parseInt(this.dataset.editIndex);
+      const name = document.getElementById("materialName").value;
+      const divisions = Array.from(document.querySelectorAll("input[name='materialDivisions']:checked")).map(cb => cb.value);
+      const description = document.getElementById("materialDescription").value;
+      const printingProcess = document.getElementById("materialPrintingProcess").value;
+      const roadmap = [];
+      document.querySelectorAll("#materialRoadmapTasksContainer .list-item").forEach(row => {
+        roadmap.push({
+          category: row.querySelector(".rtCategory").value,
+          task: row.querySelector(".rtTask").value,
+          start: row.querySelector(".rtStart").value,
+          end: row.querySelector(".rtEnd").value,
+          status: row.querySelector(".rtStatus").value,
+          fundingDetails: row.querySelector(".rtFunding").value,
+          details: row.querySelector(".rtDetails").value,
+          milestoneId: row.querySelector(".rtMilestone").value ? parseInt(row.querySelector(".rtMilestone").value) : null
+        });
+      });
+      const milestones = [];
+      document.querySelectorAll("#materialMilestonesContainer .list-item").forEach(row => {
+        milestones.push({
+          name: row.querySelector(".msName").value,
+          description: row.querySelector(".msDescription").value,
+          date: row.querySelector(".msDate").value,
+          fundingDetails: row.querySelector(".msFunding").value,
+          notes: row.querySelector(".msNotes").value
+        });
+      });
+      const machines = [];
+      document.querySelectorAll("#materialMachinesContainer .list-item").forEach(row => {
+        machines.push({
+          model: row.querySelector(".machModel").value,
+          status: row.querySelector(".machStatus").value
+        });
+      });
+      const prodPrinters = [];
+      document.querySelectorAll("#productionPrintersContainer .list-item").forEach(row => {
+        prodPrinters.push({
+          item: row.querySelector(".prodPrinterItem").value,
+          status: row.querySelector(".prodPrinterStatus").value
+        });
+      });
+      const scPowder = [];
+      document.querySelectorAll("#supplyChainPowderContainer .list-item").forEach(row => {
+        scPowder.push({
+          item: row.querySelector(".scPowderItem").value,
+          status: row.querySelector(".scPowderStatus").value
+        });
+      });
+      materials[index] = {
+        ...materials[index],
+        name: name,
+        divisions: divisions,
+        description: description,
+        printingProcess: printingProcess,
+        roadmap: roadmap,
+        milestones: milestones,
+        machines: machines,
+        productionAttributes: { printers: prodPrinters },
+        supplyChainAttributes: { powderSupplier: scPowder }
+      };
+      setAdminData("amMaterials", materials);
+      adminShowSection("adminMaterialsSection");
+      loadAdminMaterials();
+    });
+    document.getElementById("newMaterialBtn").addEventListener("click", function() {
+      let materials = getAdminData("amMaterials", []);
+      materials.push({
+        id: Date.now(),
+        name: "",
+        divisions: [],
+        description: "",
+        printingProcess: "",
+        roadmap: [],
+        milestones: [],
+        machines: [],
+        productionAttributes: { printers: [] },
+        supplyChainAttributes: { powderSupplier: [] }
+      });
+      setAdminData("amMaterials", materials);
+      editAdminMaterial(materials.length - 1);
+    });
+
+    /* ---------- END MATERIALS ADMIN ---------- */
+
+    /* ---------- CRAD ADMIN ---------- */
+    function loadAdminCrad() {
+      const crads = getAdminData("amCradOpportunities", []);
+      const container = document.getElementById("adminCradList");
+      container.innerHTML = "";
+      crads.forEach((crad, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${crad.programName}</strong> <button onclick="editAdminCrad(${index})">Edit</button>`;
+        container.appendChild(div);
+      });
+    }
+    function editAdminCrad(index) {
+      const crads = getAdminData("amCradOpportunities", []);
+      const crad = crads[index];
+      document.getElementById("cradProgramName").value = crad.programName || "";
+      document.getElementById("cradDepartment").value = crad.department || "";
+      document.getElementById("cradFunding").value = crad.expectedFunding || "";
+      document.getElementById("cradPeriod").value = crad.periodOfPerformance || "";
+      // Applicable Products from all products
+      const prodContainer = document.getElementById("cradApplicableProductsContainer");
+      prodContainer.innerHTML = "";
+      const products = getAdminData("amProducts", []);
+      products.forEach(prod => {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = prod.title;
+        checkbox.name = "cradApplicableProduct";
+        if (crad.applicableProducts && crad.applicableProducts.includes(prod.title)) {
+          checkbox.checked = true;
+        }
+        const label = document.createElement("label");
+        label.textContent = prod.title;
+        label.prepend(checkbox);
+        prodContainer.appendChild(label);
+        prodContainer.appendChild(document.createElement("br"));
+      });
+      // Applicable Materials from all materials
+      const matContainer = document.getElementById("cradApplicableMaterialsContainer");
+      matContainer.innerHTML = "";
+      const materials = getAdminData("amMaterials", []);
+      materials.forEach(mat => {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = mat.name;
+        checkbox.name = "cradApplicableMaterial";
+        if (crad.applicableMaterials && crad.applicableMaterials.includes(mat.name)) {
+          checkbox.checked = true;
+        }
+        const label = document.createElement("label");
+        label.textContent = mat.name;
+        label.prepend(checkbox);
+        matContainer.appendChild(label);
+        matContainer.appendChild(document.createElement("br"));
+      });
+      document.getElementById("cradCloseDate").value = crad.rfpCloseDate || "";
+      document.getElementById("cradContractType").value = crad.contractType || "";
+      document.getElementById("cradCostShare").value = crad.costSharePercentage || "";
+      document.getElementById("cradLink").value = crad.rfpLink || "";
+      document.getElementById("cradNotes").value = crad.notes || "";
+      document.getElementById("cradForm").dataset.editIndex = index;
+      adminShowSection("editCradSection");
+    }
+    document.getElementById("cradForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let crads = getAdminData("amCradOpportunities", []);
+      const index = parseInt(this.dataset.editIndex);
+      const programName = document.getElementById("cradProgramName").value;
+      const department = document.getElementById("cradDepartment").value;
+      const funding = document.getElementById("cradFunding").value;
+      const period = document.getElementById("cradPeriod").value;
+      const applicableProducts = Array.from(document.querySelectorAll("input[name='cradApplicableProduct']:checked")).map(cb => cb.value);
+      const applicableMaterials = Array.from(document.querySelectorAll("input[name='cradApplicableMaterial']:checked")).map(cb => cb.value);
+      const rfpCloseDate = document.getElementById("cradCloseDate").value;
+      const contractType = document.getElementById("cradContractType").value;
+      const costShare = document.getElementById("cradCostShare").value;
+      const rfpLink = document.getElementById("cradLink").value;
+      const notes = document.getElementById("cradNotes").value;
+      crads[index] = {
+        ...crads[index],
+        programName: programName,
+        department: department,
+        expectedFunding: funding,
+        periodOfPerformance: period,
+        applicableProducts: applicableProducts,
+        applicableMaterials: applicableMaterials,
+        rfpCloseDate: rfpCloseDate,
+        contractType: contractType,
+        costSharePercentage: costShare,
+        rfpLink: rfpLink,
+        notes: notes
+      };
+      setAdminData("amCradOpportunities", crads);
+      adminShowSection("adminCradSection");
+      loadAdminCrad();
+    });
+    document.getElementById("newCradBtn").addEventListener("click", function() {
+      let crads = getAdminData("amCradOpportunities", []);
+      crads.push({
+        id: Date.now(),
+        programName: "",
+        department: "",
+        expectedFunding: "",
+        periodOfPerformance: "",
+        applicableProducts: [],
+        applicableMaterials: [],
+        rfpCloseDate: "",
+        contractType: "",
+        costSharePercentage: "",
+        rfpLink: "",
+        notes: ""
+      });
+      setAdminData("amCradOpportunities", crads);
+      editAdminCrad(crads.length - 1);
+    });
+
+    /* ---------- END CRAD ADMIN ---------- */
+
+    /* ---------- SUPPLIER ADMIN ---------- */
+    function loadAdminSuppliers() {
+      const suppliers = getAdminData("amSuppliers", []);
+      const container = document.getElementById("adminSuppliersList");
+      container.innerHTML = "";
+      suppliers.forEach((sup, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${sup.name}</strong> <button onclick="editAdminSupplier(${index})">Edit</button>`;
+        container.appendChild(div);
+      });
+    }
+    function editAdminSupplier(index) {
+      const suppliers = getAdminData("amSuppliers", []);
+      const sup = suppliers[index];
+      document.getElementById("supplierNameInput").value = sup.name || "";
+      document.getElementById("supplierCapabilities").value = sup.additionalCapabilities || "";
+      document.getElementById("supplierNotesInput").value = sup.supplierNotes || "";
+      // Materials checkboxes from all materials
+      const matContainer = document.getElementById("supplierMaterialsContainer");
+      matContainer.innerHTML = "";
+      const materials = getAdminData("amMaterials", []);
+      materials.forEach(mat => {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = mat.id;
+        checkbox.name = "supplierMaterial";
+        if (sup.materials && sup.materials.includes(mat.id)) {
+          checkbox.checked = true;
+        }
+        const label = document.createElement("label");
+        label.textContent = mat.name;
+        label.prepend(checkbox);
+        matContainer.appendChild(label);
+        matContainer.appendChild(document.createElement("br"));
+      });
+      // Machines checkboxes from fixed list
+      const machineMapping = { 1: "Arcam EBM A2", 2: "EOS M290", 3: "Optomec LENS" };
+      const machineContainer = document.getElementById("supplierMachinesContainer");
+      machineContainer.innerHTML = "";
+      for (const key in machineMapping) {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = key;
+        checkbox.name = "supplierMachine";
+        if (sup.machines && sup.machines.includes(parseInt(key))) {
+          checkbox.checked = true;
+        }
+        const label = document.createElement("label");
+        label.textContent = machineMapping[key];
+        label.prepend(checkbox);
+        machineContainer.appendChild(label);
+        machineContainer.appendChild(document.createElement("br"));
+      }
+      // Supplier Roadmap Tasks dynamic list
+      const srtContainer = document.getElementById("supplierRoadmapTasksContainer");
+      srtContainer.innerHTML = "";
+      if (sup.supplierRoadmap && sup.supplierRoadmap.tasks) {
+        sup.supplierRoadmap.tasks.forEach(task => {
+          addSupplierTaskRow(task.category, task.task, task.start, task.end, task.status, task.fundingDetails, task.details);
+        });
+      }
+      // Supplier Roadmap Milestones dynamic list
+      const smContainer = document.getElementById("supplierMilestonesContainer");
+      smContainer.innerHTML = "";
+      if (sup.supplierRoadmap && sup.supplierRoadmap.milestones) {
+        sup.supplierRoadmap.milestones.forEach(ms => {
+          addSupplierMilestoneRow(ms.name, ms.description, ms.date, ms.fundingDetails, ms.notes);
+        });
+      }
+      document.getElementById("supplierForm").dataset.editIndex = index;
+      adminShowSection("editSupplierSection");
+    }
+    document.getElementById("supplierForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      let suppliers = getAdminData("amSuppliers", []);
+      const index = parseInt(this.dataset.editIndex);
+      const name = document.getElementById("supplierNameInput").value;
+      const capabilities = document.getElementById("supplierCapabilities").value;
+      const notes = document.getElementById("supplierNotesInput").value;
+      const materials = Array.from(document.querySelectorAll("input[name='supplierMaterial']:checked")).map(cb => parseInt(cb.value));
+      const machines = Array.from(document.querySelectorAll("input[name='supplierMachine']:checked")).map(cb => parseInt(cb.value));
+      const tasks = [];
+      document.querySelectorAll("#supplierRoadmapTasksContainer .list-item").forEach(row => {
+        tasks.push({
+          category: row.querySelector(".srtCategory").value,
+          task: row.querySelector(".srtTask").value,
+          start: row.querySelector(".srtStart").value,
+          end: row.querySelector(".srtEnd").value,
+          status: row.querySelector(".srtStatus").value,
+          fundingDetails: row.querySelector(".srtFunding").value,
+          details: row.querySelector(".srtDetails").value
+        });
+      });
+      const milestones = [];
+      document.querySelectorAll("#supplierMilestonesContainer .list-item").forEach(row => {
+        milestones.push({
+          name: row.querySelector(".smName").value,
+          description: row.querySelector(".smDescription").value,
+          date: row.querySelector(".smDate").value,
+          fundingDetails: row.querySelector(".smFunding").value,
+          notes: row.querySelector(".smNotes").value
+        });
+      });
+      suppliers[index] = {
+        ...suppliers[index],
+        name: name,
+        additionalCapabilities: capabilities,
+        supplierNotes: notes,
+        materials: materials,
+        machines: machines,
+        supplierRoadmap: {
+          tasks: tasks,
+          milestones: milestones
+        }
+      };
+      setAdminData("amSuppliers", suppliers);
+      adminShowSection("adminSuppliersSection");
+      loadAdminSuppliers();
+    });
+    document.getElementById("newSupplierBtn").addEventListener("click", function() {
+      let suppliers = getAdminData("amSuppliers", []);
+      suppliers.push({
+        id: Date.now(),
+        name: "",
+        additionalCapabilities: "",
+        supplierNotes: "",
+        materials: [],
+        machines: [],
+        supplierRoadmap: { tasks: [], milestones: [] }
+      });
+      setAdminData("amSuppliers", suppliers);
+      editAdminSupplier(suppliers.length - 1);
+    });
+
+    /* ---------- END SUPPLIER ADMIN ---------- */
+
+    /* ---------- INITIAL ADMIN NAVIGATION ---------- */
+    document.getElementById("adminProductsBtn").addEventListener("click", function() {
+      loadAdminProducts();
+      adminShowSection("adminProductsSection");
+    });
+    document.getElementById("adminMaterialsBtn").addEventListener("click", function() {
+      loadAdminMaterials();
+      adminShowSection("adminMaterialsSection");
+    });
+    document.getElementById("adminCradBtn").addEventListener("click", function() {
+      loadAdminCrad();
+      adminShowSection("adminCradSection");
+    });
+    document.getElementById("adminSuppliersBtn").addEventListener("click", function() {
+      loadAdminSuppliers();
+      adminShowSection("adminSuppliersSection");
+    });
+    adminShowSection("adminProductsSection");
+    /* ---------- END INITIAL ADMIN NAVIGATION ---------- */
+
+    /* ---------- DYNAMIC ROW FUNCTIONS ---------- */
+    // For Product Digital Tools & References Roadmap (only one swimlane: Design Tools & References)
+    function addDigitalToolReferenceRow(name = "", start = "", end = "", status = "complete", funding = "", details = "") {
+      const container = document.getElementById("productDigitalToolsReferencesContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      // Note: The swimlane is fixed to "Design Tools & References" in the product page
+      div.innerHTML = `<input type="text" class="dtrName" placeholder="Task Name" value="${name}">
+                       <input type="date" class="dtrStart" value="${start}">
+                       <input type="date" class="dtrEnd" value="${end}">
+                       <select class="dtrStatus">
+                         <option value="complete">Complete</option>
+                         <option value="funded (division irad)">Funded (Division IRAD)</option>
+                         <option value="funded (sector irad)">Funded (Sector IRAD)</option>
+                         <option value="funded (crad)">Funded (CRAD)</option>
+                         <option value="planned">Planned</option>
+                       </select>
+                       <input type="text" class="dtrFunding" placeholder="Funding Details" value="${funding}">
+                       <input type="text" class="dtrDetails" placeholder="Details" value="${details}">`;
+      div.querySelector(".dtrStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Product Part Acceptance Roadmap (only one swimlane: Part Acceptance)
+    function addPartAcceptanceRoadmapRow(name = "", start = "", end = "", status = "complete", funding = "", details = "") {
+      const container = document.getElementById("productPartAcceptanceRoadmapContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      // Swimlane is fixed to "Part Acceptance"
+      div.innerHTML = `<input type="text" class="parName" placeholder="Task Name" value="${name}">
+                       <input type="date" class="parStart" value="${start}">
+                       <input type="date" class="parEnd" value="${end}">
+                       <select class="parStatus">
+                         <option value="complete">Complete</option>
+                         <option value="funded (division irad)">Funded (Division IRAD)</option>
+                         <option value="funded (sector irad)">Funded (Sector IRAD)</option>
+                         <option value="funded (crad)">Funded (CRAD)</option>
+                         <option value="planned">Planned</option>
+                       </select>
+                       <input type="text" class="parFunding" placeholder="Funding Details" value="${funding}">
+                       <input type="text" class="parDetails" placeholder="Details" value="${details}">`;
+      div.querySelector(".parStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Material Roadmap Tasks
+    function addMaterialTaskRow(category = "Parameter Development", task = "", start = "", end = "", status = "complete", funding = "", details = "", milestone = "") {
+      const container = document.getElementById("materialRoadmapTasksContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<select class="rtCategory">
+                         <option value="Parameter Development">Parameter Development</option>
+                         <option value="Material Qual Data">Material Qual Data</option>
+                         <option value="Specs">Specs</option>
+                       </select>
+                       <input type="text" class="rtTask" placeholder="Task" value="${task}">
+                       <input type="date" class="rtStart" value="${start}">
+                       <input type="date" class="rtEnd" value="${end}">
+                       <select class="rtStatus">
+                         <option value="complete">Complete</option>
+                         <option value="funded (division irad)">Funded (Division IRAD)</option>
+                         <option value="funded (sector irad)">Funded (Sector IRAD)</option>
+                         <option value="funded (crad)">Funded (CRAD)</option>
+                         <option value="planned">Planned</option>
+                       </select>
+                       <input type="text" class="rtFunding" placeholder="Funding Details" value="${funding}">
+                       <input type="text" class="rtDetails" placeholder="Details" value="${details}">
+                       <input type="text" class="rtMilestone" placeholder="Milestone ID" value="${milestone}">`;
+      div.querySelector(".rtCategory").value = category;
+      div.querySelector(".rtStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Material Milestones
+    function addMaterialMilestoneRow(name = "", description = "", date = "", funding = "", notes = "") {
+      const container = document.getElementById("materialMilestonesContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="msName" placeholder="Milestone Name" value="${name}">
+                       <textarea class="msDescription" placeholder="Description">${description}</textarea>
+                       <input type="date" class="msDate" value="${date}">
+                       <input type="text" class="msFunding" placeholder="Funding Details" value="${funding}">
+                       <textarea class="msNotes" placeholder="Notes">${notes}</textarea>`;
+      container.appendChild(div);
+    }
+    // For Machines
+    function addMachineRow(model = "", status = "complete") {
+      const container = document.getElementById("materialMachinesContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="machModel" placeholder="Machine Model" value="${model}">
+                       <select class="machStatus">
+                         <option value="complete">Complete</option>
+                         <option value="in-development">In Development</option>
+                         <option value="paused">Paused</option>
+                         <option value="planned">Planned</option>
+                       </select>`;
+      div.querySelector(".machStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Production Printers (example)
+    function addProductionPrinterRow(item = "", status = "complete") {
+      const container = document.getElementById("productionPrintersContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="prodPrinterItem" placeholder="Printer" value="${item}">
+                       <select class="prodPrinterStatus">
+                         <option value="complete">Complete</option>
+                         <option value="in-development">In Development</option>
+                         <option value="paused">Paused</option>
+                         <option value="planned">Planned</option>
+                       </select>`;
+      div.querySelector(".prodPrinterStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Supply Chain Powder Supplier (example)
+    function addSupplyChainPowderRow(item = "", status = "complete") {
+      const container = document.getElementById("supplyChainPowderContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="scPowderItem" placeholder="Powder Supplier" value="${item}">
+                       <select class="scPowderStatus">
+                         <option value="complete">Complete</option>
+                         <option value="in-development">In Development</option>
+                         <option value="paused">Paused</option>
+                         <option value="planned">Planned</option>
+                       </select>`;
+      div.querySelector(".scPowderStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Supplier Roadmap Tasks – UPDATED STATUS OPTIONS
+    function addSupplierTaskRow(category = "", task = "", start = "", end = "", status = "complete", funding = "", details = "") {
+      const container = document.getElementById("supplierRoadmapTasksContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="srtCategory" placeholder="Category" value="${category}">
+                       <input type="text" class="srtTask" placeholder="Task" value="${task}">
+                       <input type="date" class="srtStart" value="${start}">
+                       <input type="date" class="srtEnd" value="${end}">
+                       <select class="srtStatus">
+                         <option value="complete">Complete</option>
+                         <option value="funded (division irad)">Funded (Division IRAD)</option>
+                         <option value="funded (sector irad)">Funded (Sector IRAD)</option>
+                         <option value="funded (crad)">Funded (CRAD)</option>
+                         <option value="planned">Planned</option>
+                       </select>
+                       <input type="text" class="srtFunding" placeholder="Funding Details" value="${funding}">
+                       <input type="text" class="srtDetails" placeholder="Details" value="${details}">`;
+      div.querySelector(".srtStatus").value = status;
+      container.appendChild(div);
+    }
+    // For Supplier Roadmap Milestones
+    function addSupplierMilestoneRow(name = "", description = "", date = "", funding = "", notes = "") {
+      const container = document.getElementById("supplierMilestonesContainer");
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `<input type="text" class="smName" placeholder="Milestone Name" value="${name}">
+                       <textarea class="smDescription" placeholder="Description">${description}</textarea>
+                       <input type="date" class="smDate" value="${date}">
+                       <input type="text" class="smFunding" placeholder="Funding Details" value="${funding}">
+                       <textarea class="smNotes" placeholder="Notes">${notes}</textarea>`;
+      container.appendChild(div);
+    }
+    /* ---------- END DYNAMIC ROW FUNCTIONS ---------- */
+  </script>
+  <!-- =====================================================
+       END ADMIN COMMON FUNCTIONS & INITIALIZATION
+  ====================================================== -->
+</body>
+</html>

@@ -1,0 +1,961 @@
+{
+  "programs": [
+    {
+      "id": "PRG1",
+      "name": "Satellite Systems",
+      "division": "S",
+      "customerName": "N/A",
+      "missionClass": "Class A",
+      "needDate": "2025-06-30",
+      "closeDate": "2025-08-30"
+    },
+    {
+      "id": "PRG2",
+      "name": "Missile Defense",
+      "division": "T",
+      "customerName": "N/A",
+      "missionClass": "Class D",
+      "needDate": "2025-06-30"
+    },
+    {
+      "id": "PRG3",
+      "name": "Launch Vehicles",
+      "division": "S",
+      "customerName": "Unknown",
+      "missionClass": "Class A",
+      "needDate": "2025-06-30",
+      "closeDate": ""
+    },
+    {
+      "id": "PRG4",
+      "name": "Space Exploration",
+      "division": "L",
+      "customerName": "N/A",
+      "missionClass": "Class C",
+      "needDate": "2025-06-30"
+    },
+    {
+      "id": "PRG5",
+      "name": "Communications",
+      "division": "P",
+      "customerName": "N/A",
+      "missionClass": "Class B",
+      "needDate": "2025-06-30"
+    }
+  ],
+  "products": [
+    {
+      "id": "P1",
+      "name": "SatCom Terminal Housing",
+      "trl": 7,
+      "requirements": {
+        "mechanical": "Withstand 10G acceleration, -40°C to +85°C temperature range",
+        "electrical": "EMI shielding, grounding requirements",
+        "environmental": "Salt fog resistance, humidity cycling"
+      },
+      "programs": [
+        "PRG1",
+        "PRG5"
+      ],
+      "materialSystems": [
+        "MS1",
+        "MS3"
+      ],
+      "postProcessing": [
+        "Surface finishing",
+        "Machining of critical interfaces",
+        "Anodizing"
+      ],
+      "postProcessingSuppliers": [
+        {
+          "process": "Surface finishing",
+          "supplier": "SUP4"
+        },
+        {
+          "process": "Machining of critical interfaces",
+          "supplier": "SUP2"
+        },
+        {
+          "process": "Anodizing",
+          "supplier": "SUP5"
+        }
+      ],
+      "designTools": [
+        "CADPro Advanced",
+        "SimulateX Thermal",
+        "FEA Structural Analysis"
+      ],
+      "documentation": [
+        "MIL-STD-810 Test Reports",
+        "Material Certification",
+        "Process Qualification Records",
+        "First Article Inspection Report"
+      ],
+      "relevantMachines": [
+        "EOS M290",
+        "Concept Laser M2"
+      ],
+      "relevantSuppliers": [
+        "SUP1",
+        "SUP3"
+      ],
+      "specialNDT": [
+        "CT Scanning for internal defects",
+        "Dye penetrant inspection",
+        "X-ray inspection of critical features"
+      ],
+      "partAcceptance": [
+        "Visual inspection per AWS D17.1",
+        "Dimensional verification",
+        "Functional testing",
+        "Surface roughness measurement"
+      ],
+      "productSupplyChain": "Direct sourcing from approved vendors with secondary source qualification.",
+      "roadmap": [
+        {
+          "task": "Initial Design",
+          "start": "2025-01-01",
+          "end": "2025-03-31",
+          "status": "Complete",
+          "lane": "Design",
+          "fundingType": "Division IRAD"
+        },
+        {
+          "task": "Prototype Build",
+          "start": "2025-04-01",
+          "end": "2025-06-30",
+          "status": "In Progress",
+          "lane": "Manufacturing",
+          "fundingType": "Sector IRAD"
+        },
+        {
+          "task": "Material Qualification",
+          "start": "2025-02-15",
+          "end": "2025-05-15",
+          "status": "In Progress",
+          "lane": "M&P",
+          "fundingType": "CRAD"
+        },
+        {
+          "task": "First Article Inspection",
+          "start": "2025-07-01",
+          "end": "2025-07-31",
+          "status": "Planned",
+          "lane": "Quality"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "PDR",
+          "date": "2025-02-15",
+          "description": "Preliminary Design Review"
+        },
+        {
+          "name": "CDR",
+          "date": "2025-04-30",
+          "description": "Critical Design Review"
+        },
+        {
+          "name": "TRR",
+          "date": "2025-07-15",
+          "description": "Test Readiness Review"
+        }
+      ],
+      "businessCase": {
+        "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
+        "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
+        "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+      }
+    },
+    {
+      "id": "P2",
+      "name": "Weather Satellite Antenna Mount",
+      "trl": 6,
+      "requirements": {
+        "mechanical": "High stiffness, low mass, survive launch loads",
+        "thermal": "Low CTE, thermal stability in space environment",
+        "environmental": "Vacuum compatibility, radiation resistance"
+      },
+      "programs": [
+        "PRG1"
+      ],
+      "materialSystems": [
+        "MS2"
+      ],
+      "postProcessing": [
+        "Precision machining",
+        "Passivation",
+        "Surface treatment"
+      ],
+      "designTools": [
+        "OrbitSim",
+        "ThermalAnalyzer",
+        "Topology Optimization Suite"
+      ],
+      "documentation": [
+        "NASA-STD-6016 Compliance",
+        "Thermal Cycling Test Results",
+        "Structural Analysis Report",
+        "Material Traceability Documentation"
+      ],
+      "relevantMachines": [
+        "SLM 280",
+        "Arcam Q20+"
+      ],
+      "relevantSuppliers": [
+        "SUP2"
+      ],
+      "specialNDT": [
+        "Ultrasonic testing",
+        "Radiographic inspection",
+        "Thermal imaging"
+      ],
+      "partAcceptance": [
+        "Thermal cycling test",
+        "Vibration test",
+        "Dimensional inspection",
+        "Surface finish verification"
+      ],
+      "productSupplyChain": "Specialized logistics for space-grade components with full traceability.",
+      "roadmap": [
+        {
+          "task": "Concept Development",
+          "start": "2025-01-15",
+          "end": "2025-03-15",
+          "status": "Complete",
+          "lane": "Design",
+          "fundingType": "Division IRAD"
+        },
+        {
+          "task": "Component Testing",
+          "start": "2025-04-01",
+          "end": "2025-05-31",
+          "status": "Planned",
+          "lane": "Quality"
+        },
+        {
+          "task": "Process Parameter Development",
+          "start": "2025-03-01",
+          "end": "2025-04-30",
+          "status": "In Progress",
+          "lane": "M&P",
+          "fundingType": "Sector IRAD"
+        },
+        {
+          "task": "Prototype Manufacturing",
+          "start": "2024-11-01",
+          "end": "2025-02-28",
+          "status": "In Progress",
+          "lane": "Manufacturing",
+          "fundingType": "CRAD"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "Design Freeze",
+          "date": "2025-03-15",
+          "description": "Final design approval"
+        },
+        {
+          "name": "Qualification Complete",
+          "date": "2025-06-30",
+          "description": "All qualification testing completed"
+        }
+      ],
+      "businessCase": {
+        "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
+        "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
+        "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+      }
+    },
+    {
+      "id": "P3",
+      "name": "Interceptor Missile Nozzle",
+      "trl": 5,
+      "requirements": {
+        "mechanical": "High temperature strength, erosion resistance",
+        "thermal": "Withstand 1200°C operating temperature",
+        "performance": "Specific thrust profile, weight constraints"
+      },
+      "programs": [
+        "PRG2"
+      ],
+      "materialSystems": [
+        "MS2"
+      ],
+      "postProcessing": [
+        "EDM wire cutting",
+        "Precision grinding",
+        "Polishing of flow surfaces"
+      ],
+      "designTools": [
+        "BallisticsCalc",
+        "WindTunnel",
+        "Computational Fluid Dynamics"
+      ],
+      "documentation": [
+        "Defense Manual",
+        "Safety Protocol",
+        "Material Property Database",
+        "Process Qualification Documentation"
+      ],
+      "relevantMachines": [
+        "EOS M400-4",
+        "AMCM M4K"
+      ],
+      "relevantSuppliers": [
+        "SUP2"
+      ],
+      "specialNDT": [
+        "Neutron radiography",
+        "Acoustic emission testing",
+        "High-resolution CT scanning"
+      ],
+      "partAcceptance": [
+        "Impact test",
+        "Pressure test",
+        "Flow testing",
+        "Metallurgical evaluation"
+      ],
+      "productSupplyChain": "Integrated supply chain with defense contractors and ITAR compliance.",
+      "roadmap": [
+        {
+          "task": "Design Optimization",
+          "start": "2025-03-01",
+          "end": "2025-05-31",
+          "status": "In Progress",
+          "lane": "Design"
+        },
+        {
+          "task": "Field Testing",
+          "start": "2025-06-01",
+          "end": "2025-08-31",
+          "status": "Planned",
+          "lane": "Quality"
+        },
+        {
+          "task": "Manufacturing Process Development",
+          "start": "2025-04-15",
+          "end": "2025-07-15",
+          "status": "Planned",
+          "lane": "Manufacturing"
+        }
+      ],
+      "businessCase": {
+        "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
+        "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
+        "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+      }
+    },
+    {
+      "id": "P4",
+      "name": "Reusable Rocket Injector Plate",
+      "trl": 8,
+      "requirements": {
+        "mechanical": "Fatigue resistance, high cycle life",
+        "thermal": "Thermal shock resistance, high heat flux",
+        "fluid": "Complex internal channels, specific flow characteristics"
+      },
+      "programs": [
+        "PRG3"
+      ],
+      "materialSystems": [
+        "MS1"
+      ],
+      "postProcessing": [
+        "CNC finishing of mating surfaces",
+        "Abrasive flow machining of internal channels",
+        "Surface treatment"
+      ],
+      "designTools": [
+        "PropulsionSim",
+        "TrajectoryCalc",
+        "Generative Design Software"
+      ],
+      "documentation": [
+        "Launch Manual",
+        "Maintenance Guide",
+        "Design History File",
+        "Process Validation Reports"
+      ],
+      "relevantMachines": [
+        "Velo3D Sapphire",
+        "GE Concept Laser X Line"
+      ],
+      "relevantSuppliers": [
+        "SUP1"
+      ],
+      "specialNDT": [
+        "Helium leak testing",
+        "Flow path verification",
+        "Pressure drop testing"
+      ],
+      "partAcceptance": [
+        "Stress test",
+        "Safety test",
+        "Flow performance verification",
+        "Thermal cycling"
+      ],
+      "productSupplyChain": "Optimized for rapid turnaround with digital thread implementation.",
+      "roadmap": [
+        {
+          "task": "Engine Testing",
+          "start": "2025-02-01",
+          "end": "2025-04-30",
+          "status": "Complete",
+          "lane": "Quality"
+        },
+        {
+          "task": "Flight Simulation",
+          "start": "2025-05-01",
+          "end": "2025-07-31",
+          "status": "Planned",
+          "lane": "Design"
+        },
+        {
+          "task": "Material Property Database Development",
+          "start": "2025-03-15",
+          "end": "2025-06-15",
+          "status": "In Progress",
+          "lane": "M&P"
+        }
+      ],
+      "businessCase": {
+        "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
+        "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
+        "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+      }
+    },
+    {
+      "id": "P5",
+      "name": "Lunar Rover Wheel Structure",
+      "trl": 4,
+      "requirements": {
+        "mechanical": "Low mass, high strength-to-weight ratio",
+        "environmental": "Lunar dust resistance, extreme temperature cycling",
+        "operational": "Energy absorption, traction on regolith"
+      },
+      "programs": [
+        "PRG4"
+      ],
+      "materialSystems": [
+        "MS3"
+      ],
+      "postProcessing": [
+        "Shot peening",
+        "Selective machining",
+        "Surface texturing"
+      ],
+      "designTools": [
+        "RoverSim",
+        "3DModeler",
+        "Lattice Structure Generator"
+      ],
+      "documentation": [
+        "Operational Manual",
+        "Spec Sheet",
+        "Qualification Test Reports",
+        "Failure Mode and Effects Analysis"
+      ],
+      "relevantMachines": [
+        "EOS M290",
+        "SLM 280"
+      ],
+      "relevantSuppliers": [
+        "SUP3"
+      ],
+      "specialNDT": [
+        "Micro-CT for lattice inspection",
+        "Laser profilometry",
+        "Residual stress measurement"
+      ],
+      "partAcceptance": [
+        "Performance test",
+        "Durability test",
+        "Thermal vacuum testing",
+        "Regolith interaction testing"
+      ],
+      "productSupplyChain": "Customized for extraterrestrial components with redundant sourcing.",
+      "roadmap": [
+        {
+          "task": "Mobility Analysis",
+          "start": "2025-01-01",
+          "end": "2025-02-28",
+          "status": "Complete",
+          "lane": "Design"
+        },
+        {
+          "task": "Terrain Testing",
+          "start": "2025-03-01",
+          "end": "2025-05-31",
+          "status": "In Progress",
+          "lane": "Quality"
+        },
+        {
+          "task": "Lattice Structure Optimization",
+          "start": "2025-02-15",
+          "end": "2025-04-30",
+          "status": "In Progress",
+          "lane": "Design"
+        },
+        {
+          "task": "Surface Treatment Development",
+          "start": "2025-04-01",
+          "end": "2025-06-30",
+          "status": "Planned",
+          "lane": "M&P"
+        }
+      ],
+      "businessCase": {
+        "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
+        "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
+        "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+      }
+    }
+  ],
+  "materialSystems": [
+    {
+      "id": "MS1",
+      "name": "LPBF Ti-6Al-4V",
+      "process": "Laser Powder Bed Fusion",
+      "material": "Ti-6Al-4V",
+      "qualification": "Qualified",
+      "qualificationClass": "Class 1",
+      "statisticalBasis": "S",
+      "mrl": 8,
+      "supplyChain": "Robust and established.",
+      "properties": [],
+      "processingParameters": [],
+      "heatTreatment": ["HIP"],
+      "postProcessing": [
+        "Stress relief heat treatment",
+        "Hot Isostatic Pressing (HIP)",
+        "Surface finishing"
+      ],
+      "qualifiedMachines": [
+        "EOS M290",
+        "Concept Laser M2",
+        "SLM 280"
+      ],
+      "relatedOpportunities": [
+        "OPP3"
+      ],
+      "roadmap": [
+        {
+          "task": "Material Certification",
+          "start": "2025-01-01",
+          "end": "2025-02-28",
+          "status": "Complete",
+          "fundingType": "Division IRAD"
+        },
+        {
+          "task": "Batch Testing",
+          "start": "2025-03-01",
+          "end": "2025-04-30",
+          "status": "Planned",
+          "fundingType": "Sector IRAD"
+        },
+        {
+          "task": "Test",
+          "start": "2025-02-03",
+          "end": "2025-03-26",
+          "status": "Complete",
+          "fundingType": "Division IRAD"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "Cert Approved",
+          "date": "2025-02-28",
+          "description": "Certification received from testing agency."
+        }
+      ],
+      "standardNDT": [
+        "Visual inspection",
+        "Dimensional inspection",
+        "Surface roughness measurement"
+      ]
+    },
+    {
+      "id": "MS2",
+      "name": "LPBF Inconel 718",
+      "process": "Laser Powder Bed Fusion",
+      "material": "Inconel 718",
+      "mrl": 3,
+      "qualification": "Pending",
+      "qualificationClass": "Class 2",
+      "statisticalBasis": "D",
+      "supplyChain": "Moderate reliability.",
+      "properties": {
+        "tensileStrength": "1250-1400 MPa",
+        "yieldStrength": "1000-1150 MPa",
+        "elongation": "12-15%",
+        "density": "8.19 g/cm³"
+      },
+      "processingParameters": {
+        "laserPower": "285-350W",
+        "scanSpeed": "960-1000 mm/s",
+        "layerThickness": "40 μm",
+        "hatchSpacing": "0.11 mm"
+      },
+      "heatTreatment": {
+        "process": "Solution annealing and double aging",
+        "temperature": "980°C for 1 hour, then 720°C for 8 hours, then 620°C for 8 hours",
+        "cooling": "Furnace cool"
+      },
+      "postProcessing": [
+        "Solution annealing",
+        "Double aging",
+        "Machining of critical features"
+      ],
+      "qualifiedMachines": [
+        "EOS M400-4",
+        "Concept Laser X LINE 2000R"
+      ],
+      "relatedOpportunities": [
+        "OPP4"
+      ],
+      "roadmap": [
+        {
+          "task": "Preliminary Tests",
+          "start": "2025-02-01",
+          "end": "2025-03-31",
+          "status": "In Progress",
+          "fundingType": "CRAD"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "Initial Results",
+          "date": "2025-03-31",
+          "description": "First round of tests completed."
+        }
+      ],
+      "standardNDT": [
+        "Visual inspection",
+        "Dimensional inspection",
+        "Radiographic testing"
+      ]
+    },
+    {
+      "id": "MS3",
+      "name": "LPBF AlSi10Mg",
+      "process": "Laser Powder Bed Fusion",
+      "material": "AlSi10Mg",
+      "mrl": 5,
+      "qualification": "Qualified",
+      "qualificationClass": "Class 3",
+      "statisticalBasis": "C",
+      "supplyChain": "Strong and cost-effective.",
+      "properties": {
+        "tensileStrength": "330-360 MPa",
+        "yieldStrength": "220-240 MPa",
+        "elongation": "3-5%",
+        "density": "2.67 g/cm³"
+      },
+      "processingParameters": {
+        "laserPower": "350-370W",
+        "scanSpeed": "1150-1250 mm/s",
+        "layerThickness": "30 μm",
+        "hatchSpacing": "0.13 mm"
+      },
+      "postProcessing": [
+        "Stress relief",
+        "T6 heat treatment",
+        "Surface finishing"
+      ],
+      "qualifiedMachines": [
+        "EOS M290",
+        "SLM 280",
+        "Renishaw AM400"
+      ],
+      "relatedOpportunities": [],
+      "roadmap": [
+        {
+          "task": "Process Validation",
+          "start": "2025-01-15",
+          "end": "2025-03-15",
+          "status": "Complete",
+          "fundingType": "Division IRAD"
+        }
+      ],
+      "milestones": [],
+      "standardNDT": [
+        "Visual inspection",
+        "Dimensional inspection",
+        "Dye penetrant inspection"
+      ]
+    },
+    {
+      "id": "MS4",
+      "name": "EBM Ti-6Al-4V",
+      "process": "Electron Beam Melting",
+      "material": "Ti-6Al-4V",
+      "qualification": "In Progress",
+      "qualificationClass": "Class 4",
+      "statisticalBasis": "None",
+      "supplyChain": "Developing with key suppliers.",
+      "properties": {
+        "tensileStrength": "930-1020 MPa",
+        "yieldStrength": "860-930 MPa",
+        "elongation": "10-14%",
+        "density": "4.43 g/cm³"
+      },
+      "processingParameters": {
+        "beamPower": "600-1000W",
+        "scanSpeed": "4500-5500 mm/s",
+        "layerThickness": "50-70 μm",
+        "preheatingTemperature": "700-750°C"
+      },
+      "postProcessing": [
+        "HIP treatment",
+        "Chemical etching",
+        "Machining"
+      ],
+      "qualifiedMachines": [
+        "Arcam Q20",
+        "Arcam A2X"
+      ],
+      "relatedOpportunities": [
+        "OPP3"
+      ],
+      "roadmap": [
+        {
+          "task": "Parameter Optimization",
+          "start": "2025-02-01",
+          "end": "2025-05-31",
+          "status": "In Progress",
+          "fundingType": "Sector IRAD"
+        },
+        {
+          "task": "Mechanical Testing",
+          "start": "2025-06-01",
+          "end": "2025-08-31",
+          "status": "Planned",
+          "fundingType": "Division IRAD"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "Optimization Complete",
+          "date": "2025-05-31",
+          "description": "Process parameters finalized for production."
+        }
+      ],
+      "standardNDT": [
+        "Visual inspection",
+        "Dimensional inspection",
+        "CT scanning"
+      ]
+    },
+    {
+      "id": "MS5",
+      "name": "DED 316L Stainless Steel",
+      "process": "Directed Energy Deposition",
+      "material": "316L Stainless Steel",
+      "qualification": "Qualified",
+      "qualificationClass": "Class 5",
+      "statisticalBasis": "S",
+      "supplyChain": "Well-established with multiple sources.",
+      "properties": {
+        "tensileStrength": "520-620 MPa",
+        "yieldStrength": "280-350 MPa",
+        "elongation": "30-40%",
+        "density": "7.99 g/cm³"
+      },
+      "processingParameters": {
+        "laserPower": "800-1200W",
+        "feedRate": "8-15 g/min",
+        "scanSpeed": "600-1000 mm/min",
+        "layerHeight": "0.8-1.2 mm"
+      },
+      "postProcessing": [
+        "Solution annealing",
+        "Machining",
+        "Polishing"
+      ],
+      "qualifiedMachines": [
+        "BeAM Modulo 400",
+        "DMG MORI LASERTEC 65 3D",
+        "Optomec LENS 850-R"
+      ],
+      "relatedOpportunities": [],
+      "roadmap": [
+        {
+          "task": "Large Component Validation",
+          "start": "2025-03-01",
+          "end": "2025-06-30",
+          "status": "Planned",
+          "fundingType": "Division IRAD"
+        }
+      ],
+      "milestones": [
+        {
+          "name": "Production Readiness",
+          "date": "2025-06-30",
+          "description": "Validated for production components."
+        }
+      ],
+      "standardNDT": [
+        "Visual inspection",
+        "Dimensional inspection",
+        "Ultrasonic testing"
+      ]
+    }
+  ],
+  "cradOpportunities": [
+    {
+      "id": "OPP1",
+      "name": "Advanced SatCom Upgrade",
+      "relatedEntity": "P1",
+      "details": "Opportunity for enhanced satellite communication systems; potential for increased funding."
+    },
+    {
+      "id": "OPP2",
+      "name": "Reusable Rocket Efficiency",
+      "relatedEntity": "P4",
+      "details": "Focus on improving efficiency of reusable rockets; seeking industry partners."
+    },
+    {
+      "id": "OPP3",
+      "name": "Titanium Expansion",
+      "relatedEntity": "MS1",
+      "details": "Expand usage of Ti-6Al-4V in aerospace applications; high interest in collaboration."
+    },
+    {
+      "id": "OPP4",
+      "name": "Inconel Testing Initiative",
+      "relatedEntity": "MS2",
+      "details": "Pilot project for testing Inconel 718 under extreme conditions; funding secured."
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "SUP1",
+      "name": "AeroSupplies Inc.",
+      "materials": [
+        "MS1",
+        "MS3"
+      ],
+      "additionalCapabilities": "Expert in aerospace-grade materials.",
+      "supplierRoadmap": {
+        "tasks": [
+          {
+            "task": "Vendor Qualification",
+            "start": "2025-01-01",
+            "end": "2025-02-15",
+            "status": "Complete",
+            "category": "Material System Vendor Qual",
+            "fundingType": "Division IRAD"
+          },
+          {
+            "task": "Supply Contract Negotiation",
+            "start": "2025-03-01",
+            "end": "2025-04-30",
+            "status": "Planned",
+            "category": "Supplier Management"
+          }
+        ]
+      },
+      "machines": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "SUP2",
+      "name": "Defense Materials Ltd.",
+      "materials": [
+        "MS2"
+      ],
+      "additionalCapabilities": "Specializes in high-temperature alloys.",
+      "supplierRoadmap": {
+        "tasks": [
+          {
+            "task": "Initial Evaluation",
+            "start": "2025-02-01",
+            "end": "2025-03-01",
+            "status": "In Progress",
+            "category": "Material System Vendor Qual",
+            "fundingType": "Sector IRAD"
+          },
+          {
+            "task": "Long-term Partnership Discussion",
+            "start": "2025-04-01",
+            "end": "2025-05-31",
+            "status": "Planned",
+            "category": "Supplier Management"
+          }
+        ]
+      },
+      "machines": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "SUP3",
+      "name": "SpaceTech Supplies",
+      "materials": [
+        "MS3"
+      ],
+      "additionalCapabilities": "Innovative solutions for lightweight materials.",
+      "supplierRoadmap": {
+        "tasks": [
+          {
+            "task": "Capability Assessment",
+            "start": "2025-01-15",
+            "end": "2025-02-28",
+            "status": "Complete",
+            "category": "Material System Vendor Qual",
+            "fundingType": "CRAD"
+          }
+        ]
+      },
+      "machines": [
+        1
+      ]
+    },
+    {
+      "id": "SUP4",
+      "name": "Surface Solutions Inc.",
+      "materials": [
+        "MS1",
+        "MS3"
+      ],
+      "additionalCapabilities": "Specializes in surface finishing for aerospace components.",
+      "supplierRoadmap": {
+        "tasks": [
+          {
+            "task": "Process Certification",
+            "start": "2025-02-01",
+            "end": "2025-03-15",
+            "status": "Complete",
+            "category": "Supplier Management",
+            "fundingType": "Division IRAD"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SUP5",
+      "name": "Anodizing Experts LLC",
+      "materials": [
+        "MS3"
+      ],
+      "additionalCapabilities": "Specialized anodizing for aluminum components.",
+      "supplierRoadmap": {
+        "tasks": [
+          {
+            "task": "Quality Audit",
+            "start": "2025-03-01",
+            "end": "2025-04-15",
+            "status": "In Progress",
+            "category": "Supplier Management",
+            "fundingType": "Sector IRAD"
+          }
+        ]
+      }
+    }
+  ]
+}

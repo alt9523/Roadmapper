@@ -1,0 +1,24 @@
+{
+  "programs": [
+    {
+      "id": "prog1",
+      "name": "Program 1",
+      "description": "Description of Program 1"
+    },
+    {
+      "id": "prog2",
+      "name": "Program 2",
+      "description": "Description of Program 2"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod1",
+      "name": "Product 1",
+      "description": "Description of Product 1"
+    }
+  ],
+  "materialSystems": [],
+  "suppliers": [],
+  "cradOpportunities": []
+} 
