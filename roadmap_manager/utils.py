@@ -15,8 +15,11 @@ def load_json_data(file_path, default_data=None):
         }
     
     try:
+        # Ensure file_path is absolute
+        file_path = os.path.abspath(file_path)
+        
         if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
             # Ensure all required sections exist
@@ -26,14 +29,22 @@ def load_json_data(file_path, default_data=None):
             
             return data, None
         else:
-            return default_data, "File not found, using default data"
+            # Create the default data file if it doesn't exist
+            save_json_data(file_path, default_data)
+            return default_data, "File not found, created new data file"
     except Exception as e:
         return default_data, f"Error loading data: {str(e)}"
 
 def save_json_data(file_path, data):
     """Save JSON data to a file"""
     try:
-        with open(file_path, 'w') as f:
+        # Ensure file_path is absolute
+        file_path = os.path.abspath(file_path)
+        
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        
+        with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
         return True, None
     except Exception as e:

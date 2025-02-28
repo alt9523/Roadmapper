@@ -6,8 +6,14 @@ Launcher script for the Roadmap Manager application
 import os
 import sys
 
-# Add the current directory to the path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Get the absolute path of the directory containing this script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Add the base directory to the path so Python can find the modules
+sys.path.insert(0, BASE_DIR)
+
+# Set the working directory to the base directory to ensure consistent file paths
+os.chdir(BASE_DIR)
 
 from roadmap_manager.main import main
 

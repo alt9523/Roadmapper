@@ -784,36 +784,34 @@
             "qualification": "Pending",
             "qualificationClass": "Class 2",
             "statisticalBasis": "D",
-            "properties": {
-                "tensileStrength": "1250-1400 MPa",
-                "yieldStrength": "1000-1150 MPa",
-                "elongation": "12-15%",
-                "density": "8.19 g/cm\u00c2\u00b3"
-            },
-            "processingParameters": {
-                "laserPower": "285-350W",
-                "scanSpeed": "960-1000 mm/s",
-                "layerThickness": "40 \u00ce\u00bcm",
-                "hatchSpacing": "0.11 mm"
-            },
+            "roadmap": [
+                {
+                    "task": "Preliminary Tests",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "In Progress",
+                    "fundingType": "CRAD"
+                }
+            ],
+            "milestones": [
+                {
+                    "name": "Initial Results",
+                    "date": "2025-03-31",
+                    "description": "First round of tests completed."
+                }
+            ],
             "postProcessing": [
                 {
                     "name": "Solution annealing",
-                    "Supplier": [
-                        "SUP2"
-                    ]
+                    "Supplier": []
                 },
                 {
                     "name": "Double aging",
-                    "Supplier": [
-                        "SUP2"
-                    ]
+                    "Supplier": []
                 },
                 {
                     "name": "Machining of critical features",
-                    "Supplier": [
-                        "SUP2"
-                    ]
+                    "Supplier": []
                 }
             ],
             "qualifiedMachines": [
@@ -830,30 +828,16 @@
                     ]
                 }
             ],
-            "relatedFundingOpps": [
-                "OPP4"
-            ],
-            "roadmap": [
-                {
-                    "task": "Preliminary Tests",
-                    "start": "2025-02-01",
-                    "end": "2025-03-31",
-                    "status": "In Progress",
-                    "fundingType": "CRAD",
-                    "lane": "Material Qualification"
-                }
-            ],
-            "milestones": [
-                {
-                    "name": "Initial Results",
-                    "date": "2025-03-31",
-                    "description": "First round of tests completed."
-                }
-            ],
             "standardNDT": [
                 "Visual inspection",
                 "Dimensional inspection",
                 "Radiographic testing"
+            ],
+            "relatedFundingOpps": [
+                {
+                    "opportunityID": "OPP4",
+                    "pursuitID": "PUR4"
+                }
             ]
         },
         {

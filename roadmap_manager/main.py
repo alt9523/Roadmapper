@@ -24,8 +24,9 @@ class RoadmapManager:
         self.status_var = tk.StringVar()
         self.status_var.set("Ready")
         
-        # Load data
-        self.data_file = "roadmap.json"
+        # Load data - use absolute path to ensure file can be found
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.data_file = os.path.join(base_dir, "roadmap.json")
         self.load_data()
         
         # Initialize models
@@ -108,9 +109,30 @@ class RoadmapManager:
         # self.create_products_tab()
 
 def main():
-    root = tk.Tk()
-    app = RoadmapManager(root)
-    root.mainloop()
+    """Main entry point for the application"""
+    try:
+        # Set up the Tkinter root window
+        root = tk.Tk()
+        
+        # Create the application
+        app = RoadmapManager(root)
+        
+        # Start the main event loop
+        root.mainloop()
+    except Exception as e:
+        # Show error message if something goes wrong
+        import traceback
+        error_message = f"An error occurred: {str(e)}\n\n{traceback.format_exc()}"
+        
+        try:
+            # Try to show a GUI error message
+            messagebox.showerror("Error", error_message)
+        except:
+            # Fall back to console error message
+            print("ERROR:", error_message)
+        
+        # Exit with error code
+        sys.exit(1)
 
 if __name__ == "__main__":
     main() 
