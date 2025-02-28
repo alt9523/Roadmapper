@@ -7,6 +7,7 @@ class ProductView:
     def __init__(self, model):
         self.model = model
         self.products_tree = None
+        self.search_entry = None
     
     def create_products_tab(self, notebook):
         """Create the Products tab in the notebook"""
@@ -19,6 +20,20 @@ class ProductView:
         
         add_button = ttk.Button(top_frame, text="Add Product", command=self.model.add_product)
         add_button.pack(side=tk.LEFT, padx=5)
+        
+        # Add search functionality
+        search_label = ttk.Label(top_frame, text="Search:")
+        search_label.pack(side=tk.LEFT, padx=(20, 5))
+        
+        self.search_entry = ttk.Entry(top_frame, width=20)
+        self.search_entry.pack(side=tk.LEFT, padx=5)
+        self.search_entry.bind("<Return>", lambda event: self.model.search_products())
+        
+        search_button = ttk.Button(top_frame, text="Search", command=self.model.search_products)
+        search_button.pack(side=tk.LEFT, padx=5)
+        
+        clear_button = ttk.Button(top_frame, text="Clear", command=self.model.clear_search)
+        clear_button.pack(side=tk.LEFT, padx=5)
         
         # Create treeview
         columns = ("ID", "Name", "TRL", "Programs", "Material Systems")

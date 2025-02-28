@@ -20,6 +20,85 @@ class ProductModel(BaseModel):
         """Populate the products treeview with data"""
         self.view.populate_products_tree()
     
+    def search_products(self):
+        """Search products based on the search term"""
+        search_term = self.view.search_entry.get().lower()
+        if not search_term:
+            self.clear_search()
+            return
+        
+        # Clear existing items
+        for item in self.products_tree.get_children():
+            self.products_tree.delete(item)
+        
+        # Add matching products to treeview
+        for product in self.data["products"]:
+            # Check if search term is in product ID or name
+            if (search_term in product["id"].lower() or 
+                search_term in product["name"].lower() or
+                search_term in str(product.get("trl", "")).lower()):
+                
+                # Also check in programs
+                program_match = False
+                for program_entry in product.get("programs", []):
+                    program_id = ""
+                    if isinstance(program_entry, dict) and "programID" in program_entry:
+                        program_id = program_entry["programID"]
+                    elif isinstance(program_entry, str):
+                        program_id = program_entry
+                    
+                    if search_term in program_id.lower():
+                        program_match = True
+                        break
+                
+                # Check in material systems
+                material_match = False
+                for material_entry in product.get("materialSystems", []):
+                    material_id = ""
+                    if isinstance(material_entry, dict) and "materialID" in material_entry:
+                        material_id = material_entry["materialID"]
+                    elif isinstance(material_entry, str):
+                        material_id = material_entry
+                    
+                    if search_term in material_id.lower():
+                        material_match = True
+                        break
+                
+                # If any match, add to treeview
+                if program_match or material_match or search_term in product["id"].lower() or search_term in product["name"].lower() or search_term in str(product.get("trl", "")).lower():
+                    # Format program IDs
+                    program_ids = []
+                    for program_entry in product.get("programs", []):
+                        if isinstance(program_entry, dict) and "programID" in program_entry:
+                            program_ids.append(program_entry["programID"])
+                        elif isinstance(program_entry, str):
+                            program_ids.append(program_entry)
+                    programs = ", ".join(program_ids)
+                    
+                    # Format material system IDs
+                    material_ids = []
+                    for material_entry in product.get("materialSystems", []):
+                        if isinstance(material_entry, dict) and "materialID" in material_entry:
+                            material_ids.append(material_entry["materialID"])
+                        elif isinstance(material_entry, str):
+                            material_ids.append(material_entry)
+                    materials = ", ".join(material_ids)
+                    
+                    values = (
+                        product["id"],
+                        product["name"],
+                        product.get("trl", ""),
+                        programs,
+                        materials
+                    )
+                    self.products_tree.insert("", tk.END, values=values)
+    
+    def clear_search(self):
+        """Clear search and show all products"""
+        if hasattr(self.view, 'search_entry'):
+            self.view.search_entry.delete(0, tk.END)
+        self.populate_products_tree()
+    
     def get_empty_product_template(self, product_id):
         """Create an empty product template with all required fields"""
         return {

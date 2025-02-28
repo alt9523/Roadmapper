@@ -8,6 +8,7 @@ class ProgramModel(BaseModel):
     def __init__(self, manager):
         super().__init__(manager)
         self.programs_tree = None
+        self.search_entry = None
     
     def create_programs_tab(self, notebook):
         """Create the Programs tab in the notebook"""
@@ -20,6 +21,20 @@ class ProgramModel(BaseModel):
         
         add_button = ttk.Button(top_frame, text="Add Program", command=self.add_program)
         add_button.pack(side=tk.LEFT, padx=5)
+        
+        # Add search functionality
+        search_label = ttk.Label(top_frame, text="Search:")
+        search_label.pack(side=tk.LEFT, padx=(20, 5))
+        
+        self.search_entry = ttk.Entry(top_frame, width=20)
+        self.search_entry.pack(side=tk.LEFT, padx=5)
+        self.search_entry.bind("<Return>", lambda event: self.search_programs())
+        
+        search_button = ttk.Button(top_frame, text="Search", command=self.search_programs)
+        search_button.pack(side=tk.LEFT, padx=5)
+        
+        clear_button = ttk.Button(top_frame, text="Clear", command=self.clear_search)
+        clear_button.pack(side=tk.LEFT, padx=5)
         
         # Create treeview
         columns = ("ID", "Name", "Sector", "Division", "Customer", "Mission Class")
@@ -44,6 +59,42 @@ class ProgramModel(BaseModel):
         # Populate treeview
         self.populate_programs_tree()
     
+    def search_programs(self):
+        """Search programs based on the search term"""
+        search_term = self.search_entry.get().lower()
+        if not search_term:
+            self.clear_search()
+            return
+        
+        # Clear existing items
+        for item in self.programs_tree.get_children():
+            self.programs_tree.delete(item)
+        
+        # Add matching programs to treeview
+        for program in self.data["programs"]:
+            # Check if search term is in any of the program attributes
+            if (search_term in program["id"].lower() or
+                search_term in program["name"].lower() or
+                search_term in program.get("sector", "").lower() or
+                search_term in program.get("division", "").lower() or
+                search_term in program.get("customerName", "").lower() or
+                search_term in program.get("missionClass", "").lower()):
+                
+                values = (
+                    program["id"],
+                    program["name"],
+                    program.get("sector", ""),
+                    program.get("division", ""),
+                    program.get("customerName", ""),
+                    program.get("missionClass", "")
+                )
+                self.programs_tree.insert("", tk.END, values=values)
+    
+    def clear_search(self):
+        """Clear search and show all programs"""
+        self.search_entry.delete(0, tk.END)
+        self.populate_programs_tree()
+    
     def populate_programs_tree(self):
         """Populate the programs treeview with data"""
         # Clear existing items
@@ -62,6 +113,28 @@ class ProgramModel(BaseModel):
             )
             self.programs_tree.insert("", tk.END, values=values)
     
+    def get_next_program_id(self):
+        """Generate the next available program ID"""
+        # Get existing IDs
+        existing_ids = []
+        for program in self.data["programs"]:
+            if "id" in program and program["id"].startswith("PRG"):
+                try:
+                    # Extract the numeric part
+                    num_part = program["id"][3:]
+                    if num_part.isdigit():
+                        existing_ids.append(int(num_part))
+                except (ValueError, IndexError):
+                    pass
+        
+        # Find the next available number
+        if not existing_ids:
+            next_num = 1
+        else:
+            next_num = max(existing_ids) + 1
+        
+        return f"PRG{next_num}"
+    
     def add_program(self):
         """Open a window to add a new program"""
         # Create a new window for adding a program
@@ -78,8 +151,9 @@ class ProgramModel(BaseModel):
         
         # Create form fields
         ttk.Label(main_frame, text="ID:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        id_var = tk.StringVar()
-        ttk.Entry(main_frame, textvariable=id_var).grid(row=0, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        id_var = tk.StringVar(value=self.get_next_program_id())
+        id_entry = ttk.Entry(main_frame, textvariable=id_var, state="readonly")
+        id_entry.grid(row=0, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         
         ttk.Label(main_frame, text="Name:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
         name_var = tk.StringVar()
@@ -104,8 +178,8 @@ class ProgramModel(BaseModel):
         # Save button
         def save_program():
             # Validate required fields
-            if not id_var.get() or not name_var.get():
-                self.show_error("Error", "ID and Name are required fields")
+            if not name_var.get():
+                self.show_error("Error", "Name is required")
                 return
             
             # Create new program

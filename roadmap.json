@@ -18,9 +18,10 @@
         {
             "id": "PRG3",
             "name": "Launch Vehicles",
-            "division": "S",
+            "division": "B",
             "customerName": "N/A",
-            "missionClass": "Class A"
+            "missionClass": "Class A",
+            "sector": ""
         },
         {
             "id": "PRG4",
@@ -42,6 +43,14 @@
             "division": "test",
             "customerName": "test",
             "missionClass": "test"
+        },
+        {
+            "id": "PRG7",
+            "name": "another test program",
+            "sector": "",
+            "division": "",
+            "customerName": "",
+            "missionClass": ""
         }
     ],
     "products": [
@@ -639,6 +648,45 @@
                 "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
                 "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
             }
+        },
+        {
+            "id": "P006",
+            "name": "tester",
+            "trl": "",
+            "programs": [
+                {
+                    "programID": "PRG7",
+                    "needDate": "2025-02-28"
+                }
+            ],
+            "materialSystems": [
+                {
+                    "materialID": "MS6",
+                    "printer": [
+                        "test test test"
+                    ]
+                }
+            ],
+            "requirements": {},
+            "postProcessingSuppliers": [
+                {
+                    "process": "HIP",
+                    "supplier": [
+                        "PSUP2"
+                    ]
+                }
+            ],
+            "designTools": [],
+            "documentation": [],
+            "specialNDT": [],
+            "partAcceptance": [],
+            "roadmap": [],
+            "milestones": [],
+            "businessCase": {
+                "costSavings": "",
+                "scheduleSavings": "",
+                "performanceGains": ""
+            }
         }
     ],
     "materialSystems": [
@@ -647,29 +695,54 @@
             "name": "LPBF Ti-6Al-4V",
             "process": "Laser Powder Bed Fusion",
             "material": "Ti-6Al-4V",
+            "mrl": 6,
             "qualification": "Qualified",
             "qualificationClass": "Class 1",
             "statisticalBasis": "S",
-            "mrl": 8,
-            "properties": [],
+            "roadmap": [
+                {
+                    "task": "Material Certification",
+                    "startDate": "2025-07-01",
+                    "endDate": "2025-09-30",
+                    "status": "Complete",
+                    "fundingType": "Division IRAD"
+                },
+                {
+                    "task": "Batch Testing",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "Planned",
+                    "fundingType": "Sector IRAD"
+                },
+                {
+                    "task": "Test",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "Complete",
+                    "fundingType": "Specifications"
+                }
+            ],
+            "milestones": [
+                {
+                    "name": "test",
+                    "date": "",
+                    "description": ""
+                }
+            ],
             "postProcessing": [
                 {
                     "name": "Stress relief heat treatment",
                     "Supplier": [
-                        "SUP1"
+                        "PSUP1"
                     ]
                 },
                 {
                     "name": "Hot Isostatic Pressing (HIP)",
-                    "Supplier": [
-                        "SUP1"
-                    ]
+                    "Supplier": []
                 },
                 {
-                    "process": "Surface finishing",
-                    "Supplier": [
-                        "SUP4"
-                    ]
+                    "name": "Surface finishing",
+                    "Supplier": []
                 }
             ],
             "qualifiedMachines": [
@@ -686,45 +759,20 @@
                     ]
                 }
             ],
-            "relatedFundingOpps": [
-                "OPP3"
-            ],
-            "roadmap": [
-                {
-                    "task": "Material Certification",
-                    "start": "2025-01-01",
-                    "end": "2025-02-28",
-                    "status": "Complete",
-                    "fundingType": "Division IRAD",
-                    "lane": "Parameter Development"
-                },
-                {
-                    "task": "Batch Testing",
-                    "start": "2025-03-01",
-                    "end": "2025-04-30",
-                    "status": "Planned",
-                    "fundingType": "Sector IRAD",
-                    "lane": "Material Qualification"
-                },
-                {
-                    "task": "Test",
-                    "start": "2025-02-03",
-                    "end": "2025-03-26",
-                    "status": "Complete",
-                    "fundingType": "Specifications"
-                }
-            ],
-            "milestones": [
-                {
-                    "name": "Cert Approved",
-                    "date": "2025-02-28",
-                    "description": "Certification received from testing agency."
-                }
-            ],
             "standardNDT": [
                 "Visual inspection",
                 "Dimensional inspection",
                 "Surface roughness measurement"
+            ],
+            "relatedFundingOpps": [
+                {
+                    "opportunityID": "OPP4",
+                    "pursuitID": "PUR4"
+                },
+                {
+                    "opportunityID": "OPP2",
+                    "pursuitID": "PUR2"
+                }
             ]
         },
         {
@@ -1065,6 +1113,22 @@
                 "Dimensional inspection",
                 "Ultrasonic testing"
             ]
+        },
+        {
+            "id": "MS6",
+            "name": "test",
+            "process": "",
+            "material": "",
+            "mrl": null,
+            "qualification": "",
+            "qualificationClass": "",
+            "statisticalBasis": "",
+            "roadmap": [],
+            "milestones": [],
+            "postProcessing": [],
+            "qualifiedMachines": [],
+            "standardNDT": [],
+            "relatedFundingOpps": []
         }
     ],
     "fundingOpps": [
@@ -1073,29 +1137,20 @@
             "announcementName": "Advanced SatCom Upgrade",
             "pursuitType": "CRAD",
             "customer": "N/A",
-            "closeDate": "2025-03-01",
+            "closeDate": "2025-02-28",
             "solicitationNumber": "1234567890",
             "fundingAmount": "1000000",
             "pursuits": [
                 {
                     "pursuitID": "PUR1",
                     "pursuitName": "Name",
-                    "targetedSubmissionDate": "2025-04-01",
-                    "relatedProducts": [
-                        {
-                            "Product": "P1",
-                            "Material": "MS1"
-                        },
-                        {
-                            "Product": "P2",
-                            "Material": "MS2"
-                        }
-                    ],
+                    "targetedSubmissionDate": "2025-02-28",
+                    "relatedProducts": "P1 | MS1, P3 | MS2",
                     "otherRelevance": "N/A",
                     "potentialValue": [
                         {
-                            "FY25": 1000000,
-                            "FY26": 1000000,
+                            "FY25": "$100000",
+                            "FY26": "$100000",
                             "FY27": 1000000,
                             "FY28": 1000000,
                             "FY29": 1000000,
@@ -1223,13 +1278,23 @@
                     "details": "Pilot project for testing Inconel 718 under extreme conditions; funding secured."
                 }
             ]
+        },
+        {
+            "id": "OPP5",
+            "announcementName": "test",
+            "pursuitType": "",
+            "closeDate": "2025-02-28",
+            "solicitationNumber": "",
+            "fundingAmount": "",
+            "customer": "",
+            "pursuits": []
         }
     ],
     "printingSuppliers": [
         {
             "id": "SUP1",
             "name": "AeroSupplies Inc.",
-            "supplierNumber": "1234567890",
+            "supplierNumber": "1234567891",
             "ndaStatus": {
                 "status": "Signed",
                 "date": "2025-01-01"
@@ -1244,6 +1309,10 @@
                         },
                         {
                             "name": "SLM 500",
+                            "qualStatus": "planned"
+                        },
+                        {
+                            "name": "NXG",
                             "qualStatus": "planned"
                         }
                     ]
