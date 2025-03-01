@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bokeh Plot</title>
+    <style>
+      html, body {
+        box-sizing: border-box;
+        display: flow-root;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
+    <script type="text/javascript">
+        Bokeh.set_log_level("info");
+    </script>
+  </head>
+  <body>
+    <div id="efc22d50-8b38-46d3-8bb4-3a890c9d91d0" data-root-id="p4752" style="display: contents;"></div>
+  
+    <script type="application/json" id="b32280e9-1cac-4306-80da-cdfa06cdda11">
+      {"120d5432-3eb1-4dae-a821-79fdca06f389":{"version":"3.6.3","title":"Bokeh Application","roots":[{"type":"object","name":"Column","id":"p4752","attributes":{"children":[{"type":"object","name":"Row","id":"p4749","attributes":{"children":[{"type":"object","name":"Div","id":"p4747","attributes":{"width":1200,"text":"\n        &lt;div style=\"margin-bottom: 20px;\"&gt;\n            &lt;h1&gt;Funding Opportunities Summary&lt;/h1&gt;\n            &lt;p&gt;This page provides an overview of all funding opportunities and their distributions.&lt;/p&gt;\n            &lt;p&gt;&lt;a href=\"../index.html\"&gt;Back to Dashboard&lt;/a&gt; | &lt;a href=\"pursuits_summary.html\"&gt;View All Pursuits&lt;/a&gt;&lt;/p&gt;\n        &lt;/div&gt;\n        "}}]}},{"type":"object","name":"Row","id":"p4750","attributes":{"children":[{"type":"object","name":"Figure","id":"p4677","attributes":{"height":400,"x_range":{"type":"object","name":"FactorRange","id":"p4687","attributes":{"factors":["CRAD","Sector IRAD","Division IRAD",""]}},"y_range":{"type":"object","name":"DataRange1d","id":"p4679"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p4688"},"y_scale":{"type":"object","name":"LinearScale","id":"p4689"},"title":{"type":"object","name":"Title","id":"p4680","attributes":{"text":"Funding Opportunities by Type","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p4709","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p4700","attributes":{"selected":{"type":"object","name":"Selection","id":"p4701","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p4702"},"data":{"type":"map","entries":[["types",["CRAD","Sector IRAD","Division IRAD",""]],["counts",[2,1,1,1]],["colors",["#1f77b4","#ff7f0e","#2ca02c","#d62728"]]]}}},"view":{"type":"object","name":"CDSView","id":"p4710","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p4711"}}},"glyph":{"type":"object","name":"VBar","id":"p4706","attributes":{"x":{"type":"field","field":"types"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.8},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p4707","attributes":{"x":{"type":"field","field":"types"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.1},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p4708","attributes":{"x":{"type":"field","field":"types"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.2},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p4686"},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p4695","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p4696","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p4697"},"axis_label":"Number of Opportunities","major_label_policy":{"type":"object","name":"AllLabels","id":"p4698"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p4690","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p4691"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p4692"},"axis_label":"Funding Type","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p4693"}}}],"center":[{"type":"object","name":"Grid","id":"p4694","attributes":{"axis":{"id":"p4690"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p4699","attributes":{"dimension":1,"axis":{"id":"p4695"}}}]}},{"type":"object","name":"Figure","id":"p4712","attributes":{"height":400,"x_range":{"type":"object","name":"FactorRange","id":"p4722","attributes":{"factors":["N/A","Internal","Government Agency",""]}},"y_range":{"type":"object","name":"DataRange1d","id":"p4714"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p4723"},"y_scale":{"type":"object","name":"LinearScale","id":"p4724"},"title":{"type":"object","name":"Title","id":"p4715","attributes":{"text":"Funding Opportunities by Source","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p4744","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p4735","attributes":{"selected":{"type":"object","name":"Selection","id":"p4736","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p4737"},"data":{"type":"map","entries":[["sources",["N/A","Internal","Government Agency",""]],["counts",[1,2,1,1]],["colors",["#2ca02c","#d62728","#9467bd","#8c564b"]]]}}},"view":{"type":"object","name":"CDSView","id":"p4745","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p4746"}}},"glyph":{"type":"object","name":"VBar","id":"p4741","attributes":{"x":{"type":"field","field":"sources"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.8},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p4742","attributes":{"x":{"type":"field","field":"sources"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.1},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p4743","attributes":{"x":{"type":"field","field":"sources"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"counts"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"colors"},"fill_alpha":{"type":"value","value":0.2},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p4721"},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p4730","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p4731","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p4732"},"axis_label":"Number of Opportunities","major_label_policy":{"type":"object","name":"AllLabels","id":"p4733"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p4725","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p4726"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p4727"},"axis_label":"Funding Source","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p4728"}}}],"center":[{"type":"object","name":"Grid","id":"p4729","attributes":{"axis":{"id":"p4725"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p4734","attributes":{"dimension":1,"axis":{"id":"p4730"}}}]}}]}},{"type":"object","name":"Row","id":"p4751","attributes":{"children":[{"type":"object","name":"Div","id":"p4748","attributes":{"width":1200,"text":"&lt;div style='margin-top: 20px;'&gt;&lt;h2&gt;All Funding Opportunities&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='funding_OPP1.html'&gt;Advanced SatCom Upgrade (OPP1)&lt;/a&gt; - Type: CRAD, Amount: $1,000,000, Pursuits: 2&lt;/li&gt;&lt;li&gt;&lt;a href='funding_OPP4.html'&gt;Inconel Testing Initiative (OPP4)&lt;/a&gt; - Type: CRAD, Amount: $1,250,000, Pursuits: 1&lt;/li&gt;&lt;li&gt;&lt;a href='funding_OPP2.html'&gt;Reusable Rocket Efficiency (OPP2)&lt;/a&gt; - Type: Sector IRAD, Amount: $750,000, Pursuits: 1&lt;/li&gt;&lt;li&gt;&lt;a href='funding_OPP3.html'&gt;Titanium Expansion (OPP3)&lt;/a&gt; - Type: Division IRAD, Amount: $500,000, Pursuits: 1&lt;/li&gt;&lt;li&gt;&lt;a href='funding_OPP5.html'&gt;test (OPP5)&lt;/a&gt; - Amount: &lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;"}}]}}]}}]}}
+    </script>
+    <script type="text/javascript">
+      (function() {
+        const fn = function() {
+          Bokeh.safely(function() {
+            (function(root) {
+              function embed_document(root) {
+              const docs_json = document.getElementById('b32280e9-1cac-4306-80da-cdfa06cdda11').textContent;
+              const render_items = [{"docid":"120d5432-3eb1-4dae-a821-79fdca06f389","roots":{"p4752":"efc22d50-8b38-46d3-8bb4-3a890c9d91d0"},"root_ids":["p4752"]}];
+              root.Bokeh.embed.embed_items(docs_json, render_items);
+              }
+              if (root.Bokeh !== undefined) {
+                embed_document(root);
+              } else {
+                let attempts = 0;
+                const timer = setInterval(function(root) {
+                  if (root.Bokeh !== undefined) {
+                    clearInterval(timer);
+                    embed_document(root);
+                  } else {
+                    attempts++;
+                    if (attempts > 100) {
+                      clearInterval(timer);
+                      console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                    }
+                  }
+                }, 10, root)
+              }
+            })(window);
+          });
+        };
+        if (document.readyState != "loading") fn();
+        else document.addEventListener("DOMContentLoaded", fn);
+      })();
+    </script>
+  </body>
+</html>

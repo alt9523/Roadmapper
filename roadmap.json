@@ -687,6 +687,31 @@
                 "scheduleSavings": "",
                 "performanceGains": ""
             }
+        },
+        {
+            "id": "P007",
+            "name": "test",
+            "trl": "",
+            "programs": [
+                {
+                    "programID": "PRG2",
+                    "needDate": "2025-03-28"
+                }
+            ],
+            "materialSystems": [],
+            "requirements": {},
+            "postProcessingSuppliers": [],
+            "designTools": [],
+            "documentation": [],
+            "specialNDT": [],
+            "partAcceptance": [],
+            "roadmap": [],
+            "milestones": [],
+            "businessCase": {
+                "costSavings": "",
+                "scheduleSavings": "",
+                "performanceGains": ""
+            }
         }
     ],
     "materialSystems": [
@@ -1133,8 +1158,8 @@
                     "otherRelevance": "N/A",
                     "potentialValue": [
                         {
-                            "FY25": "$100000",
-                            "FY26": "$100000",
+                            "FY25": 100000,
+                            "FY26": 100000,
                             "FY27": 1000000,
                             "FY28": 1000000,
                             "FY29": 1000000,
@@ -1144,6 +1169,22 @@
                     "Pcap": "N/A",
                     "Pgo": "N/A",
                     "details": "Opportunity for enhanced satellite communication systems; potential for increased funding."
+                },
+                {
+                    "pursuitID": "PUR2",
+                    "pursuitName": "test",
+                    "targetedSubmissionDate": "2025-02-28",
+                    "relatedProducts": "P3 | MS2",
+                    "otherRelevance": "none",
+                    "potentialValue": [
+                        {
+                            "FY25": 150000,
+                            "FY26": 100000
+                        }
+                    ],
+                    "Pcap": "",
+                    "Pgo": "",
+                    "details": ""
                 }
             ]
         },

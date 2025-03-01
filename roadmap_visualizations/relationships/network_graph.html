@@ -1,0 +1,46 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Relationship Network Graph</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1 { color: #333; }
+            h2, h3, h4 { color: #0066cc; }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .image-container { text-align: center; margin: 20px 0; }
+            .image-container img { max-width: 100%; border: 1px solid #ddd; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Relationship Network Graph</h1>
+            <p>This visualization shows the relationships between different entities in the roadmap data.</p>
+            <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
+            
+            <div class="image-container">
+                <img src="network_graph.png" alt="Network Graph">
+            </div>
+            
+            <h2>Legend</h2>
+            <ul>
+                <li><strong style="color: #1f77b4;">Programs</strong>: Space missions and projects</li>
+                <li><strong style="color: #ff7f0e;">Products</strong>: Components and systems being developed</li>
+                <li><strong style="color: #2ca02c;">Material Systems</strong>: Materials used in products</li>
+                <li><strong style="color: #d62728;">Printing Suppliers</strong>: Suppliers providing 3D printing services</li>
+                <li><strong style="color: #9467bd;">Post-Processing Suppliers</strong>: Suppliers providing post-processing services</li>
+                <li><strong style="color: #8c564b;">Funding Opportunities</strong>: Sources of funding for tasks</li>
+            </ul>
+            
+            <h2>Relationship Types</h2>
+            <ul>
+                <li><strong>Solid lines</strong>: Direct relationships (e.g., a product is used in a program)</li>
+                <li><strong>Dashed lines</strong>: Post-processing relationships</li>
+                <li><strong>Dotted lines</strong>: Funding relationships</li>
+            </ul>
+        </div>
+    </body>
+    </html>
+    

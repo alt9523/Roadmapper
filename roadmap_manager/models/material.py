@@ -231,7 +231,7 @@ class MaterialModel(BaseModel):
         
         ttk.Label(basic_frame, text="Qualification Class:").grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
         qualification_class_var = tk.StringVar(value=material.get("qualificationClass", "") if material else "")
-        ttk.Combobox(basic_frame, textvariable=qualification_class_var, values=["Class 1", "Class 2", "Class 3"]).grid(row=6, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        ttk.Combobox(basic_frame, textvariable=qualification_class_var, values=["Class 1", "Class 2", "Class 3", "Class 4", "Class 5"]).grid(row=6, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         
         ttk.Label(basic_frame, text="Statistical Basis:").grid(row=7, column=0, sticky=tk.W, padx=10, pady=5)
         statistical_basis_var = tk.StringVar(value=material.get("statisticalBasis", "") if material else "")

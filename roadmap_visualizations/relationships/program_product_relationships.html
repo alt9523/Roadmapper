@@ -1,0 +1,116 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Program-Product Relationships</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1 { color: #333; }
+            h2, h3, h4 { color: #0066cc; }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .image-container { text-align: center; margin: 20px 0; }
+            .image-container img { max-width: 100%; border: 1px solid #ddd; }
+            .card { 
+                border: 1px solid #ddd; 
+                border-radius: 5px; 
+                padding: 15px; 
+                margin-bottom: 20px;
+                background-color: #f9f9f9;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Program-Product Relationships</h1>
+            <p>This page shows the relationships between programs and products in the roadmap data.</p>
+            <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
+            
+            <div class="card">
+                <h2>Relationship Matrix</h2>
+                <p>This heatmap shows which programs are associated with which products. Blue cells indicate a relationship exists.</p>
+                <div class="image-container">
+                    <img src="program_product_chart.png" alt="Program-Product Relationship Matrix">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Products per Program</h2>
+                <p>This chart shows the number of products associated with each program.</p>
+                <div class="image-container">
+                    <img src="products_per_program.png" alt="Products per Program">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Programs per Product</h2>
+                <p>This chart shows the number of programs associated with each product.</p>
+                <div class="image-container">
+                    <img src="programs_per_product.png" alt="Programs per Product">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Detailed Relationships</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background-color: #e0e0e0;">
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Program</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Products</th>
+                    </tr>
+    
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG1.html">Satellite Systems (PRG1)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../products/product_P1.html'>SatCom Terminal Housing (P1)</a></li><li><a href='../products/product_P2.html'>Weather Satellite Antenna Mount (P2)</a></li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG2.html">Missile Defense (PRG2)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../products/product_P3.html'>Interceptor Missile Nozzle (P3)</a></li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG3.html">Launch Vehicles (PRG3)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../products/product_P1.html'>SatCom Terminal Housing (P1)</a></li><li><a href='../products/product_P4.html'>Reusable Rocket Injector Plate (P4)</a></li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG4.html">Space Exploration (PRG4)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../products/product_P5.html'>Lunar Rover Wheel Structure (P5)</a></li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG5.html">Communications (PRG5)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        No related products
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG6.html">test program (PRG6)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        No related products
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../programs/program_PRG7.html">another test program (PRG7)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../products/product_P006.html'>tester (P006)</a></li></ul>
+                        </td>
+                    </tr>
+        
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    

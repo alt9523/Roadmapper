@@ -1,0 +1,109 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Material-Supplier Relationships</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1 { color: #333; }
+            h2, h3, h4 { color: #0066cc; }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .image-container { text-align: center; margin: 20px 0; }
+            .image-container img { max-width: 100%; border: 1px solid #ddd; }
+            .card { 
+                border: 1px solid #ddd; 
+                border-radius: 5px; 
+                padding: 15px; 
+                margin-bottom: 20px;
+                background-color: #f9f9f9;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Material-Supplier Relationships</h1>
+            <p>This page shows the relationships between material systems and printing suppliers in the roadmap data.</p>
+            <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
+            
+            <div class="card">
+                <h2>Relationship Matrix</h2>
+                <p>This heatmap shows which material systems are associated with which printing suppliers. Red cells indicate a relationship exists.</p>
+                <div class="image-container">
+                    <img src="material_supplier_chart.png" alt="Material-Supplier Relationship Matrix">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Suppliers per Material</h2>
+                <p>This chart shows the number of printing suppliers associated with each material system.</p>
+                <div class="image-container">
+                    <img src="suppliers_per_material.png" alt="Suppliers per Material">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Materials per Supplier</h2>
+                <p>This chart shows the number of material systems associated with each printing supplier.</p>
+                <div class="image-container">
+                    <img src="materials_per_supplier.png" alt="Materials per Supplier">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Detailed Relationships</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background-color: #e0e0e0;">
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Material System</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Printing Suppliers</th>
+                    </tr>
+    
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS1.html">LPBF Ti-6Al-4V (MS1)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../suppliers/supplier_SUP1.html'>AeroSupplies Inc. (SUP1)</a> - Printers: SLM 280 (Qualified), SLM 500 (planned), NXG (planned)</li><li><a href='../suppliers/supplier_SUP4.html'>Surface Solutions Inc. (SUP4)</a> - Printers: Concept Laser M2 (Qualified)</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS2.html">LPBF Inconel 718 (MS2)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../suppliers/supplier_SUP1.html'>AeroSupplies Inc. (SUP1)</a> - Printers: EOS M290 (Qualified), EOS M400-4 (in-development)</li><li><a href='../suppliers/supplier_SUP2.html'>Defense Materials Ltd. (SUP2)</a> - Printers: EOS M400-4 (Qualified), Concept Laser X LINE 2000R (Qualified)</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS3.html">LPBF AlSi10Mg (MS3)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../suppliers/supplier_SUP3.html'>SpaceTech Supplies (SUP3)</a> - Printers: EOS M290 (Qualified), SLM 280 (Qualified), Renishaw AM400 (in-development)</li><li><a href='../suppliers/supplier_SUP4.html'>Surface Solutions Inc. (SUP4)</a> - Printers: EOS M290 (Qualified)</li><li><a href='../suppliers/supplier_SUP5.html'>Anodizing Experts LLC (SUP5)</a> - Printers: SLM 280 (Qualified), EOS M290 (Qualified)</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS4.html">EBM Ti-6Al-4V (MS4)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../suppliers/supplier_SUP4.html'>Surface Solutions Inc. (SUP4)</a> - Printers: Arcam Q20 (in-development)</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS5.html">DED 316L Stainless Steel (MS5)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../suppliers/supplier_SUP2.html'>Defense Materials Ltd. (SUP2)</a> - Printers: BeAM Modulo 400 (Qualified), DMG MORI LASERTEC 65 3D (Qualified), Optomec LENS 850-R (in-development)</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS6.html">test (MS6)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        No related suppliers
+                        </td>
+                    </tr>
+        
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    

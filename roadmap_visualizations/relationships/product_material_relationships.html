@@ -1,0 +1,109 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Product-Material Relationships</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1 { color: #333; }
+            h2, h3, h4 { color: #0066cc; }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .image-container { text-align: center; margin: 20px 0; }
+            .image-container img { max-width: 100%; border: 1px solid #ddd; }
+            .card { 
+                border: 1px solid #ddd; 
+                border-radius: 5px; 
+                padding: 15px; 
+                margin-bottom: 20px;
+                background-color: #f9f9f9;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Product-Material Relationships</h1>
+            <p>This page shows the relationships between products and material systems in the roadmap data.</p>
+            <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
+            
+            <div class="card">
+                <h2>Relationship Matrix</h2>
+                <p>This heatmap shows which products are associated with which material systems. Green cells indicate a relationship exists.</p>
+                <div class="image-container">
+                    <img src="product_material_chart.png" alt="Product-Material Relationship Matrix">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Materials per Product</h2>
+                <p>This chart shows the number of material systems associated with each product.</p>
+                <div class="image-container">
+                    <img src="materials_per_product.png" alt="Materials per Product">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Products per Material</h2>
+                <p>This chart shows the number of products associated with each material system.</p>
+                <div class="image-container">
+                    <img src="products_per_material.png" alt="Products per Material">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Detailed Relationships</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background-color: #e0e0e0;">
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Product</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Material Systems</th>
+                    </tr>
+    
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS3.html">LPBF AlSi10Mg (MS3)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS1.html'>LPBF Ti-6Al-4V (MS1)</a> - Printers: SLM 280, Arcam Q20+</li><li><a href='../materials/material_MS3.html'>LPBF AlSi10Mg (MS3)</a> - Printers: SLM 280, Arcam Q20+</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS2.html">LPBF Inconel 718 (MS2)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS2.html'>LPBF Inconel 718 (MS2)</a> - Printers: SLM 280, Arcam Q20+</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS2.html">LPBF Inconel 718 (MS2)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS2.html'>LPBF Inconel 718 (MS2)</a> - Printers: EOS M400-4, AMCM M4K</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS1.html">LPBF Ti-6Al-4V (MS1)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS1.html'>LPBF Ti-6Al-4V (MS1)</a> - Printers: Velo3D Sapphire, GE Concept Laser X Line</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS3.html">LPBF AlSi10Mg (MS3)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS3.html'>LPBF AlSi10Mg (MS3)</a> - Printers: EOS M290, SLM 280</li></ul>
+                        </td>
+                    </tr>
+        
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="../materials/material_MS6.html">test (MS6)</a></td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+        <ul><li><a href='../materials/material_MS6.html'>test (MS6)</a> - Printers: test test test</li></ul>
+                        </td>
+                    </tr>
+        
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    

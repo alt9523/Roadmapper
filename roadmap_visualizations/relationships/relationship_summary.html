@@ -1,0 +1,137 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Relationship Visualizations Summary</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1 { color: #333; }
+            h2, h3, h4 { color: #0066cc; }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .card { 
+                border: 1px solid #ddd; 
+                border-radius: 5px; 
+                padding: 15px; 
+                margin-bottom: 20px;
+                background-color: #f9f9f9;
+            }
+            .card h2 { margin-top: 0; }
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 20px;
+            }
+            .thumbnail {
+                max-width: 100%;
+                height: auto;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Relationship Visualizations Summary</h1>
+            <p>This page provides an overview of all relationship visualizations available in the roadmap data.</p>
+            <p><a href="../index.html">Back to Dashboard</a></p>
+            
+            <div class="card">
+                <h2>Overview Visualizations</h2>
+                <div class="card-grid">
+                    <div>
+                        <h3>Network Graph</h3>
+                        <p>A comprehensive view of all relationships between programs, products, materials, suppliers, and funding.</p>
+                        <a href="network_graph.html">
+                            <img src="network_graph.png" alt="Network Graph" class="thumbnail">
+                        </a>
+                        <p><a href="network_graph.html">View Network Graph</a></p>
+                    </div>
+                    
+                    <div>
+                        <h3>Sankey Diagram</h3>
+                        <p>A flow diagram showing the relationships between different entities in the roadmap.</p>
+                        <a href="sankey_diagram.html">
+                            <img src="sankey_diagram.png" alt="Sankey Diagram" class="thumbnail">
+                        </a>
+                        <p><a href="sankey_diagram.html">View Sankey Diagram</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Specific Relationship Visualizations</h2>
+                <div class="card-grid">
+                    <div>
+                        <h3>Program-Product Relationships</h3>
+                        <p>Visualizations showing the relationships between programs and products.</p>
+                        <a href="program_product_relationships.html">
+                            <img src="program_product_chart.png" alt="Program-Product Relationships" class="thumbnail">
+                        </a>
+                        <p><a href="program_product_relationships.html">View Program-Product Relationships</a></p>
+                    </div>
+                    
+                    <div>
+                        <h3>Product-Material Relationships</h3>
+                        <p>Visualizations showing the relationships between products and material systems.</p>
+                        <a href="product_material_relationships.html">
+                            <img src="product_material_chart.png" alt="Product-Material Relationships" class="thumbnail">
+                        </a>
+                        <p><a href="product_material_relationships.html">View Product-Material Relationships</a></p>
+                    </div>
+                    
+                    <div>
+                        <h3>Material-Supplier Relationships</h3>
+                        <p>Visualizations showing the relationships between material systems and suppliers.</p>
+                        <a href="material_supplier_relationships.html">
+                            <img src="material_supplier_chart.png" alt="Material-Supplier Relationships" class="thumbnail">
+                        </a>
+                        <p><a href="material_supplier_relationships.html">View Material-Supplier Relationships</a></p>
+                    </div>
+                    
+                    <div>
+                        <h3>Funding-Task Relationships</h3>
+                        <p>Visualizations showing the relationships between funding opportunities and tasks.</p>
+                        <a href="funding_task_relationships.html">
+                            <img src="funding_task_chart.png" alt="Funding-Task Relationships" class="thumbnail">
+                        </a>
+                        <p><a href="funding_task_relationships.html">View Funding-Task Relationships</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Relationship Statistics</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background-color: #e0e0e0;">
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Relationship Type</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Count</th>
+                    </tr>
+    
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">Program-Product Relationships</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">7</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">Product-Material Relationships</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">7</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">Material-Supplier Relationships</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">9</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">Product-PostProcessing Supplier Relationships</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">16</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">Funding-Task Relationships</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    

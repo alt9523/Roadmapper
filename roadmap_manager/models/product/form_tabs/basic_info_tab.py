@@ -91,7 +91,14 @@ class BasicInfoTab(BaseTab):
         # Need date entry
         ttk.Label(prog_frame, text="Need Date:").grid(row=0, column=1, padx=5)
         date_var = tk.StringVar(value=need_date)
+        
+        # Create the DateEntry widget with the correct initial value
         date_entry = DateEntry(prog_frame, textvariable=date_var, width=12)
+        
+        # Explicitly set the date if provided
+        if need_date:
+            date_entry.set_date(need_date)
+            
         date_entry.grid(row=0, column=2, padx=5)
         
         # Remove button
@@ -106,6 +113,7 @@ class BasicInfoTab(BaseTab):
         entry_data = {
             "program_var": program_var,
             "date_var": date_var,
+            "date_entry": date_entry,  # Store the actual DateEntry widget
             "frame": prog_frame
         }
         self.program_entries.append(entry_data)
@@ -205,7 +213,10 @@ class BasicInfoTab(BaseTab):
             if program_full:
                 # Extract program ID from the dropdown value (format: "ID - Name")
                 program_id = program_full.split(" - ")[0] if " - " in program_full else program_full
-                need_date = entry["date_var"].get()
+                
+                # Get the date directly from the DateEntry widget to ensure we have the most up-to-date value
+                need_date = entry["date_entry"].get_date() if hasattr(entry, "date_entry") and entry["date_entry"] else entry["date_var"].get()
+                
                 selected_programs.append({
                     "programID": program_id,
                     "needDate": need_date
