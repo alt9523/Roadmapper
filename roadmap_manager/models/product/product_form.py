@@ -212,18 +212,32 @@ class ProductForm:
         print(f"Before collecting data - Design Tools: {self.product.get('designTools', [])}")
         print(f"Before collecting data - Documentation: {self.product.get('documentation', [])}")
         
+        # Flag to track if all validations passed
+        all_validations_passed = True
+        
         # Collect data from all tabs first
         for tab_name, tab in self.tabs.items():
             print(f"Collecting data from tab: {tab_name}")
             try:
-                tab.collect_data()
+                # Check if collect_data returns a boolean value indicating validation status
+                validation_result = tab.collect_data()
+                if validation_result is False:  # Explicitly check for False
+                    all_validations_passed = False
+                    # Don't break here - continue collecting data from other tabs
+                    # This ensures all validation errors are shown
+                
                 print(f"After {tab_name} - Design Tools: {self.product.get('designTools', [])}")
                 print(f"After {tab_name} - Documentation: {self.product.get('documentation', [])}")
             except Exception as e:
                 print(f"Error collecting data from {tab_name}: {str(e)}")
+                all_validations_passed = False
         
         print(f"After collecting all data - Design Tools: {self.product.get('designTools', [])}")
         print(f"After collecting all data - Documentation: {self.product.get('documentation', [])}")
+        
+        # If any validation failed, don't proceed with saving
+        if not all_validations_passed:
+            return
         
         # Validate required fields after collecting data
         if not self.product["id"] or not self.product["name"]:

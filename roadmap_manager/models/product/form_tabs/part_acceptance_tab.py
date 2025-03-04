@@ -88,4 +88,7 @@ class PartAcceptanceTab(BaseTab):
                 
         print(f"Setting product['partAcceptance'] to {part_acceptance}")
         self.product["partAcceptance"] = part_acceptance
-        print(f"After update: product['partAcceptance'] = {self.product.get('partAcceptance', [])}") 
+        print(f"After update: product['partAcceptance'] = {self.product.get('partAcceptance', [])}")
+        
+        # Return True to indicate validation passed
+        return True 

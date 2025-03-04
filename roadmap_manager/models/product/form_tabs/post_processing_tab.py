@@ -141,4 +141,7 @@ class PostProcessingTab(BaseTab):
                         "process": process,
                         "supplier": selected_suppliers
                     })
-        self.product["postProcessingSuppliers"] = post_proc_suppliers 
+        self.product["postProcessingSuppliers"] = post_proc_suppliers
+        
+        # Return True to indicate validation passed
+        return True 

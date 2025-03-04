@@ -117,4 +117,7 @@ class RoadmapTab(BaseTab):
                     task_data["fundingType"] = entry["funding_var"].get()
                 
                 roadmap_tasks.append(task_data)
-        self.product["roadmap"] = roadmap_tasks 
+        self.product["roadmap"] = roadmap_tasks
+        
+        # Return True to indicate validation passed
+        return True 

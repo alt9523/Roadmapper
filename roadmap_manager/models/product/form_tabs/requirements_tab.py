@@ -71,4 +71,7 @@ class RequirementsTab(BaseTab):
             value = entry["value_var"].get().strip()
             if name:
                 requirements[name] = value
-        self.product["requirements"] = requirements 
+        self.product["requirements"] = requirements
+        
+        # Return True to indicate validation passed
+        return True 

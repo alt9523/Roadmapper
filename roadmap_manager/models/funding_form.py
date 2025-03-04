@@ -215,15 +215,21 @@ class FundingForm:
         ttk.Entry(basic_info_frame, textvariable=self.name_var).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         row += 1
         
-        ttk.Label(basic_info_frame, text="Pursuit Type:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
+        ttk.Label(basic_info_frame, text="Type:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
         self.pursuit_type_var = tk.StringVar(value=self.opportunity.get("pursuitType", ""))
         ttk.Combobox(basic_info_frame, textvariable=self.pursuit_type_var, 
-                    values=["Division IRAD", "Sector IRAD", "CRAD"]).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+                    values=["Division IRAD", "Sector IRAD", "CRAD", "Shaping"]).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         row += 1
         
         ttk.Label(basic_info_frame, text="Close Date:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
         self.close_date_var = tk.StringVar(value=self.opportunity.get("closeDate", ""))
-        DateEntry(basic_info_frame, textvariable=self.close_date_var).grid(row=row, column=1, sticky=tk.W, padx=10, pady=5)
+        
+        # Debug the date value
+        close_date_value = self.opportunity.get("closeDate", "")
+        print(f"Loading close date: '{close_date_value}'")
+        
+        date_entry = DateEntry(basic_info_frame, textvariable=self.close_date_var, initial_date=close_date_value)
+        date_entry.grid(row=row, column=1, sticky=tk.W, padx=10, pady=5)
         row += 1
         
         ttk.Label(basic_info_frame, text="Solicitation Number:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
@@ -232,8 +238,43 @@ class FundingForm:
         row += 1
         
         ttk.Label(basic_info_frame, text="Funding Amount:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
-        self.amount_var = tk.StringVar(value=self.opportunity.get("fundingAmount", ""))
-        ttk.Entry(basic_info_frame, textvariable=self.amount_var).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        self.amount_var = tk.StringVar()
+        
+        # Create a frame for the dollar sign and entry
+        amount_frame = ttk.Frame(basic_info_frame)
+        amount_frame.grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        # Add dollar sign label
+        ttk.Label(amount_frame, text="$").pack(side=tk.LEFT)
+        
+        # Set the amount value, removing any existing dollar sign
+        amount_value = self.opportunity.get("fundingAmount", "")
+        if isinstance(amount_value, str) and amount_value.startswith("$"):
+            amount_value = amount_value[1:]
+        self.amount_var.set(amount_value)
+        
+        ttk.Entry(amount_frame, textvariable=self.amount_var).pack(side=tk.LEFT, fill=tk.X, expand=True)
+        row += 1
+        
+        ttk.Label(basic_info_frame, text="Cost Share Percentage:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
+        self.cost_share_var = tk.StringVar()
+        
+        # Create a frame for the percentage
+        cost_share_frame = ttk.Frame(basic_info_frame)
+        cost_share_frame.grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        # Set the cost share value, removing any existing percentage sign
+        cost_share_value = self.opportunity.get("costSharePercentage", "")
+        if isinstance(cost_share_value, str) and cost_share_value.endswith("%"):
+            cost_share_value = cost_share_value[:-1]
+        self.cost_share_var.set(cost_share_value)
+        
+        # Add a validator for numeric values
+        vcmd = (self.window.register(self._validate_numeric), '%P')
+        ttk.Entry(cost_share_frame, textvariable=self.cost_share_var, validate="key", validatecommand=vcmd).pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
+        # Add percentage sign label
+        ttk.Label(cost_share_frame, text="%").pack(side=tk.LEFT)
         row += 1
         
         ttk.Label(basic_info_frame, text="Customer:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
@@ -335,7 +376,12 @@ class FundingForm:
         # Create variables for pursuit fields
         pursuit_id_var = tk.StringVar(value=pursuit_id)
         pursuit_name_var = tk.StringVar(value=pursuit.get("pursuitName", "") if pursuit else "")
-        submission_date_var = tk.StringVar(value=pursuit.get("targetedSubmissionDate", "") if pursuit else "")
+        
+        # Get the submission date value and prepare it for display
+        submission_date_value = pursuit.get("targetedSubmissionDate", "") if pursuit else ""
+        print(f"Loading pursuit {pursuit_id} submission date: '{submission_date_value}'")
+        
+        submission_date_var = tk.StringVar(value=submission_date_value)
         related_products_var = tk.StringVar()
         other_relevance_var = tk.StringVar(value=pursuit.get("otherRelevance", "") if pursuit else "")
         
@@ -377,7 +423,8 @@ class FundingForm:
         row += 1
         
         ttk.Label(pursuit_frame, text="Targeted Submission Date:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
-        DateEntry(pursuit_frame, textvariable=submission_date_var).grid(row=row, column=1, sticky=tk.W, padx=5, pady=5)
+        date_entry = DateEntry(pursuit_frame, textvariable=submission_date_var, initial_date=submission_date_value)
+        date_entry.grid(row=row, column=1, sticky=tk.W, padx=5, pady=5)
         row += 1
         
         ttk.Label(pursuit_frame, text="Related Products:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
@@ -394,13 +441,13 @@ class FundingForm:
         # Create a label and combobox for product selection
         ttk.Label(selection_frame, text="Product:").pack(side=tk.LEFT, padx=2)
         product_var = tk.StringVar()
-        products_combo = ttk.Combobox(selection_frame, textvariable=product_var, values=self.product_list, width=25)
+        products_combo = ttk.Combobox(selection_frame, textvariable=product_var, values=self.product_list, width=40)
         products_combo.pack(side=tk.LEFT, padx=2)
         
         # Create a label and combobox for material system selection
         ttk.Label(selection_frame, text="Material System:").pack(side=tk.LEFT, padx=2)
         material_var = tk.StringVar()
-        materials_combo = ttk.Combobox(selection_frame, textvariable=material_var, width=25)
+        materials_combo = ttk.Combobox(selection_frame, textvariable=material_var, width=30)
         materials_combo.pack(side=tk.LEFT, padx=2)
         
         # Function to update material systems based on selected product
@@ -634,26 +681,20 @@ class FundingForm:
                                   command=lambda frame=pursuit_frame, entry_data=None: self.remove_pursuit(frame, entry_data))
         remove_button.grid(row=row, column=0, columnspan=2, pady=5)
         
-        # Store the entry data
+        # Store all the variables and widgets for this pursuit
         entry_data = {
-            "frame": pursuit_frame,
             "pursuitID": pursuit_id_var,
             "pursuitName": pursuit_name_var,
             "targetedSubmissionDate": submission_date_var,
+            "date_entry": date_entry,  # Store the actual DateEntry widget
             "relatedProducts": related_products_var,
             "otherRelevance": other_relevance_var,
             "potentialValue_vars": potential_value_vars,
-            "total_var": total_var,
             "Pcap": pcap_var,
             "Pgo": pgo_var,
             "details_text": details_text,
-            "products_listbox": products_listbox
+            "frame": pursuit_frame
         }
-        
-        # Update the remove button command with the entry data
-        remove_button.configure(command=lambda frame=pursuit_frame, data=entry_data: self.remove_pursuit(frame, data))
-        
-        # Add to the list of entries
         self.pursuit_entries.append(entry_data)
         
         # Bind mouse wheel events to the pursuit frame
@@ -693,8 +734,22 @@ class FundingForm:
         self.opportunity["announcementName"] = self.name_var.get()
         self.opportunity["pursuitType"] = self.pursuit_type_var.get()
         self.opportunity["closeDate"] = self.close_date_var.get()
+        print(f"Saving close date: '{self.close_date_var.get()}'")
+        
         self.opportunity["solicitationNumber"] = self.solicitation_var.get()
-        self.opportunity["fundingAmount"] = self.amount_var.get()
+        
+        # Format funding amount with dollar sign if not already present
+        funding_amount = self.amount_var.get().strip()
+        if funding_amount and not funding_amount.startswith("$"):
+            funding_amount = f"${funding_amount}"
+        self.opportunity["fundingAmount"] = funding_amount
+        
+        # Format cost share percentage with % sign if not already present
+        cost_share = self.cost_share_var.get().strip()
+        if cost_share and not cost_share.endswith("%"):
+            cost_share = f"{cost_share}%"
+        self.opportunity["costSharePercentage"] = cost_share
+        
         self.opportunity["customer"] = self.customer_var.get()
         
         # Pursuits
@@ -712,11 +767,15 @@ class FundingForm:
                         # Otherwise keep as string with dollar sign
                         potential_value[year] = f"${value}"
             
+            # Get the date directly from the DateEntry widget to ensure we have the most up-to-date value
+            submission_date = entry["date_entry"].get_date() if "date_entry" in entry else entry["targetedSubmissionDate"].get()
+            print(f"Saving submission date: '{submission_date}'")
+            
             # Create pursuit dictionary
             pursuit = {
                 "pursuitID": entry["pursuitID"].get(),
                 "pursuitName": entry["pursuitName"].get(),
-                "targetedSubmissionDate": entry["targetedSubmissionDate"].get(),
+                "targetedSubmissionDate": submission_date,
                 "relatedProducts": entry["relatedProducts"].get(),
                 "otherRelevance": entry["otherRelevance"].get(),
                 "potentialValue": [potential_value] if potential_value else [],
@@ -732,6 +791,14 @@ class FundingForm:
         """Save the funding opportunity data"""
         # Collect data from all form fields
         self.collect_data()
+        
+        # Print debug info about what we're saving
+        print(f"Opportunity ID: {self.opportunity['id']}")
+        print(f"Close Date: '{self.opportunity['closeDate']}'")
+        print(f"Pursuits: {len(self.opportunity['pursuits'])}")
+        for pursuit in self.opportunity['pursuits']:
+            print(f"  Pursuit ID: {pursuit['pursuitID']}")
+            print(f"  Submission Date: '{pursuit['targetedSubmissionDate']}'")
         
         # Validate required fields
         if not self.opportunity["id"] or not self.opportunity["announcementName"]:
@@ -768,4 +835,17 @@ class FundingForm:
             # Close window
             self.window.destroy()
             
-            self.model.update_status(f"Deleted funding opportunity: {self.opportunity['announcementName']}") 
+            self.model.update_status(f"Deleted funding opportunity: {self.opportunity['announcementName']}")
+    
+    def _validate_numeric(self, value_if_allowed):
+        """Validate that input is numeric (for cost share percentage)"""
+        # Allow empty string
+        if value_if_allowed == "":
+            return True
+            
+        # Check if the value is numeric
+        try:
+            float(value_if_allowed)
+            return True
+        except ValueError:
+            return False 

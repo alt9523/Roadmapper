@@ -84,4 +84,7 @@ class MilestonesTab(BaseTab):
                     "description": entry["desc_var"].get()
                 }
                 milestones.append(milestone_data)
-        self.product["milestones"] = milestones 
+        self.product["milestones"] = milestones
+        
+        # Return True to indicate validation passed
+        return True 

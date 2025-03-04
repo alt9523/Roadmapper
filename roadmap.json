@@ -57,20 +57,46 @@
         {
             "id": "P1",
             "name": "SatCom Terminal Housing",
-            "trl": 7,
             "requirements": {
                 "mechanical": "Withstand 10G acceleration, -40\u00c2\u00b0C to +85\u00c2\u00b0C temperature range",
                 "electrical": "EMI shielding, grounding requirements",
                 "environmental": "Salt fog resistance, humidity cycling"
             },
+            "businessCase": {
+                "costSavings": {
+                    "title": "cost Savings",
+                    "description": "{'description': 'Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.', 'value': 35}",
+                    "value": ""
+                },
+                "scheduleSavings": {
+                    "title": "schedule Savings",
+                    "description": "{'description': 'Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.', 'value': 12}",
+                    "value": ""
+                },
+                "performanceGains": {
+                    "title": "performance Gains",
+                    "description": "{'description': '15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry.', 'value': 15}",
+                    "value": ""
+                }
+            },
             "programs": [
                 {
                     "programID": "PRG1",
-                    "needDate": "2025-06-30"
+                    "part": "Housing Shell",
+                    "materialID": "MS1",
+                    "lifetimeDemand": 50,
+                    "needDate": "2025-06-30",
+                    "adoptionStatus": "production",
+                    "expectedUnitCostSavings": "4000"
                 },
                 {
                     "programID": "PRG3",
-                    "needDate": "2025-09-30"
+                    "part": "Terminal Enclosure",
+                    "materialID": "MS2",
+                    "lifetimeDemand": 100,
+                    "needDate": "2025-09-01",
+                    "adoptionStatus": "prototyping",
+                    "expectedUnitCostSavings": ""
                 }
             ],
             "materialSystems": [
@@ -131,35 +157,36 @@
                 "Functional testing",
                 "Surface roughness measurement"
             ],
+            "trl": "7",
             "roadmap": [
                 {
                     "task": "Initial Design",
-                    "start": "2025-01-01",
-                    "end": "2025-03-31",
+                    "start": "",
+                    "end": "",
                     "status": "Complete",
                     "lane": "Design",
                     "fundingType": "Division IRAD"
                 },
                 {
                     "task": "Prototype Build",
-                    "start": "2025-04-01",
-                    "end": "2025-06-30",
+                    "start": "",
+                    "end": "",
                     "status": "In Progress",
                     "lane": "Manufacturing",
                     "fundingType": "Sector IRAD"
                 },
                 {
                     "task": "Material Qualification",
-                    "start": "2025-02-15",
-                    "end": "2025-05-15",
+                    "start": "",
+                    "end": "",
                     "status": "In Progress",
                     "lane": "M&P",
                     "fundingType": "CRAD"
                 },
                 {
                     "task": "First Article Inspection",
-                    "start": "2025-07-01",
-                    "end": "2025-07-31",
+                    "start": "",
+                    "end": "",
                     "status": "Planned",
                     "lane": "Quality",
                     "fundingType": "Planned"
@@ -168,30 +195,25 @@
             "milestones": [
                 {
                     "name": "PDR",
-                    "date": "2025-02-15",
+                    "date": "",
                     "description": "Preliminary Design Review"
                 },
                 {
                     "name": "CDR",
-                    "date": "2025-04-30",
+                    "date": "",
                     "description": "Critical Design Review"
                 },
                 {
                     "name": "TRR",
-                    "date": "2025-07-15",
+                    "date": "",
                     "description": "Test Readiness Review"
                 }
-            ],
-            "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
-            }
+            ]
         },
         {
             "id": "P2",
             "name": "Weather Satellite Antenna Mount",
-            "trl": 6,
+            "trl": "6",
             "requirements": {
                 "mechanical": "High stiffness, low mass, survive launch loads",
                 "thermal": "Low CTE, thermal stability in space environment",
@@ -200,7 +222,11 @@
             "programs": [
                 {
                     "programID": "PRG1",
-                    "needDate": "2025-08-15"
+                    "part": "Mounting Bracket",
+                    "materialID": "MS2",
+                    "lifetimeDemand": 25,
+                    "needDate": "2025-08-15",
+                    "adoptionStatus": "developing"
                 }
             ],
             "materialSystems": [
@@ -257,32 +283,32 @@
             "roadmap": [
                 {
                     "task": "Concept Development",
-                    "start": "2025-01-15",
-                    "end": "2025-03-15",
+                    "start": "2025-03-03",
+                    "end": "2025-03-03",
                     "status": "Complete",
                     "lane": "Design",
                     "fundingType": "Division IRAD"
                 },
                 {
                     "task": "Component Testing",
-                    "start": "2025-04-01",
-                    "end": "2025-05-31",
+                    "start": "2025-03-03",
+                    "end": "2025-03-03",
                     "status": "Planned",
                     "lane": "Quality",
                     "fundingType": "Planned"
                 },
                 {
                     "task": "Process Parameter Development",
-                    "start": "2025-03-01",
-                    "end": "2025-04-30",
+                    "start": "2025-03-03",
+                    "end": "2025-03-03",
                     "status": "In Progress",
                     "lane": "M&P",
                     "fundingType": "Sector IRAD"
                 },
                 {
                     "task": "Prototype Manufacturing",
-                    "start": "2024-11-01",
-                    "end": "2025-02-28",
+                    "start": "2025-03-03",
+                    "end": "2025-03-03",
                     "status": "In Progress",
                     "lane": "Manufacturing",
                     "fundingType": "CRAD"
@@ -291,12 +317,12 @@
             "milestones": [
                 {
                     "name": "Design Freeze",
-                    "date": "2025-03-15",
+                    "date": "2025-03-03",
                     "description": "Final design approval"
                 },
                 {
                     "name": "Qualification Complete",
-                    "date": "2025-06-30",
+                    "date": "2025-03-03",
                     "description": "All qualification testing completed"
                 }
             ],
@@ -318,7 +344,11 @@
             "programs": [
                 {
                     "programID": "PRG2",
-                    "needDate": "2025-10-15"
+                    "part": "Nozzle Assembly",
+                    "materialID": "MS2",
+                    "lifetimeDemand": 200,
+                    "needDate": "2025-10-15",
+                    "adoptionStatus": "targeting"
                 }
             ],
             "materialSystems": [
@@ -428,7 +458,11 @@
             "programs": [
                 {
                     "programID": "PRG3",
-                    "needDate": "2025-07-30"
+                    "part": "Injector Assembly",
+                    "materialID": "MS1",
+                    "lifetimeDemand": 75,
+                    "needDate": "2025-07-30",
+                    "adoptionStatus": "production"
                 }
             ],
             "materialSystems": [
@@ -529,7 +563,7 @@
         {
             "id": "P5",
             "name": "Lunar Rover Wheel Structure",
-            "trl": 4,
+            "trl": "4",
             "requirements": {
                 "mechanical": "Low mass, high strength-to-weight ratio",
                 "environmental": "Lunar dust resistance, extreme temperature cycling",
@@ -538,7 +572,11 @@
             "programs": [
                 {
                     "programID": "PRG4",
-                    "needDate": "2025-12-15"
+                    "part": "Rover Wheel Frame",
+                    "materialID": "MS3",
+                    "lifetimeDemand": 30,
+                    "needDate": "2025-12-15",
+                    "adoptionStatus": "developing"
                 }
             ],
             "materialSystems": [
@@ -579,7 +617,8 @@
                 "Operational Manual",
                 "Spec Sheet",
                 "Qualification Test Reports",
-                "Failure Mode and Effects Analysis"
+                "Failure Mode and Effects Analysis",
+                "test"
             ],
             "specialNDT": [
                 "Micro-CT for lattice inspection",
@@ -595,32 +634,32 @@
             "roadmap": [
                 {
                     "task": "Mobility Analysis",
-                    "start": "2025-01-01",
-                    "end": "2025-02-28",
+                    "start": "",
+                    "end": "",
                     "status": "Complete",
                     "lane": "Design",
                     "fundingType": "Division IRAD"
                 },
                 {
                     "task": "Terrain Testing",
-                    "start": "2025-03-01",
-                    "end": "2025-05-31",
+                    "start": "",
+                    "end": "",
                     "status": "In Progress",
                     "lane": "Quality",
                     "fundingType": "CRAD"
                 },
                 {
                     "task": "Lattice Structure Optimization",
-                    "start": "2025-02-15",
-                    "end": "2025-04-30",
+                    "start": "",
+                    "end": "",
                     "status": "In Progress",
                     "lane": "Design",
                     "fundingType": "Sector IRAD"
                 },
                 {
                     "task": "Surface Treatment Development",
-                    "start": "2025-04-01",
-                    "end": "2025-06-30",
+                    "start": "",
+                    "end": "",
                     "status": "Planned",
                     "lane": "M&P",
                     "fundingType": "Planned"
@@ -629,17 +668,17 @@
             "milestones": [
                 {
                     "name": "Design Approval",
-                    "date": "2025-02-28",
+                    "date": "",
                     "description": "Initial design concept approved"
                 },
                 {
                     "name": "Prototype Complete",
-                    "date": "2025-04-30",
+                    "date": "",
                     "description": "First functional prototype completed"
                 },
                 {
                     "name": "Testing Complete",
-                    "date": "2025-05-31",
+                    "date": "",
                     "description": "Terrain testing completed"
                 }
             ],
@@ -656,7 +695,11 @@
             "programs": [
                 {
                     "programID": "PRG7",
-                    "needDate": "2025-02-28"
+                    "part": "Test Component",
+                    "materialID": "MS6",
+                    "lifetimeDemand": 10,
+                    "needDate": "2025-02-28",
+                    "adoptionStatus": "targeting"
                 }
             ],
             "materialSystems": [
@@ -695,7 +738,11 @@
             "programs": [
                 {
                     "programID": "PRG2",
-                    "needDate": "2025-03-28"
+                    "part": "Test Part",
+                    "materialID": "MS2",
+                    "lifetimeDemand": 5,
+                    "needDate": "2025-03-28",
+                    "adoptionStatus": "closed"
                 }
             ],
             "materialSystems": [],
@@ -1146,14 +1193,14 @@
             "announcementName": "Advanced SatCom Upgrade",
             "pursuitType": "CRAD",
             "customer": "N/A",
-            "closeDate": "2025-02-28",
+            "closeDate": "",
             "solicitationNumber": "1234567890",
-            "fundingAmount": "1000000",
+            "fundingAmount": "$1000000",
             "pursuits": [
                 {
                     "pursuitID": "PUR1",
                     "pursuitName": "Name",
-                    "targetedSubmissionDate": "2025-02-28",
+                    "targetedSubmissionDate": "",
                     "relatedProducts": "P1 | MS1, P3 | MS2",
                     "otherRelevance": "N/A",
                     "potentialValue": [
@@ -1173,7 +1220,7 @@
                 {
                     "pursuitID": "PUR2",
                     "pursuitName": "test",
-                    "targetedSubmissionDate": "2025-02-28",
+                    "targetedSubmissionDate": "",
                     "relatedProducts": "P3 | MS2",
                     "otherRelevance": "none",
                     "potentialValue": [
@@ -1186,7 +1233,8 @@
                     "Pgo": "",
                     "details": ""
                 }
-            ]
+            ],
+            "costSharePercentage": "25%"
         },
         {
             "id": "OPP2",
@@ -1195,18 +1243,13 @@
             "customer": "Internal",
             "closeDate": "2025-05-15",
             "solicitationNumber": "2345678901",
-            "fundingAmount": "750000",
+            "fundingAmount": "$750000",
             "pursuits": [
                 {
                     "pursuitID": "PUR2",
                     "pursuitName": "Rocket Efficiency Initiative",
-                    "targetedSubmissionDate": "2025-04-30",
-                    "relatedProducts": [
-                        {
-                            "Product": "P4",
-                            "Material": "MS1"
-                        }
-                    ],
+                    "targetedSubmissionDate": "2025-09-01",
+                    "relatedProducts": "{'Product': 'P4', 'Material': 'MS1'}",
                     "otherRelevance": "Supports launch vehicle development roadmap",
                     "potentialValue": [
                         {
@@ -1222,7 +1265,8 @@
                     "Pgo": "80%",
                     "details": "Focus on improving efficiency of reusable rockets; seeking industry partners."
                 }
-            ]
+            ],
+            "costSharePercentage": "25%"
         },
         {
             "id": "OPP3",

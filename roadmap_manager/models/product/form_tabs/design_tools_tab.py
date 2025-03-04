@@ -99,6 +99,8 @@ class DesignToolsTab(BaseTab):
                 print(f"  Skipping empty tool entry")
         
         # Update the product
-        print(f"Setting product['designTools'] to {design_tools}")
         self.product["designTools"] = design_tools
-        print(f"After update: product['designTools'] = {self.product.get('designTools', [])}") 
+        print(f"Updated product design tools: {self.product['designTools']}")
+        
+        # Return True to indicate validation passed
+        return True 

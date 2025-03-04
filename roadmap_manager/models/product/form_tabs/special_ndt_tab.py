@@ -85,7 +85,10 @@ class SpecialNDTTab(BaseTab):
                 print(f"  Added NDT to specialNDT list")
             else:
                 print(f"  Skipping empty NDT entry")
-                
+        
         print(f"Setting product['specialNDT'] to {special_ndt}")
         self.product["specialNDT"] = special_ndt
-        print(f"After update: product['specialNDT'] = {self.product.get('specialNDT', [])}") 
+        print(f"After update: product['specialNDT'] = {self.product.get('specialNDT', [])}")
+        
+        # Return True to indicate validation passed
+        return True 

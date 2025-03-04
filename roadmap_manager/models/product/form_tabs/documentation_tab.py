@@ -99,6 +99,8 @@ class DocumentationTab(BaseTab):
                 print(f"  Skipping entry with empty name")
         
         # Update the product
-        print(f"Setting product['documentation'] to {documentation}")
         self.product["documentation"] = documentation
-        print(f"After update: product['documentation'] = {self.product.get('documentation', [])}") 
+        print(f"Updated product documentation: {self.product['documentation']}")
+        
+        # Return True to indicate validation passed
+        return True 

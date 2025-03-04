@@ -277,7 +277,7 @@ class SupplierModel(BaseModel):
         material_entries = []
         
         # Function to add a material system entry
-        def add_material_system():
+        def add_material_system(existing_ms=None):
             # Create a frame for this material system
             ms_frame = ttk.LabelFrame(materials_list_frame, text=f"Material System {len(material_entries) + 1}")
             ms_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -285,13 +285,16 @@ class SupplierModel(BaseModel):
             # Material System selection
             ttk.Label(ms_frame, text="Material System:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
             ms_var = tk.StringVar()
+            ms_id_map = {}  # Map from material name to material ID
             
             # Get material system options
             ms_options = []
-            ms_id_map = {}
             for ms in self.data["materialSystems"]:
                 ms_options.append(ms["name"])
                 ms_id_map[ms["name"]] = ms["id"]
+                # If this is an existing material system, set the selected value
+                if existing_ms and ms["id"] == existing_ms.get("materialID"):
+                    ms_var.set(ms["name"])
             
             ms_combo = ttk.Combobox(ms_frame, textvariable=ms_var, values=ms_options)
             ms_combo.grid(row=0, column=1, sticky=tk.W+tk.E, padx=5, pady=5)
@@ -305,22 +308,26 @@ class SupplierModel(BaseModel):
             printer_entries = []
             
             # Function to add a printer entry
-            def add_printer():
+            def add_printer(name="", qual_status="Qualified"):
                 printer_frame = ttk.Frame(printers_frame)
                 printer_frame.pack(fill=tk.X, pady=2)
                 
-                printer_var = tk.StringVar()
+                printer_var = tk.StringVar(value=name)
                 printer_entry = ttk.Entry(printer_frame, textvariable=printer_var)
                 printer_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
                 
-                qual_status_var = tk.StringVar(value="Qualified")
+                qual_status_var = tk.StringVar(value=qual_status)
                 qual_combo = ttk.Combobox(printer_frame, textvariable=qual_status_var, 
                                          values=["Qualified", "in-development", "planned"])
                 qual_combo.pack(side=tk.LEFT, padx=5)
                 
                 # Button to remove this printer
-                remove_btn = ttk.Button(printer_frame, text="X", width=2,
-                                       command=lambda f=printer_frame: f.destroy())
+                def remove_printer():
+                    printer_frame.destroy()
+                    # Important: Remove the entry from the list
+                    printer_entries.remove((printer_var, qual_status_var))
+                
+                remove_btn = ttk.Button(printer_frame, text="X", width=2, command=remove_printer)
                 remove_btn.pack(side=tk.LEFT)
                 
                 printer_entries.append((printer_var, qual_status_var))
@@ -329,22 +336,51 @@ class SupplierModel(BaseModel):
             add_printer_btn = ttk.Button(printers_frame, text="Add Printer", command=add_printer)
             add_printer_btn.pack(anchor=tk.W)
             
-            # Add one printer entry by default
-            add_printer()
+            # If this is an existing material system, add its printers
+            if existing_ms and "printer" in existing_ms:
+                for printer in existing_ms["printer"]:
+                    if isinstance(printer, dict):
+                        # New format with name and qualStatus
+                        add_printer(printer.get("name", ""), printer.get("qualStatus", "Qualified"))
+                    else:
+                        # Old format with just printer name
+                        add_printer(printer)
+            else:
+                # Add one printer entry by default
+                add_printer()
             
             # Button to remove this material system
+            def remove_material_system_entry():
+                ms_frame.destroy()
+                # Important: Remove the entry from material_entries
+                for i, entry in enumerate(material_entries):
+                    if entry[0] is ms_var and entry[1] is ms_id_map and entry[2] is printer_entries:
+                        del material_entries[i]
+                        break
+            
             remove_ms_btn = ttk.Button(ms_frame, text="Remove Material System", 
-                                     command=lambda f=ms_frame: f.destroy())
+                                      command=remove_material_system_entry)
             remove_ms_btn.grid(row=2, column=0, columnspan=2, pady=5)
             
             material_entries.append((ms_var, ms_id_map, printer_entries))
+            return (ms_var, ms_id_map, printer_entries)
         
         # Button to add a material system
-        add_ms_btn = ttk.Button(materials_frame, text="Add Material System", command=add_material_system)
+        add_ms_btn = ttk.Button(materials_frame, text="Add Material System", command=lambda: add_material_system())
         add_ms_btn.pack(anchor=tk.W, padx=10, pady=5)
         
-        # Add one material system by default
-        add_material_system()
+        # Add existing material systems
+        if "materialSystems" in supplier:
+            for ms in supplier["materialSystems"]:
+                # Debug print for troubleshooting
+                print(f"Adding existing material system: {ms}")
+                try:
+                    add_material_system(ms)
+                except Exception as e:
+                    print(f"Error adding material system: {e}")
+        else:
+            # Add one material system by default
+            add_material_system()
         
         # Additional Capabilities tab
         capabilities_frame = ttk.Frame(notebook)
@@ -383,8 +419,8 @@ class SupplierModel(BaseModel):
         # Save button
         def save_supplier():
             # Validate required fields
-            if not id_var.get() or not name_var.get():
-                self.show_error("Error", "ID and Name are required fields")
+            if not name_var.get():
+                self.show_error("Error", "Name is required")
                 return
             
             # Create NDA status
@@ -394,13 +430,13 @@ class SupplierModel(BaseModel):
                 if nda_date_var.get():
                     nda_status["date"] = nda_date_var.get()
             
-            # Get material systems
+            # Get material systems - only include those that are still in the material_entries list
             material_systems = []
             for ms_var, ms_id_map, printer_entries in material_entries:
                 if ms_var.get():  # If a material system is selected
                     ms_id = ms_id_map.get(ms_var.get())
                     if ms_id:
-                        # Get printers for this material system
+                        # Get printers for this material system, only include those still in printer_entries
                         printers = []
                         for printer_var, qual_status_var in printer_entries:
                             if printer_var.get():  # If a printer is entered
@@ -423,22 +459,25 @@ class SupplierModel(BaseModel):
                 if capability_var.get():  # If a capability is entered
                     additional_capabilities.append(capability_var.get())
             
-            # Create new supplier
+            # Create new supplier with an explicitly empty material systems list to ensure deleted ones are removed
             new_supplier = {
                 "id": id_var.get(),
                 "name": name_var.get(),
                 "supplierNumber": supplier_number_var.get(),
-                "materialSystems": material_systems,
+                "materialSystems": material_systems,  # This now contains only the material systems that are currently in the form
                 "additionalCapabilities": additional_capabilities,
-                "supplierRoadmap": {"tasks": []}  # Initialize empty roadmap
+                "supplierRoadmap": supplier.get("supplierRoadmap", {"tasks": []})  # Preserve existing roadmap data
             }
             
             # Add NDA status if present
             if nda_status:
                 new_supplier["ndaStatus"] = nda_status
             
-            # Add to data
-            self.data["printingSuppliers"].append(new_supplier)
+            # Update supplier in data - completely replace the existing supplier
+            for i, s in enumerate(self.data["printingSuppliers"]):
+                if s["id"] == supplier_id:
+                    self.data["printingSuppliers"][i] = new_supplier
+                    break
             
             # Refresh treeview
             self.populate_printing_suppliers_tree()
@@ -446,7 +485,7 @@ class SupplierModel(BaseModel):
             # Close window
             add_window.destroy()
             
-            self.update_status(f"Added printing supplier: {new_supplier['name']}")
+            self.update_status(f"Updated printing supplier: {new_supplier['name']}")
         
         # Buttons at the bottom
         button_frame = ttk.Frame(add_window)
@@ -529,10 +568,10 @@ class SupplierModel(BaseModel):
             # Material System selection
             ttk.Label(ms_frame, text="Material System:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
             ms_var = tk.StringVar()
+            ms_id_map = {}  # Map from material name to material ID
             
             # Get material system options
             ms_options = []
-            ms_id_map = {}
             for ms in self.data["materialSystems"]:
                 ms_options.append(ms["name"])
                 ms_id_map[ms["name"]] = ms["id"]
@@ -566,8 +605,12 @@ class SupplierModel(BaseModel):
                 qual_combo.pack(side=tk.LEFT, padx=5)
                 
                 # Button to remove this printer
-                remove_btn = ttk.Button(printer_frame, text="X", width=2,
-                                       command=lambda f=printer_frame: f.destroy())
+                def remove_printer():
+                    printer_frame.destroy()
+                    # Important: Remove the entry from the list
+                    printer_entries.remove((printer_var, qual_status_var))
+                
+                remove_btn = ttk.Button(printer_frame, text="X", width=2, command=remove_printer)
                 remove_btn.pack(side=tk.LEFT)
                 
                 printer_entries.append((printer_var, qual_status_var))
@@ -590,14 +633,23 @@ class SupplierModel(BaseModel):
                 add_printer()
             
             # Button to remove this material system
+            def remove_material_system_entry():
+                ms_frame.destroy()
+                # Important: Remove the entry from material_entries
+                for i, entry in enumerate(material_entries):
+                    if entry[0] is ms_var and entry[1] is ms_id_map and entry[2] is printer_entries:
+                        del material_entries[i]
+                        break
+            
             remove_ms_btn = ttk.Button(ms_frame, text="Remove Material System", 
-                                     command=lambda f=ms_frame: f.destroy())
+                                      command=remove_material_system_entry)
             remove_ms_btn.grid(row=2, column=0, columnspan=2, pady=5)
             
             material_entries.append((ms_var, ms_id_map, printer_entries))
+            return (ms_var, ms_id_map, printer_entries)
         
         # Button to add a material system
-        add_ms_btn = ttk.Button(materials_frame, text="Add Material System", command=add_material_system)
+        add_ms_btn = ttk.Button(materials_frame, text="Add Material System", command=lambda: add_material_system())
         add_ms_btn.pack(anchor=tk.W, padx=10, pady=5)
         
         # Add existing material systems
@@ -661,13 +713,13 @@ class SupplierModel(BaseModel):
                 if nda_date_var.get():
                     nda_status["date"] = nda_date_var.get()
             
-            # Get material systems
+            # Get material systems - only include those that are still in the material_entries list
             material_systems = []
             for ms_var, ms_id_map, printer_entries in material_entries:
                 if ms_var.get():  # If a material system is selected
                     ms_id = ms_id_map.get(ms_var.get())
                     if ms_id:
-                        # Get printers for this material system
+                        # Get printers for this material system, only include those still in printer_entries
                         printers = []
                         for printer_var, qual_status_var in printer_entries:
                             if printer_var.get():  # If a printer is entered
@@ -690,12 +742,12 @@ class SupplierModel(BaseModel):
                 if capability_var.get():  # If a capability is entered
                     additional_capabilities.append(capability_var.get())
             
-            # Create new supplier
+            # Create new supplier with an explicitly empty material systems list to ensure deleted ones are removed
             new_supplier = {
                 "id": id_var.get(),
                 "name": name_var.get(),
                 "supplierNumber": supplier_number_var.get(),
-                "materialSystems": material_systems,
+                "materialSystems": material_systems,  # This now contains only the material systems that are currently in the form
                 "additionalCapabilities": additional_capabilities,
                 "supplierRoadmap": supplier.get("supplierRoadmap", {"tasks": []})  # Preserve existing roadmap data
             }
@@ -704,7 +756,7 @@ class SupplierModel(BaseModel):
             if nda_status:
                 new_supplier["ndaStatus"] = nda_status
             
-            # Update supplier in data
+            # Update supplier in data - completely replace the existing supplier
             for i, s in enumerate(self.data["printingSuppliers"]):
                 if s["id"] == supplier_id:
                     self.data["printingSuppliers"][i] = new_supplier

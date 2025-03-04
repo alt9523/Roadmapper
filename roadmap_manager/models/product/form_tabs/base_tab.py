@@ -25,4 +25,5 @@ class BaseTab:
     def collect_data(self):
         """Collect data from the tab - to be overridden by subclasses"""
         print(f"Base collect_data method called for {self.__class__.__name__}")
-        pass 
+        # Return True by default to indicate validation passed
+        return True 
