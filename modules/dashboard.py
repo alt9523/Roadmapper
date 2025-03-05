@@ -4,7 +4,7 @@ from bokeh.models import Div
 from bokeh.layouts import layout
 from bokeh.plotting import output_file, save
 
-def generate_dashboard(data, output_dir):
+def generate_dashboard(data, output_dir, network_analysis_path=None, progress_path=None):
     """Generate the main dashboard/index page"""
     print("Generating main dashboard...")
     
@@ -116,6 +116,10 @@ def generate_dashboard(data, output_dir):
                 border-radius: 5px;
                 margin-top: 10px;
             }}
+            .feature-card {{
+                background-color: #f9f9ff;
+                border-left: 4px solid #0066cc;
+            }}
         </style>
     </head>
     <body>
@@ -217,6 +221,26 @@ def generate_dashboard(data, output_dir):
                         <a href="relationships/relationship_summary.html" class="btn">View Relationships</a>
                     </div>
                 </div>
+
+                <div class="card">
+                    <h2>Progress Tracking</h2>
+                    <div class="card-content">
+                        <p>Track progress with burndown charts for task completion, milestone achievement tracking, and comparison of planned vs. actual progress.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="progress/progress_dashboard.html" class="btn">View Progress</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Advanced Network Analysis</h2>
+                    <div class="card-content">
+                        <p>Advanced network graph analysis with centrality metrics, dependency chains, and impact analysis.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{network_analysis_path if network_analysis_path else 'relationships/relationship_summary.html'}" class="btn">View Analysis</a>
+                    </div>
+                </div>
             </div>
             
             <div class="card">
@@ -229,6 +253,7 @@ def generate_dashboard(data, output_dir):
                 </div>
                 <div class="card-footer">
                     <a href="relationships/network_graph.html" class="btn">View Full Graph</a>
+                    {f'<a href="{network_analysis_path}" class="btn">View Advanced Analysis</a>' if network_analysis_path else ''}
                 </div>
             </div>
             

@@ -19,9 +19,48 @@ class DateEntry(ttk.Frame):
         
         # Handle initial date correctly
         if initial_date and isinstance(initial_date, str) and initial_date.strip():
-            # Use the provided date string directly
-            print(f"Setting date from string: '{initial_date}'")
-            self.date_var.set(initial_date)
+            # Try to convert the date string to YYYY-MM-DD format
+            try:
+                # Handle different formats
+                if re.match(r'^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}$', initial_date):  # MM-DD-YYYY or MM/DD/YYYY
+                    parts = re.split(r'[-/]', initial_date)
+                    month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
+                    if year < 100:
+                        year += 2000
+                    date_obj = datetime(year, month, day)
+                    formatted_date = date_obj.strftime("%Y-%m-%d")
+                    print(f"Converted MM/DD/YYYY date to: '{formatted_date}'")
+                    self.date_var.set(formatted_date)
+                elif re.match(r'^\d{2,4}[-/]\d{1,2}[-/]\d{1,2}$', initial_date):  # YYYY-MM-DD or YYYY/MM/DD
+                    parts = re.split(r'[-/]', initial_date)
+                    year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+                    if year < 100:
+                        year += 2000
+                    date_obj = datetime(year, month, day)
+                    formatted_date = date_obj.strftime("%Y-%m-%d")
+                    print(f"Converted YYYY/MM/DD date to: '{formatted_date}'")
+                    self.date_var.set(formatted_date)
+                else:
+                    # Try multiple formats
+                    try:
+                        # Try YYYY-MM-DD first (already in correct format)
+                        date_obj = datetime.strptime(initial_date, "%Y-%m-%d")
+                        self.date_var.set(initial_date)
+                        print(f"Using existing YYYY-MM-DD date: '{initial_date}'")
+                    except ValueError:
+                        try:
+                            # Try MM/DD/YYYY
+                            date_obj = datetime.strptime(initial_date, "%m/%d/%Y")
+                            formatted_date = date_obj.strftime("%Y-%m-%d")
+                            self.date_var.set(formatted_date)
+                            print(f"Converted MM/DD/YYYY date to: '{formatted_date}'")
+                        except ValueError:
+                            # If all else fails, just use the string as is
+                            print(f"Using date string as-is: '{initial_date}'")
+                            self.date_var.set(initial_date)
+            except (ValueError, IndexError) as e:
+                print(f"Date parsing error: {e}, using original string")
+                self.date_var.set(initial_date)
         elif initial_date and isinstance(initial_date, datetime):
             # Convert datetime to string
             date_str = initial_date.strftime("%Y-%m-%d")
@@ -76,8 +115,17 @@ class DateEntry(ttk.Frame):
                 if year < 100:
                     year += 2000
             else:
-                # Try direct parsing
-                date_obj = datetime.strptime(value, "%Y-%m-%d")
+                # Try direct parsing with multiple formats
+                try:
+                    # Try YYYY-MM-DD first
+                    date_obj = datetime.strptime(value, "%Y-%m-%d")
+                except ValueError:
+                    try:
+                        # Try MM/DD/YYYY
+                        date_obj = datetime.strptime(value, "%m/%d/%Y")
+                    except ValueError:
+                        # Try DD/MM/YYYY
+                        date_obj = datetime.strptime(value, "%d/%m/%Y")
                 year, month, day = date_obj.year, date_obj.month, date_obj.day
                 
             # Validate date
@@ -115,11 +163,53 @@ class DateEntry(ttk.Frame):
         if isinstance(date, datetime):
             date = date.strftime("%Y-%m-%d")
             
-        if date:
-            print(f"Setting date to: '{date}'")
-            self.date_var.set(date)
-            # Only validate if there's a date
-            self._validate(date)
+        if date and isinstance(date, str) and date.strip():
+            # Try to convert the date string to YYYY-MM-DD format
+            try:
+                # Handle different formats
+                if re.match(r'^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}$', date):  # MM-DD-YYYY or MM/DD/YYYY
+                    parts = re.split(r'[-/]', date)
+                    month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
+                    if year < 100:
+                        year += 2000
+                    date_obj = datetime(year, month, day)
+                    formatted_date = date_obj.strftime("%Y-%m-%d")
+                    print(f"Converted MM/DD/YYYY date to: '{formatted_date}'")
+                    self.date_var.set(formatted_date)
+                elif re.match(r'^\d{2,4}[-/]\d{1,2}[-/]\d{1,2}$', date):  # YYYY-MM-DD or YYYY/MM/DD
+                    parts = re.split(r'[-/]', date)
+                    year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+                    if year < 100:
+                        year += 2000
+                    date_obj = datetime(year, month, day)
+                    formatted_date = date_obj.strftime("%Y-%m-%d")
+                    print(f"Converted YYYY/MM/DD date to: '{formatted_date}'")
+                    self.date_var.set(formatted_date)
+                else:
+                    # Try multiple formats
+                    try:
+                        # Try YYYY-MM-DD first (already in correct format)
+                        date_obj = datetime.strptime(date, "%Y-%m-%d")
+                        self.date_var.set(date)
+                        print(f"Using existing YYYY-MM-DD date: '{date}'")
+                    except ValueError:
+                        try:
+                            # Try MM/DD/YYYY
+                            date_obj = datetime.strptime(date, "%m/%d/%Y")
+                            formatted_date = date_obj.strftime("%Y-%m-%d")
+                            self.date_var.set(formatted_date)
+                            print(f"Converted MM/DD/YYYY date to: '{formatted_date}'")
+                        except ValueError:
+                            # If all else fails, just use the string as is
+                            print(f"Using date string as-is: '{date}'")
+                            self.date_var.set(date)
+                # Validate the date
+                self._validate(self.date_var.get())
+            except (ValueError, IndexError) as e:
+                print(f"Date parsing error: {e}, using original string")
+                self.date_var.set(date)
+                # Validate the date
+                self._validate(date)
         else:
             print("Setting empty date")
             self.date_var.set("") 

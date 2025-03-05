@@ -2,7 +2,9 @@
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Relationship Flow Diagram</title>
+        <title>Relationship Flow Diagram (Sankey)</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
             h1 { color: #333; }
@@ -10,28 +12,187 @@
             a { color: #0066cc; text-decoration: none; }
             a:hover { text-decoration: underline; }
             .container { max-width: 1200px; margin: 0 auto; }
-            .image-container { text-align: center; margin: 20px 0; }
-            .image-container img { max-width: 100%; border: 1px solid #ddd; }
+            #sankey-diagram { width: 100%; height: 600px; }
+            .node rect { opacity: 0.9; }
+            .node text { font-size: 12px; font-weight: bold; }
+            .link { opacity: 0.7; }
+            .link:hover { opacity: 0.9; }
+            .column-header { font-size: 16px; font-weight: bold; text-anchor: middle; }
         </style>
     </head>
     <body>
         <div class="container">
             <h1>Relationship Flow Diagram (Sankey)</h1>
-            <p>This visualization shows the flow of relationships between different entities in the roadmap data.</p>
+            <p>This visualization shows the flow of relationships from Suppliers to Materials to Products to Programs.</p>
             <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
             
-            <div class="image-container">
-                <img src="sankey_diagram.png" alt="Sankey Diagram">
-            </div>
+            <div id="sankey-diagram"></div>
+            
+            <script>
+                // Data for the Sankey diagram
+                const nodes = [{"name": "AeroSupplies Inc.", "color": "#8c564b", "type": "supplier"}, {"name": "Defense Materials Ltd.", "color": "#8c564b", "type": "supplier"}, {"name": "SpaceTech Supplies", "color": "#8c564b", "type": "supplier"}, {"name": "Surface Solutions Inc.", "color": "#8c564b", "type": "supplier"}, {"name": "Anodizing Experts LLC", "color": "#8c564b", "type": "supplier"}, {"name": "Example 1", "color": "#8c564b", "type": "supplier"}, {"name": "Example 2", "color": "#8c564b", "type": "supplier"}, {"name": "LPBF Ti-6Al-4V", "color": "#2ca02c", "type": "material"}, {"name": "LPBF Inconel 718", "color": "#2ca02c", "type": "material"}, {"name": "LPBF AlSi10Mg", "color": "#2ca02c", "type": "material"}, {"name": "EBM Ti-6Al-4V", "color": "#2ca02c", "type": "material"}, {"name": "DED 316L Stainless Steel", "color": "#2ca02c", "type": "material"}, {"name": "test", "color": "#2ca02c", "type": "material"}, {"name": "SatCom Terminal Housing", "color": "#ff7f0e", "type": "product"}, {"name": "Weather Satellite Antenna Mount", "color": "#ff7f0e", "type": "product"}, {"name": "Interceptor Missile Nozzle", "color": "#ff7f0e", "type": "product"}, {"name": "Reusable Rocket Injector Plate", "color": "#ff7f0e", "type": "product"}, {"name": "Lunar Rover Wheel Structure", "color": "#ff7f0e", "type": "product"}, {"name": "tester", "color": "#ff7f0e", "type": "product"}, {"name": "test", "color": "#ff7f0e", "type": "product"}, {"name": "Satellite Systems", "color": "#1f77b4", "type": "program"}, {"name": "Missile Defense", "color": "#1f77b4", "type": "program"}, {"name": "Launch Vehicles", "color": "#1f77b4", "type": "program"}, {"name": "Space Exploration", "color": "#1f77b4", "type": "program"}, {"name": "Communications", "color": "#1f77b4", "type": "program"}, {"name": "test program", "color": "#1f77b4", "type": "program"}, {"name": "another test program", "color": "#1f77b4", "type": "program"}];
+                const links = [{"source": "AeroSupplies Inc.", "target": "LPBF Ti-6Al-4V", "value": 1, "color": "#d6c1b0"}, {"source": "AeroSupplies Inc.", "target": "LPBF Inconel 718", "value": 1, "color": "#d6c1b0"}, {"source": "Defense Materials Ltd.", "target": "LPBF Inconel 718", "value": 1, "color": "#d6c1b0"}, {"source": "Defense Materials Ltd.", "target": "DED 316L Stainless Steel", "value": 1, "color": "#d6c1b0"}, {"source": "SpaceTech Supplies", "target": "LPBF AlSi10Mg", "value": 1, "color": "#d6c1b0"}, {"source": "Surface Solutions Inc.", "target": "LPBF Ti-6Al-4V", "value": 1, "color": "#d6c1b0"}, {"source": "Surface Solutions Inc.", "target": "LPBF AlSi10Mg", "value": 1, "color": "#d6c1b0"}, {"source": "Surface Solutions Inc.", "target": "EBM Ti-6Al-4V", "value": 1, "color": "#d6c1b0"}, {"source": "Anodizing Experts LLC", "target": "LPBF AlSi10Mg", "value": 1, "color": "#d6c1b0"}, {"source": "LPBF Ti-6Al-4V", "target": "SatCom Terminal Housing", "value": 1, "color": "#a3d6a3"}, {"source": "LPBF AlSi10Mg", "target": "SatCom Terminal Housing", "value": 1, "color": "#a3d6a3"}, {"source": "LPBF Inconel 718", "target": "Weather Satellite Antenna Mount", "value": 1, "color": "#a3d6a3"}, {"source": "LPBF Inconel 718", "target": "Interceptor Missile Nozzle", "value": 1, "color": "#a3d6a3"}, {"source": "LPBF Ti-6Al-4V", "target": "Reusable Rocket Injector Plate", "value": 1, "color": "#a3d6a3"}, {"source": "LPBF AlSi10Mg", "target": "Lunar Rover Wheel Structure", "value": 1, "color": "#a3d6a3"}, {"source": "test", "target": "tester", "value": 1, "color": "#a3d6a3"}, {"source": "SatCom Terminal Housing", "target": "Satellite Systems", "value": 1, "color": "#ffcc99"}, {"source": "SatCom Terminal Housing", "target": "Launch Vehicles", "value": 1, "color": "#ffcc99"}, {"source": "Weather Satellite Antenna Mount", "target": "Satellite Systems", "value": 1, "color": "#ffcc99"}, {"source": "Interceptor Missile Nozzle", "target": "Missile Defense", "value": 1, "color": "#ffcc99"}, {"source": "Reusable Rocket Injector Plate", "target": "Launch Vehicles", "value": 1, "color": "#ffcc99"}, {"source": "Lunar Rover Wheel Structure", "target": "Space Exploration", "value": 1, "color": "#ffcc99"}, {"source": "tester", "target": "another test program", "value": 1, "color": "#ffcc99"}, {"source": "test", "target": "Missile Defense", "value": 1, "color": "#ffcc99"}];
+                
+                // Set up the dimensions and margins
+                const margin = {top: 50, right: 50, bottom: 20, left: 50};
+                const width = 1100 - margin.left - margin.right;
+                const height = 600 - margin.top - margin.bottom;
+                
+                // Create the SVG container
+                const svg = d3.select("#sankey-diagram")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+                
+                // Define fixed column positions
+                const columnPositions = {
+                    'supplier': 0,
+                    'material': width / 3,
+                    'product': 2 * width / 3,
+                    'program': width - 20
+                };
+                
+                // Group nodes by type
+                const nodesByType = {
+                    'supplier': [],
+                    'material': [],
+                    'product': [],
+                    'program': []
+                };
+                
+                nodes.forEach(node => {
+                    if (node.type) {
+                        nodesByType[node.type].push(node);
+                    }
+                });
+                
+                // Calculate y positions for each node within its column
+                Object.keys(nodesByType).forEach(type => {
+                    const typeNodes = nodesByType[type];
+                    const totalNodes = typeNodes.length;
+                    const spacing = height / (totalNodes + 1);
+                    
+                    typeNodes.forEach((node, i) => {
+                        node.x0 = columnPositions[type];
+                        node.x1 = node.x0 + 20;  // Node width = 20
+                        node.y0 = (i + 1) * spacing - 10;  // Center node at position
+                        node.y1 = node.y0 + 20;  // Node height based on value
+                    });
+                });
+                
+                // Create a node map for quick lookup
+                const nodeMap = {};
+                nodes.forEach(node => {
+                    nodeMap[node.name] = node;
+                });
+                
+                // Process links to connect to the positioned nodes
+                const processedLinks = links.map(link => {
+                    const sourceNode = nodeMap[link.source];
+                    const targetNode = nodeMap[link.target];
+                    
+                    // Adjust the height of nodes based on number of connections
+                    const linkHeight = Math.max(5, link.value * 3);
+                    sourceNode.y1 = Math.max(sourceNode.y1, sourceNode.y0 + linkHeight);
+                    targetNode.y1 = Math.max(targetNode.y1, targetNode.y0 + linkHeight);
+                    
+                    return {
+                        source: sourceNode,
+                        target: targetNode,
+                        value: link.value,
+                        color: link.color
+                    };
+                });
+                
+                // Draw the links
+                const link = svg.append("g")
+                    .selectAll(".link")
+                    .data(processedLinks)
+                    .enter()
+                    .append("path")
+                    .attr("class", "link")
+                    .attr("d", d => {
+                        // Calculate source and target points
+                        const sourceX = d.source.x1;
+                        const sourceY = (d.source.y0 + d.source.y1) / 2;
+                        const targetX = d.target.x0;
+                        const targetY = (d.target.y0 + d.target.y1) / 2;
+                        
+                        // Create a curved path
+                        return `M${sourceX},${sourceY}
+                                C${sourceX + (targetX - sourceX) / 2},${sourceY}
+                                 ${sourceX + (targetX - sourceX) / 2},${targetY}
+                                 ${targetX},${targetY}`;
+                    })
+                    .attr("stroke", d => d.color)
+                    .attr("stroke-width", d => Math.max(2, d.value * 2))
+                    .attr("fill", "none")
+                    .style("opacity", 0.7)
+                    .on("mouseover", function() { d3.select(this).style("opacity", 0.9); })
+                    .on("mouseout", function() { d3.select(this).style("opacity", 0.7); });
+                
+                // Add hover tooltips to links
+                link.append("title")
+                    .text(d => `${d.source.name} -> ${d.target.name}\nValue: ${d.value}`);
+                
+                // Draw the nodes
+                const node = svg.append("g")
+                    .selectAll(".node")
+                    .data(nodes)
+                    .enter()
+                    .append("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${d.x0},${d.y0})`);
+                
+                // Add rectangles for the nodes
+                node.append("rect")
+                    .attr("height", d => d.y1 - d.y0)
+                    .attr("width", d => d.x1 - d.x0)
+                    .attr("fill", d => d.color)
+                    .attr("stroke", "#000")
+                    .attr("stroke-width", 1)
+                    .style("opacity", 0.9);
+                
+                // Add labels to the nodes
+                node.append("text")
+                    .attr("x", d => d.type === 'program' ? -6 : d.x1 - d.x0 + 6)
+                    .attr("y", d => (d.y1 - d.y0) / 2)
+                    .attr("dy", "0.35em")
+                    .attr("text-anchor", d => d.type === 'program' ? "end" : "start")
+                    .text(d => d.name)
+                    .style("font-size", "12px")
+                    .style("font-weight", "bold")
+                    .style("pointer-events", "none");
+                
+                // Add column headers
+                const headers = [
+                    { x: columnPositions.supplier + 10, y: -30, text: "Suppliers" },
+                    { x: columnPositions.material + 10, y: -30, text: "Materials" },
+                    { x: columnPositions.product + 10, y: -30, text: "Products" },
+                    { x: columnPositions.program + 10, y: -30, text: "Programs" }
+                ];
+                
+                svg.selectAll(".column-header")
+                    .data(headers)
+                    .enter()
+                    .append("text")
+                    .attr("class", "column-header")
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y)
+                    .attr("text-anchor", "middle")
+                    .text(d => d.text);
+            </script>
             
             <h2>Explanation</h2>
-            <p>The Sankey diagram shows the flow of relationships from Programs to Products to Materials to Suppliers. The width of each flow represents the number of connections between entities.</p>
+            <p>The Sankey diagram shows the flow of relationships from Suppliers to Materials to Products to Programs. The width of each flow represents the number of connections between entities.</p>
             
             <ul>
-                <li><strong style="color: #1f77b4;">Programs</strong>: Space missions and projects</li>
-                <li><strong style="color: #ff7f0e;">Products</strong>: Components and systems being developed</li>
+                <li><strong style="color: #8c564b;">Suppliers</strong>: Suppliers providing materials and services</li>
                 <li><strong style="color: #2ca02c;">Materials</strong>: Material systems used in products</li>
-                <li><strong style="color: #d62728;">Suppliers</strong>: Suppliers providing materials and services</li>
+                <li><strong style="color: #ff7f0e;">Products</strong>: Components and systems being developed</li>
+                <li><strong style="color: #1f77b4;">Programs</strong>: Space missions and projects</li>
             </ul>
         </div>
     </body>

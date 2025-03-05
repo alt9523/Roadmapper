@@ -1,0 +1,174 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Progress Tracking Dashboard</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+            .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+            .header { 
+                background-color: #0066cc; 
+                color: white; 
+                padding: 20px; 
+                text-align: center;
+                border-radius: 5px 5px 0 0;
+                margin-bottom: 20px;
+            }
+            .header h1 { margin: 0; }
+            .header p { margin: 10px 0 0 0; }
+            .nav-links {
+                display: flex;
+                background-color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .nav-links a {
+                color: #0066cc;
+                text-decoration: none;
+                margin: 0 15px;
+                font-weight: bold;
+            }
+            .nav-links a:hover {
+                text-decoration: underline;
+            }
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .card { 
+                background-color: white; 
+                border-radius: 5px; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                padding: 20px;
+                transition: transform 0.3s ease;
+            }
+            .card:hover { 
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            .card h2 { 
+                color: #0066cc; 
+                margin-top: 0;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 10px;
+            }
+            .card-content { margin-bottom: 15px; }
+            .card-footer { 
+                display: flex;
+                justify-content: flex-start;
+            }
+            .btn {
+                display: inline-block;
+                padding: 8px 15px;
+                background-color: #0066cc;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+            .btn:hover { background-color: #004c99; }
+            .footer { 
+                text-align: center; 
+                margin-top: 30px; 
+                padding-top: 20px; 
+                border-top: 1px solid #ddd;
+                color: #666;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            .summary-card h2 {
+                color: #0066cc;
+                margin-top: 0;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 10px;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            li {
+                margin-bottom: 8px;
+            }
+            .note {
+                font-style: italic;
+                color: #666;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Progress Tracking Dashboard</h1>
+                <p>Track task completion, milestone achievements, and compare planned vs. actual progress</p>
+            </div>
+            
+            <div class="nav-links">
+                <a href="../index.html">Back to Main Dashboard</a> |
+                <a href="burndown_charts.html">Burndown Charts</a> |
+                <a href="milestone_tracking.html">Milestone Tracking</a> |
+                <a href="planned_vs_actual.html">Planned vs. Actual</a>
+            </div>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <h2>Burndown Charts</h2>
+                    <div class="card-content">
+                        <p>Track task completion over time with burndown charts showing the remaining work and completion trends.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="burndown_charts.html" class="btn">View Charts</a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Milestone Tracking</h2>
+                    <div class="card-content">
+                        <p>Monitor the achievement of key milestones across programs, products, and material systems.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="milestone_tracking.html" class="btn">View Milestones</a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Planned vs. Actual</h2>
+                    <div class="card-content">
+                        <p>Compare planned progress against actual progress to identify areas that need attention.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="planned_vs_actual.html" class="btn">View Comparison</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h2>Progress Summary</h2>
+                <p>This dashboard provides tools to track progress of tasks and milestones across the entire roadmap.</p>
+                <p>Use these visualizations to:</p>
+                <ul>
+                    <li>Monitor task completion rates and trends over time</li>
+                    <li>Track upcoming and completed milestones</li>
+                    <li>Identify discrepancies between planned and actual progress</li>
+                    <li>Make data-driven decisions to keep projects on track</li>
+                </ul>
+                <p class="note">Note: The visualizations currently use simulated data for demonstration purposes. In a production environment, these would be populated with actual progress data.</p>
+            </div>
+            
+            <div class="footer">
+                <p>Generated on 2025-03-04 | Additive Manufacturing Roadmap</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    

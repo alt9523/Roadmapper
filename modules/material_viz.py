@@ -464,17 +464,51 @@ def generate_material_summary(data, material_dir):
     p3.xgrid.grid_line_color = None
     
     # Create material list section
-    material_list = "<div style='margin-top: 20px;'><h2>All Material Systems</h2><ul>"
-    for material in sorted(data['materialSystems'], key=lambda x: x['name']):
-        material_list += f"<li><a href='material_{material['id']}.html'>{material['name']} ({material['id']})</a> - Process: {material.get('process', 'N/A')}, Material: {material.get('material', 'N/A')}, MRL: {material.get('mrl', 'N/A')}</li>"
-    material_list += "</ul></div>"
+    material_list = """
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">All Material Systems</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material Name</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Process</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">MRL</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Qualification</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    # Add rows for each material system
+    for i, material in enumerate(sorted(data['materialSystems'], key=lambda x: x['name'])):
+        row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+        material_list += f"""
+        <tr style="{row_style}">
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='material_{material['id']}.html' style="color: #3498db;">{material['name']}</a></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material['id']}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('process', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('material', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('mrl', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('qualification', 'N/A')}</td>
+        </tr>
+        """
+    
+    material_list += """
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
     
     # Create header
     header = """
     <div style="margin-bottom: 20px;">
-        <h1>Material Systems Summary</h1>
+        <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Material Systems Summary</h1>
         <p>This page provides an overview of all material systems and their distributions.</p>
-        <p><a href="../index.html">Back to Dashboard</a></p>
+        <p><a href="../index.html" style="color: #3498db; text-decoration: none;">Back to Dashboard</a></p>
     </div>
     """
     

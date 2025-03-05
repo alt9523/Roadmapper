@@ -161,8 +161,8 @@
             "roadmap": [
                 {
                     "task": "Initial Design",
-                    "start": "",
-                    "end": "",
+                    "start": "2025-03-05",
+                    "end": "2025-09-01",
                     "status": "Complete",
                     "lane": "Design",
                     "fundingType": "Division IRAD"
@@ -1193,13 +1193,14 @@
             "announcementName": "Advanced SatCom Upgrade",
             "pursuitType": "CRAD",
             "customer": "N/A",
-            "closeDate": "",
+            "closeDate": "2025-09-05",
             "solicitationNumber": "1234567890",
             "fundingAmount": "$1000000",
             "pursuits": [
                 {
                     "pursuitID": "PUR1",
                     "pursuitName": "Name",
+                    "pointOfContact": "Engineer 1",
                     "targetedSubmissionDate": "",
                     "relatedProducts": "P1 | MS1, P3 | MS2",
                     "otherRelevance": "N/A",
@@ -1220,6 +1221,7 @@
                 {
                     "pursuitID": "PUR2",
                     "pursuitName": "test",
+                    "pointOfContact": "",
                     "targetedSubmissionDate": "",
                     "relatedProducts": "P3 | MS2",
                     "otherRelevance": "none",
@@ -1234,7 +1236,9 @@
                     "details": ""
                 }
             ],
-            "costSharePercentage": "25%"
+            "costSharePercentage": "25%",
+            "status": "Pursuing",
+            "periodOfPerformance": "12 months"
         },
         {
             "id": "OPP2",

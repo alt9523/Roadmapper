@@ -227,41 +227,123 @@ def generate_product_page(product, data, product_dir, status_colors):
     
     # Create product info section
     product_info = f"""
-    <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px;">
-        <h2>Product Details: {product['name']}</h2>
+    <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Product Details: {product['name']}</h2>
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>ID:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{product_id}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd; width: 30%;"><strong>ID:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{product_id}</td>
             </tr>
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>TRL:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{product.get('trl', 'N/A')}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>TRL:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{product.get('trl', 'N/A')}</td>
             </tr>
     """
     
     # Add requirements if available
     if 'requirements' in product:
-        product_info += "<tr><td style='padding: 8px; border-bottom: 1px solid #ddd;'><strong>Requirements:</strong></td><td style='padding: 8px; border-bottom: 1px solid #ddd;'><ul>"
+        product_info += "<tr><td style='padding: 12px; border-bottom: 1px solid #ddd;'><strong>Requirements:</strong></td><td style='padding: 12px; border-bottom: 1px solid #ddd;'><ul>"
         for req_type, req_text in product['requirements'].items():
             product_info += f"<li><strong>{req_type}:</strong> {req_text}</li>"
         product_info += "</ul></td></tr>"
     
-    # Add associated programs
-    product_info += "<tr><td style='padding: 8px; border-bottom: 1px solid #ddd;'><strong>Programs:</strong></td><td style='padding: 8px; border-bottom: 1px solid #ddd;'><ul>"
-    for program_entry in product.get('programs', []):
-        if isinstance(program_entry, str):
-            program_id = program_entry
-            program = next((p for p in data['programs'] if p['id'] == program_id), None)
-            if program:
-                product_info += f"<li><a href='../programs/program_{program_id}.html'>{program['name']} ({program_id})</a></li>"
-        elif isinstance(program_entry, dict) and 'programID' in program_entry:
-            program_id = program_entry['programID']
-            program = next((p for p in data['programs'] if p['id'] == program_id), None)
-            if program:
-                need_date = f" - Need Date: {program_entry['needDate']}" if 'needDate' in program_entry else ""
-                product_info += f"<li><a href='../programs/program_{program_id}.html'>{program['name']} ({program_id})</a>{need_date}</li>"
-    product_info += "</ul></td></tr>"
+    # Add associated programs with detailed information
+    if 'programs' in product and product['programs']:
+        program_info = "<tr><td style='padding: 12px; border-bottom: 1px solid #ddd;'><strong>Associated Programs:</strong></td><td style='padding: 12px; border-bottom: 1px solid #ddd;'>"
+        
+        # Create a table for program relationships
+        program_info += """
+        <table style="width: 100%; border-collapse: collapse; margin-top: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background-color: #3498db; color: white;">
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Program</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Part</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Material</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Need Date</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Adoption Status</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Lifetime Demand</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Unit Cost Savings</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+        
+        for i, program_entry in enumerate(product['programs']):
+            row_class = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            
+            if isinstance(program_entry, str):
+                program_id = program_entry
+                program = next((p for p in data['programs'] if p['id'] == program_id), None)
+                if program:
+                    program_info += f"""
+                    <tr style="{row_class}">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><a href='../programs/program_{program_id}.html' style="color: #3498db;">{program['name']} ({program_id})</a></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">N/A</td>
+                    </tr>
+                    """
+            elif isinstance(program_entry, dict) and 'programID' in program_entry:
+                program_id = program_entry['programID']
+                program = next((p for p in data['programs'] if p['id'] == program_id), None)
+                if program:
+                    # Get additional details
+                    part = program_entry.get('part', 'N/A')
+                    material_id = program_entry.get('materialID', 'N/A')
+                    need_date = program_entry.get('needDate', 'N/A')
+                    adoption_status = program_entry.get('adoptionStatus', 'N/A')
+                    lifetime_demand = program_entry.get('lifetimeDemand', 'N/A')
+                    unit_cost_savings = program_entry.get('expectedUnitCostSavings', 'N/A')
+                    
+                    # Get material name if available
+                    material_display = material_id
+                    if material_id != 'N/A':
+                        material = next((m for m in data['materialSystems'] if m['id'] == material_id), None)
+                        if material:
+                            material_display = f"<a href='../materials/material_{material_id}.html' style='color: #3498db;'>{material['name']} ({material_id})</a>"
+                    
+                    # Format adoption status with color
+                    status_style = ""
+                    if adoption_status.lower() == 'production':
+                        status_style = "color: #27ae60; font-weight: bold;"  # Green
+                    elif adoption_status.lower() == 'prototyping':
+                        status_style = "color: #f39c12; font-weight: bold;"  # Orange
+                    elif adoption_status.lower() == 'developing':
+                        status_style = "color: #3498db; font-weight: bold;"  # Blue
+                    elif adoption_status.lower() == 'targeting':
+                        status_style = "color: #9b59b6; font-weight: bold;"  # Purple
+                    elif adoption_status.lower() == 'closed':
+                        status_style = "color: #e74c3c; font-weight: bold;"  # Red
+                    
+                    # Format unit cost savings
+                    if unit_cost_savings and unit_cost_savings != 'N/A':
+                        try:
+                            unit_cost_savings = f"${int(unit_cost_savings):,}"
+                        except (ValueError, TypeError):
+                            pass
+                    
+                    program_info += f"""
+                    <tr style="{row_class}">
+                        <td style="padding: 8px; border: 1px solid #ddd;"><a href='../programs/program_{program_id}.html' style="color: #3498db;">{program['name']} ({program_id})</a></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">{part}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">{material_display}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">{need_date}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; {status_style}">{adoption_status}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">{lifetime_demand}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">{unit_cost_savings}</td>
+                    </tr>
+                    """
+        
+        program_info += """
+            </tbody>
+        </table>
+        """
+        
+        program_info += "</td></tr>"
+        product_info += program_info
     
     # Add material systems
     product_info += "<tr><td style='padding: 8px; border-bottom: 1px solid #ddd;'><strong>Material Systems:</strong></td><td style='padding: 8px; border-bottom: 1px solid #ddd;'><ul>"
@@ -429,17 +511,82 @@ def generate_product_summary(data, product_dir):
     p2.xaxis.major_label_orientation = 45
     
     # Create product list section
-    product_list = "<div style='margin-top: 20px;'><h2>All Products</h2><ul>"
-    for product in sorted(data['products'], key=lambda x: x['name']):
-        product_list += f"<li><a href='product_{product['id']}.html'>{product['name']} ({product['id']})</a> - TRL: {product.get('trl', 'N/A')}</li>"
-    product_list += "</ul></div>"
+    product_list = """
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">All Products</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Product Name</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">TRL</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Associated Programs</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material Systems</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    # Add rows for each product
+    for i, product in enumerate(sorted(data['products'], key=lambda x: x['name'])):
+        row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+        
+        # Get associated programs
+        associated_programs = []
+        for program_entry in product.get('programs', []):
+            if isinstance(program_entry, str):
+                program_id = program_entry
+            elif isinstance(program_entry, dict) and 'programID' in program_entry:
+                program_id = program_entry['programID']
+            else:
+                continue
+                
+            program = next((p for p in data['programs'] if p['id'] == program_id), None)
+            if program:
+                associated_programs.append(f"{program['name']} ({program_id})")
+        
+        # Get material systems
+        material_systems = []
+        for material_entry in product.get('materialSystems', []):
+            if isinstance(material_entry, str):
+                material_id = material_entry
+            elif isinstance(material_entry, dict) and 'materialID' in material_entry:
+                material_id = material_entry['materialID']
+            else:
+                continue
+                
+            material = next((m for m in data['materialSystems'] if m['id'] == material_id), None)
+            if material:
+                material_systems.append(f"{material['name']} ({material_id})")
+        
+        # Format lists for display
+        programs_display = ", ".join(associated_programs) if associated_programs else "None"
+        materials_display = ", ".join(material_systems) if material_systems else "None"
+        
+        product_list += f"""
+        <tr style="{row_style}">
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='product_{product['id']}.html' style="color: #3498db;">{product['name']}</a></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{product['id']}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{product.get('trl', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{programs_display}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{materials_display}</td>
+        </tr>
+        """
+    
+    product_list += """
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
     
     # Create header
     header = """
     <div style="margin-bottom: 20px;">
-        <h1>Product Summary</h1>
+        <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Product Summary</h1>
         <p>This page provides an overview of all products and their distributions.</p>
-        <p><a href="../index.html">Back to Dashboard</a></p>
+        <p><a href="../index.html" style="color: #3498db; text-decoration: none;">Back to Dashboard</a></p>
     </div>
     """
     

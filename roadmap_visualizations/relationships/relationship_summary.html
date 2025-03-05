@@ -5,9 +5,10 @@
         <title>Relationship Visualizations Summary</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-            h1 { color: #333; }
-            h2, h3, h4 { color: #0066cc; }
-            a { color: #0066cc; text-decoration: none; }
+            h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+            h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+            h3, h4 { color: #2c3e50; }
+            a { color: #3498db; text-decoration: none; }
             a:hover { text-decoration: underline; }
             .container { max-width: 1200px; margin: 0 auto; }
             .card { 
@@ -16,6 +17,7 @@
                 padding: 15px; 
                 margin-bottom: 20px;
                 background-color: #f9f9f9;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
             .card h2 { margin-top: 0; }
             .card-grid {
@@ -28,6 +30,27 @@
                 height: auto;
                 border: 1px solid #ddd;
                 border-radius: 3px;
+            }
+            table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-top: 15px; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            thead tr { 
+                background-color: #3498db; 
+                color: white; 
+            }
+            th, td { 
+                padding: 12px; 
+                text-align: left; 
+                border: 1px solid #ddd; 
+            }
+            tbody tr:nth-child(even) { 
+                background-color: #f2f9ff; 
+            }
+            tbody tr:nth-child(odd) { 
+                background-color: #ffffff; 
             }
         </style>
     </head>
@@ -111,7 +134,7 @@
     
                     <tr>
                         <td style="padding: 8px; border-bottom: 1px solid #ddd;">Program-Product Relationships</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">7</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #ddd;">8</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px; border-bottom: 1px solid #ddd;">Product-Material Relationships</td>

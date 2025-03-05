@@ -44,12 +44,14 @@ class RoadmapTab(BaseTab):
         # Start date
         ttk.Label(task_frame, text="Start:").grid(row=0, column=2, sticky=tk.W, padx=5)
         start_var = tk.StringVar(value=task_data.get("start", ""))
-        DateEntry(task_frame, textvariable=start_var, width=12).grid(row=0, column=3, padx=5)
+        start_date_entry = DateEntry(task_frame, textvariable=start_var, width=12, initial_date=task_data.get("start", ""))
+        start_date_entry.grid(row=0, column=3, padx=5)
         
         # End date
         ttk.Label(task_frame, text="End:").grid(row=0, column=4, sticky=tk.W, padx=5)
         end_var = tk.StringVar(value=task_data.get("end", ""))
-        DateEntry(task_frame, textvariable=end_var, width=12).grid(row=0, column=5, padx=5)
+        end_date_entry = DateEntry(task_frame, textvariable=end_var, width=12, initial_date=task_data.get("end", ""))
+        end_date_entry.grid(row=0, column=5, padx=5)
         
         # Status
         ttk.Label(task_frame, text="Status:").grid(row=1, column=0, sticky=tk.W, padx=5)
@@ -88,7 +90,9 @@ class RoadmapTab(BaseTab):
             "status_var": status_var,
             "lane_var": lane_var,
             "funding_var": funding_var,
-            "frame": task_frame
+            "frame": task_frame,
+            "start_date_entry": start_date_entry,
+            "end_date_entry": end_date_entry
         }
         self.roadmap_entries.append(entry_data)
         
@@ -102,10 +106,14 @@ class RoadmapTab(BaseTab):
         for entry in self.roadmap_entries:
             task = entry["task_var"].get()
             if task:
+                # Get dates directly from DateEntry widgets
+                start_date = entry["start_date_entry"].get_date()
+                end_date = entry["end_date_entry"].get_date()
+                
                 task_data = {
                     "task": task,
-                    "start": entry["start_var"].get(),
-                    "end": entry["end_var"].get(),
+                    "start": start_date,
+                    "end": end_date,
                     "status": entry["status_var"].get()
                 }
                 

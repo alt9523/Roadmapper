@@ -29,6 +29,15 @@ def generate_pursuit_section(pursuit, data, funding_dir, funding_id):
         </tr>
         """
     
+    # Add point of contact if available
+    if 'pointOfContact' in pursuit and pursuit['pointOfContact']:
+        pursuit_section += f"""
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Point of Contact:</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{pursuit['pointOfContact']}</td>
+        </tr>
+        """
+    
     # Add Pcap and Pgo if available
     if 'Pcap' in pursuit and pursuit['Pcap']:
         pursuit_section += f"""
@@ -263,6 +272,7 @@ def generate_pursuits_summary(funding_opportunities, data, funding_dir):
                 'funding_id': funding_id,
                 'funding_name': funding_name,
                 'submission_date': pursuit.get('targetedSubmissionDate', 'N/A'),
+                'point_of_contact': pursuit.get('pointOfContact', 'N/A'),
                 'pcap': pursuit.get('Pcap', 'N/A'),
                 'pgo': pursuit.get('Pgo', 'N/A'),
                 'pursuit': pursuit
@@ -334,6 +344,7 @@ def generate_pursuits_summary(funding_opportunities, data, funding_dir):
                         <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Pursuit Name</th>
                         <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Funding Opportunity</th>
                         <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Submission Date</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Point of Contact</th>
                         <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Pcap</th>
                         <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Pgo</th>
                     </tr>
@@ -349,6 +360,7 @@ def generate_pursuits_summary(funding_opportunities, data, funding_dir):
                 <a href="funding_{pursuit['funding_id']}.html">{pursuit['funding_name']} ({pursuit['funding_id']})</a>
             </td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{pursuit['submission_date']}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{pursuit['point_of_contact']}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{pursuit['pcap']}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{pursuit['pgo']}</td>
         </tr>

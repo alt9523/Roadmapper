@@ -52,8 +52,13 @@ def generate_program_page(program, data, program_dir):
     # Find all products associated with this program
     associated_products = []
     for product in data['products']:
-        if program_id in product.get('programs', []):
-            associated_products.append(product)
+        for prog in product.get('programs', []):
+            if isinstance(prog, str) and prog == program_id:
+                associated_products.append(product)
+                break
+            elif isinstance(prog, dict) and prog.get('programID') == program_id:
+                associated_products.append(product)
+                break
     
     # Sort products by name
     associated_products.sort(key=lambda x: x['name'])
@@ -61,6 +66,7 @@ def generate_program_page(program, data, program_dir):
     # Plot products on timeline
     y_pos = 0
     all_dates = []
+    has_renderers = False
     
     for product in associated_products:
         y_pos -= 1
@@ -78,7 +84,7 @@ def generate_program_page(program, data, program_dir):
             continue
         
         # Add product as a point on the timeline
-        p.circle(
+        p.scatter(
             x=need_date, 
             y=y_pos, 
             size=15, 
@@ -86,12 +92,19 @@ def generate_program_page(program, data, program_dir):
             alpha=0.8,
             legend_label="Product Need Date"
         )
+        has_renderers = True
         
         # Add product label
+        source = ColumnDataSource(data=dict(
+            x=[need_date],
+            y=[y_pos],
+            text=[f"{product['name']} ({product['id']})"]
+        ))
         p.text(
-            x=need_date, 
-            y=y_pos, 
-            text=f"{product['name']} ({product['id']})",
+            x='x', 
+            y='y', 
+            text='text',
+            source=source,
             text_font_size="10pt",
             text_baseline="middle",
             text_align="left",
@@ -99,20 +112,23 @@ def generate_program_page(program, data, program_dir):
         )
         
         # Add all tasks from the product roadmap to the timeline
-        for task in product.get('roadmap', []):
-            start_date = datetime.strptime(task['start'], "%Y-%m-%d")
-            end_date = datetime.strptime(task['end'], "%Y-%m-%d")
-            all_dates.extend([start_date, end_date])
-            
-            # Add task bar
-            p.hbar(
-                y=y_pos,
-                left=start_date,
-                right=end_date,
-                height=0.3,
-                color=Category10[10][1],
-                alpha=0.6
-            )
+        if 'roadmap' in product and isinstance(product['roadmap'], dict) and 'tasks' in product['roadmap']:
+            for task in product['roadmap']['tasks']:
+                if 'start' in task and 'end' in task:
+                    start_date = datetime.strptime(task['start'], "%Y-%m-%d")
+                    end_date = datetime.strptime(task['end'], "%Y-%m-%d")
+                    all_dates.extend([start_date, end_date])
+                    
+                    # Add task bar
+                    p.hbar(
+                        y=y_pos,
+                        left=start_date,
+                        right=end_date,
+                        height=0.3,
+                        color=Category10[10][1],
+                        alpha=0.6
+                    )
+                    has_renderers = True
     
     # Add hover tool
     hover = HoverTool()
@@ -172,16 +188,28 @@ def generate_program_page(program, data, program_dir):
     """
     
     # Create product list section
-    product_list = "<div style='margin-top: 20px;'><h3>Associated Products</h3><ul>"
-    for product in associated_products:
-        product_list += f"<li><a href='../products/product_{product['id']}.html'>{product['name']} ({product['id']})</a> - TRL: {product.get('trl', 'N/A')}</li>"
-    product_list += "</ul></div>"
+    product_list = "<div style='margin-top: 20px;'><h3>Associated Products</h3>"
+    if associated_products:
+        product_list += "<ul>"
+        for product in associated_products:
+            product_list += f"<li><a href='../products/product_{product['id']}.html'>{product['name']} ({product['id']})</a> - TRL: {product.get('trl', 'N/A')}</li>"
+        product_list += "</ul>"
+    else:
+        product_list += "<p>No associated products found for this program.</p>"
+    product_list += "</div>"
     
     # Combine all elements
     info_div = Div(text=program_info + product_list, width=1200)
     
-    # Create layout
-    layout = column(info_div, p)
+    # If there's no data to display, add a message
+    if not has_renderers:
+        no_data_message = Div(
+            text="<div style='text-align: center; margin: 50px; color: #777;'><h3>No timeline data available for this program</h3><p>There are no products with need dates associated with this program.</p></div>",
+            width=1200
+        )
+        layout = column(info_div, no_data_message)
+    else:
+        layout = column(info_div, p)
     
     # Output to file
     output_file(os.path.join(program_dir, f"program_{program_id}.html"))
@@ -258,17 +286,51 @@ def generate_program_summary(data, program_dir):
     p2.xgrid.grid_line_color = None
     
     # Create program list section
-    program_list = "<div style='margin-top: 20px;'><h2>All Programs</h2><ul>"
-    for program in sorted(data['programs'], key=lambda x: x['name']):
-        program_list += f"<li><a href='program_{program['id']}.html'>{program['name']} ({program['id']})</a> - Division: {program.get('division', 'N/A')}, Mission Class: {program.get('missionClass', 'N/A')}</li>"
-    program_list += "</ul></div>"
+    program_list = """
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">All Programs</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Program Name</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Division</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sector</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Mission Class</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Customer</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    # Add rows for each program
+    for i, program in enumerate(sorted(data['programs'], key=lambda x: x['name'])):
+        row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+        program_list += f"""
+        <tr style="{row_style}">
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='program_{program['id']}.html' style="color: #3498db;">{program['name']}</a></td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{program['id']}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{program.get('division', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{program.get('sector', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{program.get('missionClass', 'N/A')}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{program.get('customerName', 'N/A')}</td>
+        </tr>
+        """
+    
+    program_list += """
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
     
     # Create header
     header = """
     <div style="margin-bottom: 20px;">
-        <h1>Program Summary</h1>
+        <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Program Summary</h1>
         <p>This page provides an overview of all programs and their distributions.</p>
-        <p><a href="../index.html">Back to Dashboard</a></p>
+        <p><a href="../index.html" style="color: #3498db; text-decoration: none;">Back to Dashboard</a></p>
     </div>
     """
     

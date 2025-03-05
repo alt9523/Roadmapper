@@ -274,12 +274,13 @@ class MaterialModel(BaseModel):
             task_var = tk.StringVar(value=task_data.get("task", "") if task_data else "")
             ttk.Entry(task_frame, textvariable=task_var, width=20).pack(side=tk.LEFT, padx=2)
             
-            start_var = tk.StringVar(value=task_data.get("startDate", "") if task_data else "")
-            start_entry = ttk.Entry(task_frame, textvariable=start_var, width=20)
+            # Replace string variables and Entry widgets with DateEntry widgets
+            start_date = task_data.get("startDate", "") if task_data else ""
+            start_entry = DateEntry(task_frame, width=18, initial_date=start_date)
             start_entry.pack(side=tk.LEFT, padx=2)
             
-            end_var = tk.StringVar(value=task_data.get("endDate", "") if task_data else "")
-            end_entry = ttk.Entry(task_frame, textvariable=end_var, width=20)
+            end_date = task_data.get("endDate", "") if task_data else ""
+            end_entry = DateEntry(task_frame, width=18, initial_date=end_date)
             end_entry.pack(side=tk.LEFT, padx=2)
             
             status_options = ["Not Started", "In Progress", "Completed", "Delayed"]
@@ -299,8 +300,8 @@ class MaterialModel(BaseModel):
             entry_data = {
                 "frame": task_frame,
                 "task": task_var,
-                "start_date": start_var,
-                "end_date": end_var,
+                "start_date": start_entry,
+                "end_date": end_entry,
                 "status": status_var,
                 "fundingType": funding_var
             }
@@ -347,8 +348,9 @@ class MaterialModel(BaseModel):
             name_var = tk.StringVar(value=milestone_data.get("name", "") if milestone_data else "")
             ttk.Entry(ms_entry_frame, textvariable=name_var, width=20).pack(side=tk.LEFT, padx=2)
             
-            date_var = tk.StringVar(value=milestone_data.get("date", "") if milestone_data else "")
-            date_entry = ttk.Entry(ms_entry_frame, textvariable=date_var, width=20)
+            # Replace string variable and Entry widget with DateEntry widget
+            milestone_date = milestone_data.get("date", "") if milestone_data else ""
+            date_entry = DateEntry(ms_entry_frame, width=18, initial_date=milestone_date)
             date_entry.pack(side=tk.LEFT, padx=2)
             
             desc_var = tk.StringVar(value=milestone_data.get("description", "") if milestone_data else "")
@@ -363,7 +365,7 @@ class MaterialModel(BaseModel):
             entry_data = {
                 "frame": ms_entry_frame,
                 "name": name_var,
-                "date": date_var,
+                "date": date_entry,
                 "description": desc_var
             }
             milestone_entries.append(entry_data)
@@ -721,8 +723,8 @@ class MaterialModel(BaseModel):
                 
                 task_data = {
                     "task": task_entry["task"].get(),
-                    "startDate": task_entry["start_date"].get(),
-                    "endDate": task_entry["end_date"].get(),
+                    "startDate": task_entry["start_date"].get_date().strftime("%Y-%m-%d"),
+                    "endDate": task_entry["end_date"].get_date().strftime("%Y-%m-%d"),
                     "status": task_entry["status"].get()
                 }
                 
@@ -740,7 +742,7 @@ class MaterialModel(BaseModel):
                 
                 milestone_data = {
                     "name": milestone_entry["name"].get(),
-                    "date": milestone_entry["date"].get(),
+                    "date": milestone_entry["date"].get_date().strftime("%Y-%m-%d"),
                     "description": milestone_entry["description"].get()
                 }
                 milestones.append(milestone_data)

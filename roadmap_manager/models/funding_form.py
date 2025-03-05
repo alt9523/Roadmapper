@@ -218,7 +218,13 @@ class FundingForm:
         ttk.Label(basic_info_frame, text="Type:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
         self.pursuit_type_var = tk.StringVar(value=self.opportunity.get("pursuitType", ""))
         ttk.Combobox(basic_info_frame, textvariable=self.pursuit_type_var, 
-                    values=["Division IRAD", "Sector IRAD", "CRAD", "Shaping"]).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+                    values=["CRAD - RFI", "CRAD - RFP", "CRAD - RFWP", "BAA", "Follow On", "Shaping", "Division IRAD", "Sector IRAD"]).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        row += 1
+        
+        ttk.Label(basic_info_frame, text="Status:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
+        self.status_var = tk.StringVar(value=self.opportunity.get("status", ""))
+        ttk.Combobox(basic_info_frame, textvariable=self.status_var, 
+                    values=["Considering", "Pursuing", "Closed", "Awarded", "Reshaping"]).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         row += 1
         
         ttk.Label(basic_info_frame, text="Close Date:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
@@ -230,6 +236,11 @@ class FundingForm:
         
         date_entry = DateEntry(basic_info_frame, textvariable=self.close_date_var, initial_date=close_date_value)
         date_entry.grid(row=row, column=1, sticky=tk.W, padx=10, pady=5)
+        row += 1
+        
+        ttk.Label(basic_info_frame, text="Period of Performance:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
+        self.period_of_performance_var = tk.StringVar(value=self.opportunity.get("periodOfPerformance", ""))
+        ttk.Entry(basic_info_frame, textvariable=self.period_of_performance_var).grid(row=row, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         row += 1
         
         ttk.Label(basic_info_frame, text="Solicitation Number:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=5)
@@ -420,6 +431,11 @@ class FundingForm:
         
         ttk.Label(pursuit_frame, text="Pursuit Name:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
         ttk.Entry(pursuit_frame, textvariable=pursuit_name_var).grid(row=row, column=1, sticky=tk.W+tk.E, padx=5, pady=5)
+        row += 1
+        
+        ttk.Label(pursuit_frame, text="Point of Contact:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
+        point_of_contact_var = tk.StringVar(value=pursuit.get("pointOfContact", "") if pursuit else "")
+        ttk.Entry(pursuit_frame, textvariable=point_of_contact_var).grid(row=row, column=1, sticky=tk.W+tk.E, padx=5, pady=5)
         row += 1
         
         ttk.Label(pursuit_frame, text="Targeted Submission Date:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
@@ -685,6 +701,7 @@ class FundingForm:
         entry_data = {
             "pursuitID": pursuit_id_var,
             "pursuitName": pursuit_name_var,
+            "pointOfContact": point_of_contact_var,
             "targetedSubmissionDate": submission_date_var,
             "date_entry": date_entry,  # Store the actual DateEntry widget
             "relatedProducts": related_products_var,
@@ -733,9 +750,9 @@ class FundingForm:
         self.opportunity["id"] = self.id_var.get()
         self.opportunity["announcementName"] = self.name_var.get()
         self.opportunity["pursuitType"] = self.pursuit_type_var.get()
+        self.opportunity["status"] = self.status_var.get()
         self.opportunity["closeDate"] = self.close_date_var.get()
-        print(f"Saving close date: '{self.close_date_var.get()}'")
-        
+        self.opportunity["periodOfPerformance"] = self.period_of_performance_var.get()
         self.opportunity["solicitationNumber"] = self.solicitation_var.get()
         
         # Format funding amount with dollar sign if not already present
@@ -775,6 +792,7 @@ class FundingForm:
             pursuit = {
                 "pursuitID": entry["pursuitID"].get(),
                 "pursuitName": entry["pursuitName"].get(),
+                "pointOfContact": entry["pointOfContact"].get(),
                 "targetedSubmissionDate": submission_date,
                 "relatedProducts": entry["relatedProducts"].get(),
                 "otherRelevance": entry["otherRelevance"].get(),

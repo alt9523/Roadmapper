@@ -520,43 +520,136 @@ def generate_supplier_summary(data, supplier_dir):
         p2.title.text_font_size = '14pt'
     
     # Create printing supplier list section
-    printing_supplier_list = "<div style='margin-top: 20px;'><h2>Printing Suppliers</h2><ul>"
+    printing_supplier_list = """
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Printing Suppliers</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Supplier Name</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Supplier Number</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">NDA Status</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material Systems</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
     if 'printingSuppliers' in data:
-        for supplier in sorted(data['printingSuppliers'], key=lambda x: x['name']):
-            printing_supplier_list += f"<li><a href='supplier_{supplier['id']}.html'>{supplier['name']} ({supplier['id']})</a></li>"
+        for i, supplier in enumerate(sorted(data['printingSuppliers'], key=lambda x: x['name'])):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            
+            # Get NDA status
+            nda_status = "N/A"
+            if 'ndaStatus' in supplier and 'status' in supplier['ndaStatus']:
+                nda_status = supplier['ndaStatus']['status']
+                if 'date' in supplier['ndaStatus'] and supplier['ndaStatus']['date']:
+                    nda_status += f" ({supplier['ndaStatus']['date']})"
+            
+            # Count material systems
+            material_count = len(supplier.get('materialSystems', []))
+            
+            printing_supplier_list += f"""
+            <tr style="{row_style}">
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='supplier_{supplier['id']}.html' style="color: #3498db;">{supplier['name']}</a></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{supplier['id']}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{supplier.get('supplierNumber', 'N/A')}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{nda_status}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material_count}</td>
+            </tr>
+            """
     else:
-        printing_supplier_list += "<li>No printing suppliers found</li>"
-    printing_supplier_list += "</ul></div>"
+        printing_supplier_list += """
+        <tr>
+            <td colspan="5" style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">No printing suppliers found</td>
+        </tr>
+        """
+    
+    printing_supplier_list += """
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
     
     # Create post-processing supplier list section
-    postprocessing_supplier_list = "<div style='margin-top: 20px;'><h2>Post-Processing Suppliers</h2><ul>"
+    postprocessing_supplier_list = """
+    <div style="margin-top: 30px;">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Post-Processing Suppliers</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #3498db; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Supplier Name</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Supplier Number</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">NDA Status</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Processes</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
     if 'postProcessingSuppliers' in data:
-        for supplier in sorted(data['postProcessingSuppliers'], key=lambda x: x['name']):
-            postprocessing_supplier_list += f"<li><a href='supplier_{supplier['id']}.html'>{supplier['name']} ({supplier['id']})</a></li>"
+        for i, supplier in enumerate(sorted(data['postProcessingSuppliers'], key=lambda x: x['name'])):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            
+            # Get NDA status
+            nda_status = "N/A"
+            if 'ndaStatus' in supplier and 'status' in supplier['ndaStatus']:
+                nda_status = supplier['ndaStatus']['status']
+                if 'date' in supplier['ndaStatus'] and supplier['ndaStatus']['date']:
+                    nda_status += f" ({supplier['ndaStatus']['date']})"
+            
+            # Get processes
+            processes = ", ".join(supplier.get('processs', [])) if 'processs' in supplier else "N/A"
+            
+            postprocessing_supplier_list += f"""
+            <tr style="{row_style}">
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='supplier_{supplier['id']}.html' style="color: #3498db;">{supplier['name']}</a></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{supplier['id']}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{supplier.get('supplierNumber', 'N/A')}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{nda_status}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{processes}</td>
+            </tr>
+            """
     else:
-        postprocessing_supplier_list += "<li>No post-processing suppliers found</li>"
-    postprocessing_supplier_list += "</ul></div>"
+        postprocessing_supplier_list += """
+        <tr>
+            <td colspan="5" style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">No post-processing suppliers found</td>
+        </tr>
+        """
+    
+    postprocessing_supplier_list += """
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
     
     # Create header
     header = """
     <div style="margin-bottom: 20px;">
-        <h1>Supplier Summary</h1>
+        <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Supplier Summary</h1>
         <p>This page provides an overview of all suppliers and their distributions.</p>
-        <p><a href="../index.html">Back to Dashboard</a></p>
+        <p><a href="../index.html" style="color: #3498db; text-decoration: none;">Back to Dashboard</a></p>
     </div>
     """
     
     # Combine all elements
     header_div = Div(text=header, width=1200)
-    printing_supplier_list_div = Div(text=printing_supplier_list, width=600)
-    postprocessing_supplier_list_div = Div(text=postprocessing_supplier_list, width=600)
+    printing_supplier_list_div = Div(text=printing_supplier_list, width=1200)
+    postprocessing_supplier_list_div = Div(text=postprocessing_supplier_list, width=1200)
     
     # Create layout
     layout_obj = layout([
         [header_div],
         [p1],
         [p2],
-        [printing_supplier_list_div, postprocessing_supplier_list_div]
+        [printing_supplier_list_div],
+        [postprocessing_supplier_list_div]
     ])
     
     # Output to file

@@ -44,7 +44,8 @@ class MilestonesTab(BaseTab):
         # Date
         ttk.Label(ms_frame, text="Date:").grid(row=0, column=2, sticky=tk.W, padx=5)
         date_var = tk.StringVar(value=milestone_data.get("date", ""))
-        DateEntry(ms_frame, textvariable=date_var, width=12).grid(row=0, column=3, padx=5)
+        date_entry = DateEntry(ms_frame, textvariable=date_var, width=12, initial_date=milestone_data.get("date", ""))
+        date_entry.grid(row=0, column=3, padx=5)
         
         # Description
         ttk.Label(ms_frame, text="Description:").grid(row=1, column=0, sticky=tk.W, padx=5)
@@ -63,6 +64,7 @@ class MilestonesTab(BaseTab):
         entry_data = {
             "name_var": name_var,
             "date_var": date_var,
+            "date_entry": date_entry,
             "desc_var": desc_var,
             "frame": ms_frame
         }
@@ -78,9 +80,12 @@ class MilestonesTab(BaseTab):
         for entry in self.milestone_entries:
             name = entry["name_var"].get()
             if name:
+                # Get date directly from DateEntry widget
+                date = entry["date_entry"].get_date()
+                
                 milestone_data = {
                     "name": name,
-                    "date": entry["date_var"].get(),
+                    "date": date,
                     "description": entry["desc_var"].get()
                 }
                 milestones.append(milestone_data)

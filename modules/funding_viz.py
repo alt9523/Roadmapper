@@ -47,20 +47,20 @@ def generate_funding_page(funding, data, funding_dir):
     
     # Create funding info section
     funding_info = f"""
-    <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px;">
-        <h2>Funding Opportunity Details: {funding_name}</h2>
+    <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Funding Opportunity Details: {funding_name}</h2>
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>ID:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding_id}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd; width: 30%;"><strong>ID:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding_id}</td>
             </tr>
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Type:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding_type}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Type:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding_type}</td>
             </tr>
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Source:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding_source}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Source:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding_source}</td>
             </tr>
     """
     
@@ -68,15 +68,15 @@ def generate_funding_page(funding, data, funding_dir):
     if 'startDate' in funding:
         funding_info += f"""
         <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Start Date:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding['startDate']}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Start Date:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['startDate']}</td>
         </tr>
         """
     elif 'closeDate' in funding:
         funding_info += f"""
         <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Close Date:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding['closeDate']}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Close Date:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['closeDate']}</td>
         </tr>
         """
     
@@ -84,8 +84,8 @@ def generate_funding_page(funding, data, funding_dir):
     if 'amount' in funding:
         funding_info += f"""
         <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${funding['amount']:,}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${funding['amount']:,}</td>
         </tr>
         """
     elif 'fundingAmount' in funding:
@@ -93,17 +93,66 @@ def generate_funding_page(funding, data, funding_dir):
             amount = int(funding['fundingAmount'])
             funding_info += f"""
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${amount:,}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">${amount:,}</td>
             </tr>
             """
         except (ValueError, TypeError):
             funding_info += f"""
             <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{funding['fundingAmount']}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['fundingAmount']}</td>
             </tr>
             """
+    
+    # Add cost share if available
+    if 'costSharePercentage' in funding:
+        funding_info += f"""
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Cost Share:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['costSharePercentage']}</td>
+        </tr>
+        """
+    
+    # Add solicitation number if available
+    if 'solicitationNumber' in funding:
+        funding_info += f"""
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Solicitation Number:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['solicitationNumber']}</td>
+        </tr>
+        """
+    
+    # Add status if available
+    if 'status' in funding:
+        status_value = funding['status']
+        status_color = "#4a89ff"  # Default blue
+        if status_value == "Awarded":
+            status_color = "#43a047"  # Green
+        elif status_value == "Closed":
+            status_color = "#e53935"  # Red
+        elif status_value == "Pursuing":
+            status_color = "#ff9800"  # Orange
+        elif status_value == "Reshaping":
+            status_color = "#9c27b0"  # Purple
+            
+        funding_info += f"""
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Status:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">
+                <span style="display: inline-block; padding: 4px 8px; background-color: {status_color}; color: white; border-radius: 4px;">{status_value}</span>
+            </td>
+        </tr>
+        """
+    
+    # Add period of performance if available
+    if 'periodOfPerformance' in funding and funding['periodOfPerformance']:
+        funding_info += f"""
+        <tr>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;"><strong>Period of Performance:</strong></td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">{funding['periodOfPerformance']}</td>
+        </tr>
+        """
     
     # Close the table
     funding_info += """
@@ -432,6 +481,8 @@ def generate_funding_page(funding, data, funding_dir):
 
 def generate_funding_summary(data, funding_dir):
     """Generate a summary page for all funding opportunities"""
+    from datetime import datetime
+    
     # Create a figure for funding distribution by type
     if 'fundingOpportunities' in data:
         funding_types = {}
@@ -472,6 +523,55 @@ def generate_funding_summary(data, funding_dir):
         p1.xgrid.grid_line_color = None
         p1.xaxis.major_label_orientation = 45
         
+        # Create a figure for funding distribution by status
+        funding_statuses = {}
+        for funding in data['fundingOpportunities']:
+            funding_status = funding.get('status', 'Unknown')
+            funding_statuses[funding_status] = funding_statuses.get(funding_status, 0) + 1
+        
+        # Create a figure for funding status distribution
+        p3 = figure(
+            title="Funding Opportunities by Status",
+            x_range=list(funding_statuses.keys()),
+            width=600,
+            height=400,
+            toolbar_location=None,
+            tools=""
+        )
+        
+        # Define status colors
+        status_colors = {
+            "Considering": "#4a89ff",  # Blue
+            "Pursuing": "#ff9800",     # Orange
+            "Closed": "#e53935",       # Red
+            "Awarded": "#43a047",      # Green
+            "Reshaping": "#9c27b0",    # Purple
+            "Unknown": "#9e9e9e"       # Gray
+        }
+        
+        # Add bars
+        source3 = ColumnDataSource(data=dict(
+            statuses=list(funding_statuses.keys()),
+            counts=list(funding_statuses.values()),
+            colors=[status_colors.get(status, "#9e9e9e") for status in funding_statuses.keys()]
+        ))
+        
+        p3.vbar(
+            x='statuses',
+            top='counts',
+            width=0.5,
+            source=source3,
+            fill_color='colors',
+            alpha=0.8
+        )
+        
+        # Customize appearance
+        p3.title.text_font_size = '14pt'
+        p3.xaxis.axis_label = "Status"
+        p3.yaxis.axis_label = "Number of Opportunities"
+        p3.xgrid.grid_line_color = None
+        p3.xaxis.major_label_orientation = 45
+        
         # Create a figure for funding distribution by source
         funding_sources = {}
         for funding in data['fundingOpportunities']:
@@ -511,63 +611,206 @@ def generate_funding_summary(data, funding_dir):
         p2.xgrid.grid_line_color = None
         p2.xaxis.major_label_orientation = 45
         
-        # Create funding list section
-        funding_list = "<div style='margin-top: 20px;'><h2>All Funding Opportunities</h2><ul>"
-        for funding in sorted(data['fundingOpportunities'], key=lambda x: x.get('name', x.get('announcementName', ''))):
+        # Get current date for filtering upcoming opportunities
+        current_date = datetime.now()
+        
+        # Separate upcoming and past opportunities
+        upcoming_opportunities = []
+        all_opportunities = []
+        
+        for funding in data['fundingOpportunities']:
             funding_name = funding.get('name', funding.get('announcementName', 'Unknown'))
             funding_id = funding['id']
-            funding_list += f"<li><a href='funding_{funding_id}.html'>{funding_name} ({funding_id})</a>"
+            funding_type = funding.get('type', funding.get('pursuitType', 'Unknown'))
             
-            # Add type and amount if available
-            funding_details = []
-            funding_type = funding.get('type', funding.get('pursuitType', None))
-            if funding_type:
-                funding_details.append(f"Type: {funding_type}")
+            # Get close date if available
+            close_date_str = funding.get('closeDate', '')
+            close_date = None
+            is_upcoming = True
             
+            if close_date_str:
+                try:
+                    close_date = datetime.strptime(close_date_str, "%Y-%m-%d")
+                    is_upcoming = close_date > current_date
+                except (ValueError, TypeError):
+                    pass
+            
+            # Get funding amount
             funding_amount = None
             if 'amount' in funding:
                 funding_amount = funding['amount']
             elif 'fundingAmount' in funding:
                 try:
-                    funding_amount = int(funding['fundingAmount'])
-                except (ValueError, TypeError):
+                    if funding['fundingAmount'] and funding['fundingAmount'].strip():
+                        amount_str = funding['fundingAmount'].replace('$', '').replace(',', '')
+                        funding_amount = int(amount_str)
+                except (ValueError, TypeError, AttributeError):
                     funding_amount = funding['fundingAmount']
             
+            # Format amount for display
+            amount_display = 'N/A'
             if funding_amount is not None:
                 if isinstance(funding_amount, (int, float)):
-                    funding_details.append(f"Amount: ${funding_amount:,}")
+                    amount_display = f"${funding_amount:,}"
                 else:
-                    funding_details.append(f"Amount: {funding_amount}")
+                    amount_display = funding_amount
             
-            # Add pursuit count if available
-            if 'pursuits' in funding and funding['pursuits']:
-                pursuit_count = len(funding['pursuits'])
-                funding_details.append(f"Pursuits: {pursuit_count}")
+            # Get cost share if available
+            cost_share = funding.get('costSharePercentage', 'N/A')
             
-            if funding_details:
-                funding_list += f" - {', '.join(funding_details)}"
+            # Get status if available
+            status = funding.get('status', 'N/A')
             
-            funding_list += "</li>"
-        funding_list += "</ul></div>"
+            # Get period of performance if available
+            period_of_performance = funding.get('periodOfPerformance', 'N/A')
+            
+            # Get pursuit count
+            pursuit_count = len(funding.get('pursuits', [])) if 'pursuits' in funding else 0
+            
+            # Create opportunity data
+            opportunity_data = {
+                'id': funding_id,
+                'name': funding_name,
+                'type': funding_type,
+                'status': status,
+                'close_date': close_date_str,
+                'period_of_performance': period_of_performance,
+                'amount': amount_display,
+                'cost_share': cost_share,
+                'pursuit_count': pursuit_count,
+                'is_upcoming': is_upcoming
+            }
+            
+            all_opportunities.append(opportunity_data)
+            if is_upcoming:
+                upcoming_opportunities.append(opportunity_data)
+        
+        # Sort opportunities by close date (if available)
+        upcoming_opportunities.sort(key=lambda x: x['close_date'] if x['close_date'] else '9999-12-31')
+        all_opportunities.sort(key=lambda x: x['close_date'] if x['close_date'] else '9999-12-31')
+        
+        # Create upcoming opportunities section
+        upcoming_section = """
+        <div style="margin-top: 30px;">
+            <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Upcoming Funding Opportunities</h2>
+        """
+        
+        if upcoming_opportunities:
+            upcoming_section += """
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <thead>
+                        <tr style="background-color: #3498db; color: white;">
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Name</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Type</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Close Date</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Period of Performance</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Amount</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Cost Share</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Pursuits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+            
+            for i, opp in enumerate(upcoming_opportunities):
+                row_class = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+                upcoming_section += f"""
+                <tr style="{row_class}">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><a href="funding_{opp['id']}.html" style="color: #3498db; font-weight: bold;">{opp['name']}</a></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['type']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['status']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['close_date']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['period_of_performance']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['amount']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['cost_share']}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{opp['pursuit_count']}</td>
+                </tr>
+                """
+            
+            upcoming_section += """
+                    </tbody>
+                </table>
+            </div>
+            """
+        else:
+            upcoming_section += """
+            <p style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #3498db; margin: 20px 0;">
+                No upcoming funding opportunities found.
+            </p>
+            """
+        
+        upcoming_section += "</div>"
+        
+        # Create all opportunities section
+        all_opps_section = """
+        <div style="margin-top: 40px;">
+            <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">All Funding Opportunities</h2>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <thead>
+                        <tr style="background-color: #3498db; color: white;">
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Name</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Type</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Close Date</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Period of Performance</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Amount</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Cost Share</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Pursuits</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        """
+        
+        for i, opp in enumerate(all_opportunities):
+            row_class = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            status_style = "color: #27ae60; font-weight: bold;" if opp['is_upcoming'] else "color: #7f8c8d;"
+            status_text = "Upcoming" if opp['is_upcoming'] else "Past"
+            
+            all_opps_section += f"""
+            <tr style="{row_class}">
+                <td style="padding: 10px; border: 1px solid #ddd;"><a href="funding_{opp['id']}.html" style="color: #3498db; font-weight: bold;">{opp['name']}</a></td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['type']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['status']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['close_date']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['period_of_performance']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['amount']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['cost_share']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{opp['pursuit_count']}</td>
+                <td style="padding: 10px; border: 1px solid #ddd; {status_style}">{status_text}</td>
+            </tr>
+            """
+        
+        all_opps_section += """
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        """
         
         # Create header
         header = """
-        <div style="margin-bottom: 20px;">
-            <h1>Funding Opportunities Summary</h1>
-            <p>This page provides an overview of all funding opportunities and their distributions.</p>
-            <p><a href="../index.html">Back to Dashboard</a> | <a href="pursuits_summary.html">View All Pursuits</a></p>
+        <div style="margin-bottom: 30px;">
+            <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 15px;">Funding Opportunities Summary</h1>
+            <p style="font-size: 16px; color: #555;">This page provides an overview of all funding opportunities and their distributions.</p>
+            <p><a href="../index.html" style="color: #3498db; text-decoration: none; font-weight: bold;">Back to Dashboard</a> | <a href="pursuits_summary.html" style="color: #3498db; text-decoration: none; font-weight: bold;">View All Pursuits</a></p>
         </div>
         """
         
         # Combine all elements
         header_div = Div(text=header, width=1200)
-        funding_list_div = Div(text=funding_list, width=1200)
+        upcoming_div = Div(text=upcoming_section, width=1200)
+        all_opps_div = Div(text=all_opps_section, width=1200)
         
         # Create layout
         layout_obj = layout([
             [header_div],
-            [p1, p2],
-            [funding_list_div]
+            [p1, p2, p3],
+            [upcoming_div],
+            [all_opps_div]
         ])
         
         # Output to file
@@ -603,255 +846,99 @@ def generate_funding_summary(data, funding_dir):
             f.write(html_content)
 
 def generate_funding_distribution_charts(data, funding_dir):
-    """Generate distribution charts for funding opportunities"""
-    if 'fundingOpportunities' in data:
-        # Create a figure for funding amount by type
-        funding_by_type = {}
-        
-        for funding in data['fundingOpportunities']:
-            funding_type = funding.get('type', funding.get('pursuitType', 'Unknown'))
-            
-            # Get amount from either 'amount' or 'fundingAmount' field
-            amount = 0
-            if 'amount' in funding:
-                amount = funding['amount']
-            elif 'fundingAmount' in funding:
-                try:
-                    amount = int(funding['fundingAmount'])
-                except (ValueError, TypeError):
-                    try:
-                        # Try to extract numeric value if it's a string like "$100,000"
-                        amount_str = funding['fundingAmount'].replace('$', '').replace(',', '')
-                        amount = int(amount_str)
-                    except (ValueError, TypeError, AttributeError):
-                        amount = 0
-            
-            if funding_type not in funding_by_type:
-                funding_by_type[funding_type] = 0
-            
-            funding_by_type[funding_type] += amount
-        
-        if funding_by_type:
-            # Sort by amount
-            sorted_types = sorted(funding_by_type.items(), key=lambda x: x[1], reverse=True)
-            types = [t[0] for t in sorted_types]
-            amounts = [t[1] for t in sorted_types]
-            
-            # Create a figure for funding amount by type
-            p = figure(
-                title="Total Funding Amount by Type",
-                x_range=types,
-                width=800,
-                height=400,
-                toolbar_location="above",
-                tools="pan,wheel_zoom,box_zoom,reset,save",
-            )
-            
-            # Add bars
-            source = ColumnDataSource(data=dict(
-                types=types,
-                amounts=amounts,
-                formatted_amounts=[f"${amount:,}" for amount in amounts],
-                colors=[Category10[10][i % 10] for i in range(len(types))]
-            ))
-            
-            p.vbar(
-                x='types',
-                top='amounts',
-                width=0.7,
-                source=source,
-                line_color="white",
-                fill_color='colors',
-                alpha=0.8
-            )
-            
-            # Customize appearance
-            p.title.text_font_size = '14pt'
-            p.xaxis.axis_label = "Funding Type"
-            p.yaxis.axis_label = "Total Amount ($)"
-            p.xgrid.grid_line_color = None
-            p.xaxis.major_label_orientation = 45
-            
-            # Add hover tool
-            hover = HoverTool()
-            hover.tooltips = [
-                ("Type", "@types"),
-                ("Amount", "@formatted_amounts")
-            ]
-            p.add_tools(hover)
-            
-            # Output to file
-            output_file(os.path.join(funding_dir, "funding_amount_by_type.html"))
-            save(p)
-        
-        # Create a timeline of all funding opportunities
-        funding_timeline = []
-        
-        for funding in data['fundingOpportunities']:
-            start_date = None
-            end_date = None
-            
-            # Try to get start date
-            if 'startDate' in funding:
-                try:
-                    start_date = datetime.strptime(funding['startDate'], "%Y-%m-%d")
-                except (ValueError, TypeError):
-                    pass
-            
-            # Try to get end date from either endDate or closeDate
-            if 'endDate' in funding:
-                try:
-                    end_date = datetime.strptime(funding['endDate'], "%Y-%m-%d")
-                except (ValueError, TypeError):
-                    pass
-            elif 'closeDate' in funding:
-                try:
-                    end_date = datetime.strptime(funding['closeDate'], "%Y-%m-%d")
-                except (ValueError, TypeError):
-                    pass
-            
-            # If we have at least one date, add to timeline
-            if start_date or end_date:
-                # If we only have one date, use it for both start and end
-                if start_date and not end_date:
-                    end_date = start_date + timedelta(days=90)  # Default to 3 months duration
-                elif end_date and not start_date:
-                    start_date = end_date - timedelta(days=90)  # Default to 3 months duration
-                
-                funding_name = funding.get('name', funding.get('announcementName', 'Unknown'))
-                funding_type = funding.get('type', funding.get('pursuitType', 'Unknown'))
-                funding_source = funding.get('source', funding.get('customer', 'Unknown'))
-                
-                # Get amount
-                amount = 0
-                if 'amount' in funding:
-                    amount = funding['amount']
-                elif 'fundingAmount' in funding:
-                    try:
-                        amount = int(funding['fundingAmount'])
-                    except (ValueError, TypeError):
-                        try:
-                            # Try to extract numeric value if it's a string like "$100,000"
-                            amount_str = funding['fundingAmount'].replace('$', '').replace(',', '')
-                            amount = int(amount_str)
-                        except (ValueError, TypeError, AttributeError):
-                            amount = 0
-                
-                funding_timeline.append({
-                    'id': funding['id'],
-                    'name': funding_name,
-                    'type': funding_type,
-                    'source': funding_source,
-                    'amount': amount,
-                    'start_date': start_date,
-                    'end_date': end_date
-                })
-        
-        if funding_timeline:
-            # Sort by start date
-            funding_timeline.sort(key=lambda x: x['start_date'])
-            
-            # Create a figure for the funding timeline
-            p = figure(
-                title="Funding Opportunities Timeline",
-                x_axis_type="datetime",
-                width=1200,
-                height=400,
-                toolbar_location="above",
-                tools="pan,wheel_zoom,box_zoom,reset,save",
-            )
-            
-            # Customize appearance
-            p.title.text_font_size = '14pt'
-            p.xaxis.axis_label = "Timeline"
-            p.yaxis.axis_label = ""
-            p.grid.grid_line_alpha = 0.3
-            p.background_fill_color = "#f8f9fa"
-            
-            # Process funding opportunities
-            y_pos = 0
-            all_dates = []
-            
-            # Create a color map for funding types
-            funding_types = list(set(item['type'] for item in funding_timeline))
-            color_map = {}
-            for i, funding_type in enumerate(funding_types):
-                color_map[funding_type] = Category10[10][i % 10]
-            
-            # Add funding bars
-            for item in funding_timeline:
-                y_pos -= 1
-                all_dates.extend([item['start_date'], item['end_date']])
-                
-                # Create data source for the funding bar
-                bar_source = ColumnDataSource(data=dict(
-                    y=[y_pos],
-                    left=[item['start_date']],
-                    right=[item['end_date']],
-                    name=[item['name']],
-                    id=[item['id']],
-                    type=[item['type']],
-                    source=[item['source']],
-                    amount=[f"${item['amount']:,}" if item['amount'] else 'N/A'],
-                    start=[item['start_date']],
-                    end=[item['end_date']]
-                ))
-                
-                # Add funding bar
-                color = color_map.get(item['type'], '#95a5a6')
-                p.hbar(y='y', left='left', right='right', height=0.6, 
-                       color=color, alpha=0.8, source=bar_source)
-                
-                # Create data source for the label
-                label_source = ColumnDataSource(data=dict(
-                    x=[item['start_date']],
-                    y=[y_pos],
-                    text=[item['name']]
-                ))
-                
-                # Add label with offset to prevent overlap
-                p.text(x='x', y='y', text='text', source=label_source,
-                       text_font_size="9pt", text_baseline="middle", 
-                       x_offset=5, text_align="left")
-            
-            # Add hover tool
-            hover = HoverTool()
-            hover.tooltips = [
-                ("Name", "@name"),
-                ("ID", "@id"),
-                ("Type", "@type"),
-                ("Source", "@source"),
-                ("Amount", "@amount"),
-                ("Start", "@start{%F}"),
-                ("End", "@end{%F}")
-            ]
-            hover.formatters = {
-                "@start": "datetime",
-                "@end": "datetime"
-            }
-            p.add_tools(hover)
-            
-            # Set y-range with padding
-            p.y_range = Range1d(y_pos - 1, 1)
-            
-            # Set x-range based on all dates
-            if all_dates:
-                min_date = min(all_dates)
-                max_date = max(all_dates)
-                # Add some padding (3 months before and after)
-                min_date = min_date - timedelta(days=90)
-                max_date = max_date + timedelta(days=90)
-                p.x_range.start = min_date
-                p.x_range.end = max_date
-            
-            # Add legend
-            legend_items = []
-            for funding_type, color in color_map.items():
-                legend_items.append((funding_type, [p.hbar(y=0, left=0, right=0, height=0, color=color)]))
-            
-            legend = Legend(items=legend_items, location="top_right")
-            p.add_layout(legend)
-            
-            # Output to file
-            output_file(os.path.join(funding_dir, "funding_timeline.html"))
-            save(p) 
+    """Generate charts showing the distribution of funding opportunities"""
+    print("Generating funding distribution charts...")
+    
+    if 'fundingOpportunities' not in data or not data['fundingOpportunities']:
+        return
+    
+    # Create a figure for funding distribution by type
+    funding_types = {}
+    for funding in data['fundingOpportunities']:
+        funding_type = funding.get('type', funding.get('pursuitType', 'Unknown'))
+        funding_types[funding_type] = funding_types.get(funding_type, 0) + 1
+    
+    # Create a figure for funding distribution by status
+    funding_statuses = {}
+    for funding in data['fundingOpportunities']:
+        funding_status = funding.get('status', 'Unknown')
+        funding_statuses[funding_status] = funding_statuses.get(funding_status, 0) + 1
+    
+    # Create a figure for funding distribution by source
+    funding_sources = {}
+    for funding in data['fundingOpportunities']:
+        funding_source = funding.get('source', funding.get('customer', 'Unknown'))
+        funding_sources[funding_source] = funding_sources.get(funding_source, 0) + 1
+    
+    # Create figures
+    fig, axs = plt.subplots(1, 3, figsize=(18, 6))
+    
+    # Plot funding types
+    axs[0].bar(funding_types.keys(), funding_types.values(), color='skyblue')
+    axs[0].set_title('Funding Opportunities by Type')
+    axs[0].set_xlabel('Type')
+    axs[0].set_ylabel('Count')
+    axs[0].tick_params(axis='x', rotation=45)
+    
+    # Plot funding statuses
+    status_colors = {
+        "Considering": "#4a89ff",  # Blue
+        "Pursuing": "#ff9800",     # Orange
+        "Closed": "#e53935",       # Red
+        "Awarded": "#43a047",      # Green
+        "Reshaping": "#9c27b0",    # Purple
+        "Unknown": "#9e9e9e"       # Gray
+    }
+    
+    status_colors_list = [status_colors.get(status, "#9e9e9e") for status in funding_statuses.keys()]
+    axs[1].bar(funding_statuses.keys(), funding_statuses.values(), color=status_colors_list)
+    axs[1].set_title('Funding Opportunities by Status')
+    axs[1].set_xlabel('Status')
+    axs[1].set_ylabel('Count')
+    axs[1].tick_params(axis='x', rotation=45)
+    
+    # Plot funding sources
+    axs[2].bar(funding_sources.keys(), funding_sources.values(), color='lightgreen')
+    axs[2].set_title('Funding Opportunities by Source')
+    axs[2].set_xlabel('Source')
+    axs[2].set_ylabel('Count')
+    axs[2].tick_params(axis='x', rotation=45)
+    
+    # Adjust layout
+    plt.tight_layout()
+    
+    # Save the figure
+    chart_path = os.path.join(funding_dir, 'funding_distribution.png')
+    plt.savefig(chart_path, dpi=100, bbox_inches='tight')
+    plt.close()
+    
+    # Create HTML page
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Funding Distribution</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
+            h1 {{ color: #333; }}
+            a {{ color: #0066cc; text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            .container {{ max-width: 1200px; margin: 0 auto; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Funding Distribution</h1>
+            <p>This page shows the distribution of funding opportunities.</p>
+            <p><a href="../index.html">Back to Dashboard</a></p>
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="funding_distribution.png" alt="Funding Distribution Charts" style="max-width: 100%; border: 1px solid #ddd;">
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Write to file
+    with open(os.path.join(funding_dir, "funding_distribution.html"), 'w') as f:
+        f.write(html_content) 

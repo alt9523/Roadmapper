@@ -8,6 +8,10 @@ from bokeh.layouts import column, row, layout, gridplot
 from bokeh.palettes import Category10, Spectral6
 from bokeh.transform import factor_cmap
 import numpy as np
+import json
+
+# Import the aligned Sankey diagram generator
+from modules.relationship_viz_aligned import generate_sankey_diagram
 
 def generate_relationship_visualizations(data, output_dir):
     """Generate visualizations for relationships between different entities"""
@@ -116,9 +120,6 @@ def generate_network_graph(data, relationship_dir):
                         if 'fundingID' in task and task['fundingID'] == funding['id']:
                             G.add_edge(funding['id'], product['id'], weight=1, style='dotted')
     
-    # Create the figure with a white background
-    plt.figure(figsize=(20, 12), facecolor='white')
-    
     # Use multipartite layout to organize nodes by layer
     pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
     
@@ -140,83 +141,305 @@ def generate_network_graph(data, relationship_dir):
             # Adjust vertical position
             pos[node][1] = (idx / (layer_counts[layer] - 1) - 0.5) * 0.9 if layer_counts[layer] > 1 else 0
     
-    # Set node colors and sizes based on type
-    node_colors = []
+    # Convert positions to a format Bokeh can use
+    # Bokeh's plotting is reversed compared to nx/matplotlib, so we need to adjust
+    node_x = []
+    node_y = []
+    node_ids = []
+    node_labels = []
+    node_types = []
     node_sizes = []
+    node_colors = []
     for node in G.nodes():
+        node_ids.append(node)
+        node_labels.append(G.nodes[node]['label'])
+        node_types.append(G.nodes[node]['type'])
+        node_x.append(pos[node][0] * 1000)  # Scale for better visualization
+        node_y.append(pos[node][1] * 600)   # Scale for better visualization
+        
+        # Set node sizes and colors based on type
         node_type = G.nodes[node]['type']
         if node_type == 'program':
             node_colors.append('#1f77b4')  # Blue
-            node_sizes.append(800)
+            node_sizes.append(15)
         elif node_type == 'product':
             node_colors.append('#ff7f0e')  # Orange
-            node_sizes.append(700)
+            node_sizes.append(13)
         elif node_type == 'material':
             node_colors.append('#2ca02c')  # Green
-            node_sizes.append(600)
+            node_sizes.append(11)
         elif node_type == 'supplier':
             node_colors.append('#d62728')  # Red
-            node_sizes.append(500)
+            node_sizes.append(9)
         elif node_type == 'post-supplier':
             node_colors.append('#9467bd')  # Purple
-            node_sizes.append(500)
+            node_sizes.append(9)
         elif node_type == 'funding':
             node_colors.append('#8c564b')  # Brown
-            node_sizes.append(600)
+            node_sizes.append(11)
         else:
             node_colors.append('#7f7f7f')  # Gray
-            node_sizes.append(400)
+            node_sizes.append(8)
     
-    # Draw edges with different styles based on edge attributes
+    # Create edge data
+    edge_x0 = []
+    edge_y0 = []
+    edge_x1 = []
+    edge_y1 = []
+    edge_colors = []
+    edge_widths = []
+    edge_dashes = []
+    edge_alphas = []
+    
     for edge in G.edges(data=True):
         start, end, attrs = edge
+        
+        # Get positions of start and end nodes
+        x0, y0 = pos[start][0] * 1000, pos[start][1] * 600
+        x1, y1 = pos[end][0] * 1000, pos[end][1] * 600
+        
+        # Add a slight curve by offsetting the x,y values
+        # For a quadratic curve, we need a control point
+        control_x = (x0 + x1) / 2 + (y1 - y0) * 0.1  # Offset in x direction based on y diff
+        control_y = (y0 + y1) / 2 + (x1 - x0) * 0.1  # Offset in y direction based on x diff
+        
+        # Store edge data
+        edge_x0.append(x0)
+        edge_y0.append(y0)
+        edge_x1.append(x1)
+        edge_y1.append(y1)
+        
+        # Set edge attributes based on style
         style = attrs.get('style', 'solid')
         if style == 'dashed':
-            nx.draw_networkx_edges(
-                G, pos, 
-                edgelist=[(start, end)],
-                width=1.2, 
-                alpha=0.7, 
-                edge_color='gray', 
-                arrows=True,
-                arrowsize=15,
-                style='dashed',
-                connectionstyle='arc3,rad=0.1'  # Curved edges
-            )
+            edge_colors.append('gray')
+            edge_widths.append(1.2)
+            edge_dashes.append([5, 3])
+            edge_alphas.append(0.7)
         elif style == 'dotted':
-            nx.draw_networkx_edges(
-                G, pos, 
-                edgelist=[(start, end)],
-                width=1.2, 
-                alpha=0.7, 
-                edge_color='gray', 
-                arrows=True,
-                arrowsize=15,
-                style='dotted',
-                connectionstyle='arc3,rad=0.1'  # Curved edges
-            )
+            edge_colors.append('gray')
+            edge_widths.append(1.2)
+            edge_dashes.append([2, 2])
+            edge_alphas.append(0.7)
         else:
-            nx.draw_networkx_edges(
-                G, pos, 
-                edgelist=[(start, end)],
-                width=1.2, 
-                alpha=0.7, 
-                edge_color='gray', 
-                arrows=True,
-                arrowsize=15,
-                connectionstyle='arc3,rad=0.1'  # Curved edges
-            )
+            edge_colors.append('gray')
+            edge_widths.append(1.5)
+            edge_dashes.append([])
+            edge_alphas.append(0.7)
     
-    # Draw nodes
-    nx.draw_networkx_nodes(
-        G, pos, 
-        node_size=node_sizes, 
-        node_color=node_colors, 
-        alpha=0.9,
-        edgecolors='black',
-        linewidths=1
+    # Create a Bokeh figure
+    # Set up the output file
+    output_file(os.path.join(relationship_dir, "network_graph.html"))
+    
+    # Create a plot with a transparent background
+    p = figure(
+        title="Roadmap Relationships Network",
+        width=1200, 
+        height=800,
+        x_range=(-50, 1050),
+        y_range=(-350, 350),
+        tools="pan,wheel_zoom,box_zoom,reset,save",
+        toolbar_location="right",
     )
     
+    # Set plot properties
+    p.title.text_font_size = "20px"
+    p.axis.visible = False
+    p.grid.visible = False
+    p.outline_line_color = None
+    
+    # Add hover tool for nodes
+    node_hover = HoverTool(
+        tooltips=[
+            ("ID", "@id"),
+            ("Name", "@label"),
+            ("Type", "@type")
+        ],
+        renderers=[],  # Will be set later
+    )
+    p.add_tools(node_hover)
+    
+    # Create ColumnDataSource for nodes
+    node_source = ColumnDataSource(data=dict(
+        x=node_x,
+        y=node_y,
+        id=node_ids,
+        label=node_labels,
+        type=node_types,
+        size=node_sizes,
+        color=node_colors
+    ))
+    
+    # Add nodes to the plot
+    node_renderer = p.scatter(
+        x="x", y="y", 
+        source=node_source,
+        size="size", 
+        fill_color="color", 
+        line_color="black",
+        line_width=1,
+        alpha=0.9,
+        marker="circle"
+    )
+    
+    # Add hover tool to node renderer
+    node_hover.renderers = [node_renderer]
+    
+    # Add edges
+    for i in range(len(edge_x0)):
+        # Create a quadratic Bezier curve for each edge
+        # Use line_dash and line_width from our calculated arrays
+        p.line(
+            [edge_x0[i], (edge_x0[i] + edge_x1[i]) / 2, edge_x1[i]],
+            [edge_y0[i], (edge_y0[i] + edge_y1[i]) / 2, edge_y1[i]],
+            line_color=edge_colors[i],
+            line_width=edge_widths[i],
+            line_dash=edge_dashes[i],
+            line_alpha=edge_alphas[i]
+        )
+        
+        # Add an arrow at the end of the edge
+        # Create a small triangle at the end
+        arrow_length = 10
+        arrow_width = 5
+        
+        # Calculate direction vector
+        dx = edge_x1[i] - edge_x0[i]
+        dy = edge_y1[i] - edge_y0[i]
+        length = (dx**2 + dy**2)**0.5
+        if length > 0:
+            dx = dx / length
+            dy = dy / length
+        
+        # Ensure we place the arrow near the end but not exactly at it (for curved edges)
+        factor = 0.9
+        tip_x = edge_x0[i] + dx * length * factor
+        tip_y = edge_y0[i] + dy * length * factor
+        
+        # Calculate perpendicular vector for arrow width
+        perp_dx = -dy
+        perp_dy = dx
+        
+        # Triangle points
+        x0, y0 = tip_x, tip_y
+        x1, y1 = tip_x - arrow_length * dx + arrow_width * perp_dx, tip_y - arrow_length * dy + arrow_width * perp_dy
+        x2, y2 = tip_x - arrow_length * dx - arrow_width * perp_dx, tip_y - arrow_length * dy - arrow_width * perp_dy
+        
+        # Add the arrow as a triangle
+        p.scatter(
+            x=[x0, x1, x2],
+            y=[y0, y1, y2],
+            marker="triangle",
+            fill_color=edge_colors[i],
+            line_color=None,
+            fill_alpha=edge_alphas[i],
+            size=8
+        )
+    
+    # Add column headers for the different layers
+    header_labels = ["Programs", "Products", "Material Systems", "Suppliers", "Funding"]
+    header_xs = [0, 250, 500, 750, 1000]  # Adjust these based on the x-range
+    
+    for i, label in enumerate(header_labels):
+        # Add header text
+        header_text = Label(
+            x=header_xs[i], y=320,
+            text=label,
+            text_font_size="16px",
+            text_align="center",
+            text_baseline="middle",
+            text_font_style="bold"
+        )
+        p.add_layout(header_text)
+        
+        # Add vertical separator line
+        if i > 0:
+            separator = Span(
+                location=(header_xs[i-1] + header_xs[i])/2,
+                dimension='height',
+                line_color='lightgray',
+                line_dash='dashed',
+                line_width=1
+            )
+            p.add_layout(separator)
+    
+    # Add a legend
+    legend_items = []
+    for node_type, color, label in [
+        ('program', '#1f77b4', 'Programs'),
+        ('product', '#ff7f0e', 'Products'),
+        ('material', '#2ca02c', 'Material Systems'),
+        ('supplier', '#d62728', 'Printing Suppliers'),
+        ('post-supplier', '#9467bd', 'Post-Processing Suppliers'),
+        ('funding', '#8c564b', 'Funding Opportunities')
+    ]:
+        # Create a renderer for this legend item (just a dummy scatter point outside the visible area)
+        dummy_renderer = p.scatter(
+            x=[-100], y=[-100],  # Outside visible area
+            size=10,
+            color=color,
+            alpha=0.8,
+            marker="circle"
+        )
+        # Add to legend items
+        legend_items.append((label, [dummy_renderer]))
+    
+    # Create and add the legend
+    legend = Legend(items=legend_items, location="center")
+    legend.orientation = "horizontal"
+    legend.spacing = 20
+    p.add_layout(legend, 'below')
+    
+    # Export the network graph as a static image for the dashboard
+    # We need to use a different approach since Bokeh doesn't directly support exporting as PNG
+    # We'll generate an HTML with instructions to save the image
+    
+    # Save the interactive Bokeh visualization
+    save(p)
+    
+    # Create a simple static version as PNG for the dashboard
+    # Use nx.draw to create a static image
+    plt.figure(figsize=(12, 8), facecolor='white')
+    
+    # Draw nodes with colors and sizes based on type
+    for node_type, color in [
+        ('program', '#1f77b4'),
+        ('product', '#ff7f0e'),
+        ('material', '#2ca02c'),
+        ('supplier', '#d62728'),
+        ('post-supplier', '#9467bd'),
+        ('funding', '#8c564b')
+    ]:
+        nodelist = [node for node in G.nodes() if G.nodes[node]['type'] == node_type]
+        if nodelist:
+            size = 800 if node_type == 'program' else 700 if node_type == 'product' else 600
+            nx.draw_networkx_nodes(
+                G, pos, 
+                nodelist=nodelist,
+                node_size=size, 
+                node_color=color, 
+                alpha=0.9,
+                edgecolors='black',
+                linewidths=1
+            )
+    
+    # Draw edges with different styles
+    for style, line_style in [('dashed', 'dashed'), ('dotted', 'dotted'), (None, 'solid')]:
+        edgelist = [(u, v) for u, v, d in G.edges(data=True) if d.get('style', None) == style]
+        if edgelist:
+            nx.draw_networkx_edges(
+                G, pos, 
+                edgelist=edgelist,
+                width=1.2, 
+                alpha=0.7, 
+                edge_color='gray', 
+                arrows=True,
+                arrowsize=15,
+                style=line_style,
+                connectionstyle='arc3,rad=0.1'  # Curved edges
+            )
+    
+    # Draw labels with a white background
     # Add labels with white background for better readability
     labels = {node: G.nodes[node]['label'] for node in G.nodes()}
     
@@ -231,41 +454,12 @@ def generate_network_graph(data, relationship_dir):
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.9)
         )
     
-    # Add column headers
-    plt.text(0.0, 1.05, "Programs", fontsize=16, ha='center', fontweight='bold')
-    plt.text(0.25, 1.05, "Products", fontsize=16, ha='center', fontweight='bold')
-    plt.text(0.5, 1.05, "Material Systems", fontsize=16, ha='center', fontweight='bold')
-    plt.text(0.75, 1.05, "Suppliers", fontsize=16, ha='center', fontweight='bold')
-    plt.text(1.0, 1.05, "Funding", fontsize=16, ha='center', fontweight='bold')
-    
-    # Add a legend
-    legend_elements = [
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#1f77b4', markersize=15, label='Programs'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#ff7f0e', markersize=15, label='Products'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#2ca02c', markersize=15, label='Material Systems'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#d62728', markersize=15, label='Printing Suppliers'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#9467bd', markersize=15, label='Post-Processing Suppliers'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#8c564b', markersize=15, label='Funding Opportunities')
-    ]
-    plt.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=3)
-    
     # Add title and remove axes
     plt.title('Roadmap Relationships Network', fontsize=20, pad=20)
     plt.axis('off')
     
-    # Add a grid background to separate the columns
-    plt.axvline(x=0.125, color='lightgray', linestyle='--', alpha=0.5)
-    plt.axvline(x=0.375, color='lightgray', linestyle='--', alpha=0.5)
-    plt.axvline(x=0.625, color='lightgray', linestyle='--', alpha=0.5)
-    plt.axvline(x=0.875, color='lightgray', linestyle='--', alpha=0.5)
-    
-    # Save the figure with high resolution
-    plt.tight_layout()
+    # Save the static image
     plt.savefig(os.path.join(relationship_dir, "network_graph.png"), dpi=300, bbox_inches='tight')
-    
-    # Also save as SVG for better quality
-    plt.savefig(os.path.join(relationship_dir, "network_graph.svg"), format='svg', bbox_inches='tight')
-    
     plt.close()
     
     # Create an HTML page to display the network graph
@@ -282,7 +476,17 @@ def generate_network_graph(data, relationship_dir):
             a:hover {{ text-decoration: underline; }}
             .container {{ max-width: 1200px; margin: 0 auto; }}
             .image-container {{ text-align: center; margin: 20px 0; }}
-            .image-container img {{ max-width: 100%; border: 1px solid #ddd; }}
+            .btn {{
+                display: inline-block;
+                padding: 8px 15px;
+                background-color: #0066cc;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+                margin: 10px;
+            }}
+            .btn:hover {{ background-color: #004c99; }}
         </style>
     </head>
     <body>
@@ -292,7 +496,11 @@ def generate_network_graph(data, relationship_dir):
             <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
             
             <div class="image-container">
-                <img src="network_graph.png" alt="Network Graph">
+                <iframe src="network_graph.html" width="100%" height="800px" frameborder="0"></iframe>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="network_graph.html" class="btn" target="_blank">Open Interactive Graph in New Tab</a>
             </div>
             
             <h2>Legend</h2>
@@ -311,174 +519,31 @@ def generate_network_graph(data, relationship_dir):
                 <li><strong>Dashed lines</strong>: Post-processing relationships</li>
                 <li><strong>Dotted lines</strong>: Funding relationships</li>
             </ul>
-        </div>
-    </body>
-    </html>
-    """
-    
-    with open(os.path.join(relationship_dir, "network_graph.html"), 'w') as f:
-        f.write(html_content)
-    
-    print(f"Network graph generated in '{relationship_dir}/network_graph.html'")
-
-def generate_sankey_diagram(data, relationship_dir):
-    """Generate a Sankey diagram showing flows between different entities"""
-    print("Generating Sankey diagram...")
-    
-    # Create a figure
-    plt.figure(figsize=(15, 10))
-    
-    # Initialize the Sankey diagram
-    sankey = Sankey(ax=plt.gca(), scale=0.01, offset=0.2, head_angle=120, margin=0.4, shoulder=0)
-    
-    # Collect all the flows
-    program_to_product = {}
-    product_to_material = {}
-    material_to_supplier = {}
-    
-    # Count program to product flows
-    for product in data.get('products', []):
-        for program_entry in product.get('programs', []):
-            program_id = None
-            if isinstance(program_entry, str):
-                program_id = program_entry
-            elif isinstance(program_entry, dict) and 'programID' in program_entry:
-                program_id = program_entry['programID']
-                
-            if program_id:
-                if program_id not in program_to_product:
-                    program_to_product[program_id] = 0
-                program_to_product[program_id] += 1
-    
-    # Count product to material flows
-    for product in data.get('products', []):
-        for material_entry in product.get('materialSystems', []):
-            material_id = None
-            if isinstance(material_entry, str):
-                material_id = material_entry
-            elif isinstance(material_entry, dict) and 'materialID' in material_entry:
-                material_id = material_entry['materialID']
-                
-            if material_id:
-                key = (product['id'], material_id)
-                if key not in product_to_material:
-                    product_to_material[key] = 0
-                product_to_material[key] += 1
-    
-    # Count material to supplier flows
-    for supplier in data.get('printingSuppliers', []):
-        if 'materialSystems' in supplier:
-            for material_entry in supplier['materialSystems']:
-                material_id = material_entry.get('materialID')
-                if material_id:
-                    key = (material_id, supplier['id'])
-                    if key not in material_to_supplier:
-                        material_to_supplier[key] = 0
-                    material_to_supplier[key] += 1
-    
-    # Add the first stage: Programs to Products
-    program_flows = [-sum(program_to_product.values())]  # Total outflow
-    
-    # Add the diagram
-    sankey.add(flows=program_flows, 
-               labels=['Programs'],
-               orientations=[0],
-               pathlengths=[0.25],
-               facecolor='#1f77b4')
-    
-    # Add the second stage: Products
-    product_inflow = sum(program_to_product.values())
-    product_outflow = sum(len(product.get('materialSystems', [])) for product in data.get('products', []))
-    product_flows = [product_inflow, -product_outflow]
-    
-    sankey.add(flows=product_flows,
-               labels=['Products'],
-               orientations=[0, 0],
-               pathlengths=[0.25, 0.25],
-               facecolor='#ff7f0e',
-               prior=0,
-               connect=(0, 0))
-    
-    # Add the third stage: Materials
-    material_inflow = product_outflow
-    material_outflow = sum(1 for supplier in data.get('printingSuppliers', []) 
-                          for material in supplier.get('materialSystems', []))
-    material_flows = [material_inflow, -material_outflow]
-    
-    sankey.add(flows=material_flows,
-               labels=['Materials'],
-               orientations=[0, 0],
-               pathlengths=[0.25, 0.25],
-               facecolor='#2ca02c',
-               prior=1,
-               connect=(1, 0))
-    
-    # Add the fourth stage: Suppliers
-    supplier_inflow = material_outflow
-    supplier_flows = [supplier_inflow]
-    
-    sankey.add(flows=supplier_flows,
-               labels=['Suppliers'],
-               orientations=[0],
-               pathlengths=[0.25],
-               facecolor='#d62728',
-               prior=2,
-               connect=(1, 0))
-    
-    # Finish the diagram
-    sankey.finish()
-    plt.title('Roadmap Relationships Flow Diagram', fontsize=16)
-    
-    # Save the figure
-    plt.savefig(os.path.join(relationship_dir, "sankey_diagram.png"), dpi=300, bbox_inches='tight')
-    plt.savefig(os.path.join(relationship_dir, "sankey_diagram.svg"), format='svg', bbox_inches='tight')
-    plt.close()
-    
-    # Create an HTML page to display the Sankey diagram
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Relationship Flow Diagram</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
-            h1 {{ color: #333; }}
-            h2, h3, h4 {{ color: #0066cc; }}
-            a {{ color: #0066cc; text-decoration: none; }}
-            a:hover {{ text-decoration: underline; }}
-            .container {{ max-width: 1200px; margin: 0 auto; }}
-            .image-container {{ text-align: center; margin: 20px 0; }}
-            .image-container img {{ max-width: 100%; border: 1px solid #ddd; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Relationship Flow Diagram (Sankey)</h1>
-            <p>This visualization shows the flow of relationships between different entities in the roadmap data.</p>
-            <p><a href="../index.html">Back to Dashboard</a> | <a href="relationship_summary.html">Back to Relationship Summary</a></p>
             
-            <div class="image-container">
-                <img src="sankey_diagram.png" alt="Sankey Diagram">
-            </div>
-            
-            <h2>Explanation</h2>
-            <p>The Sankey diagram shows the flow of relationships from Programs to Products to Materials to Suppliers. The width of each flow represents the number of connections between entities.</p>
-            
+            <p>Use the interactive controls to explore the network:</p>
             <ul>
-                <li><strong style="color: #1f77b4;">Programs</strong>: Space missions and projects</li>
-                <li><strong style="color: #ff7f0e;">Products</strong>: Components and systems being developed</li>
-                <li><strong style="color: #2ca02c;">Materials</strong>: Material systems used in products</li>
-                <li><strong style="color: #d62728;">Suppliers</strong>: Suppliers providing materials and services</li>
+                <li><strong>Pan</strong>: Click and drag to move around</li>
+                <li><strong>Zoom</strong>: Use mouse wheel or zoom tools</li>
+                <li><strong>Hover</strong>: Hover over nodes to see details</li>
+                <li><strong>Reset</strong>: Reset the view to default</li>
             </ul>
         </div>
     </body>
     </html>
     """
     
-    with open(os.path.join(relationship_dir, "sankey_diagram.html"), 'w') as f:
+    with open(os.path.join(relationship_dir, "network_graph_viewer.html"), 'w') as f:
         f.write(html_content)
     
-    print(f"Sankey diagram generated in '{relationship_dir}/sankey_diagram.html'")
+    print(f"Network graph generated in '{relationship_dir}/network_graph.html'")
+
+def generate_sankey_diagram(data, relationship_dir):
+    """Generate a Sankey diagram showing flows between different entities with aligned columns"""
+    # Import the aligned Sankey diagram generator
+    from modules.relationship_viz_aligned import generate_sankey_diagram as generate_aligned_sankey
+    
+    # Call the aligned version
+    generate_aligned_sankey(data, relationship_dir)
 
 def generate_relationship_summary(data, relationship_dir):
     """Generate a summary page for all relationship visualizations"""
@@ -492,9 +557,10 @@ def generate_relationship_summary(data, relationship_dir):
         <title>Relationship Visualizations Summary</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
-            h1 {{ color: #333; }}
-            h2, h3, h4 {{ color: #0066cc; }}
-            a {{ color: #0066cc; text-decoration: none; }}
+            h1 {{ color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }}
+            h2 {{ color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }}
+            h3, h4 {{ color: #2c3e50; }}
+            a {{ color: #3498db; text-decoration: none; }}
             a:hover {{ text-decoration: underline; }}
             .container {{ max-width: 1200px; margin: 0 auto; }}
             .card {{ 
@@ -503,6 +569,7 @@ def generate_relationship_summary(data, relationship_dir):
                 padding: 15px; 
                 margin-bottom: 20px;
                 background-color: #f9f9f9;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }}
             .card h2 {{ margin-top: 0; }}
             .card-grid {{
@@ -515,6 +582,27 @@ def generate_relationship_summary(data, relationship_dir):
                 height: auto;
                 border: 1px solid #ddd;
                 border-radius: 3px;
+            }}
+            table {{ 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-top: 15px; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }}
+            thead tr {{ 
+                background-color: #3498db; 
+                color: white; 
+            }}
+            th, td {{ 
+                padding: 12px; 
+                text-align: left; 
+                border: 1px solid #ddd; 
+            }}
+            tbody tr:nth-child(even) {{ 
+                background-color: #f2f9ff; 
+            }}
+            tbody tr:nth-child(odd) {{ 
+                background-color: #ffffff; 
             }}
         </style>
     </head>
