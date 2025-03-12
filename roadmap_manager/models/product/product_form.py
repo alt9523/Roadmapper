@@ -8,7 +8,6 @@ from .form_tabs.design_tools_tab import DesignToolsTab
 from .form_tabs.documentation_tab import DocumentationTab
 from .form_tabs.special_ndt_tab import SpecialNDTTab
 from .form_tabs.part_acceptance_tab import PartAcceptanceTab
-from .form_tabs.roadmap_tab import RoadmapTab
 from .form_tabs.milestones_tab import MilestonesTab
 from .form_tabs.business_case_tab import BusinessCaseTab
 import platform
@@ -90,7 +89,6 @@ class ProductForm:
             self.tabs['documentation'] = DocumentationTab(self)
             self.tabs['special_ndt'] = SpecialNDTTab(self)
             self.tabs['part_acceptance'] = PartAcceptanceTab(self)
-            self.tabs['roadmap'] = RoadmapTab(self)
             self.tabs['milestones'] = MilestonesTab(self)
             self.tabs['business_case'] = BusinessCaseTab(self)
             

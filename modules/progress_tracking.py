@@ -65,14 +65,17 @@ def generate_burndown_charts(data, progress_dir):
                     'entity_id': program.get('id', 'Unknown'),
                     'start': task.get('start', ''),
                     'end': task.get('end', ''),
-                    'status': task.get('status', 'Unknown')
+                    'status': task.get('status', 'Unknown'),
+                    'float': task.get('float', False),
+                    'additionalDetails': task.get('additionalDetails', '')
                 }
                 all_tasks.append(task_info)
     
     # Process product tasks
     for product in data.get('products', []):
-        if 'roadmap' in product and 'tasks' in product['roadmap']:
-            for task in product['roadmap']['tasks']:
+        # Process roadmap tasks
+        if 'roadmap' in product:
+            for task in product.get('roadmap', []):
                 task_info = {
                     'id': f"P{product['id']}_T{task.get('task', 'Unknown')}",
                     'name': task.get('task', 'Unknown'),
@@ -81,9 +84,83 @@ def generate_burndown_charts(data, progress_dir):
                     'entity_id': product.get('id', 'Unknown'),
                     'start': task.get('start', ''),
                     'end': task.get('end', ''),
-                    'status': task.get('status', 'Unknown')
+                    'status': task.get('status', 'Unknown'),
+                    'float': task.get('float', False),
+                    'additionalDetails': task.get('additionalDetails', '')
                 }
                 all_tasks.append(task_info)
+        
+        # Process design tools tasks
+        if 'designTools' in product:
+            for tool in product.get('designTools', []):
+                if isinstance(tool, dict):
+                    task_info = {
+                        'id': f"P{product['id']}_DT_{tool.get('name', 'Unknown')}",
+                        'name': tool.get('name', 'Unknown'),
+                        'entity_type': 'Design Tool',
+                        'entity_name': product.get('name', 'Unknown'),
+                        'entity_id': product.get('id', 'Unknown'),
+                        'start': tool.get('start', ''),
+                        'end': tool.get('end', ''),
+                        'status': tool.get('status', 'Unknown'),
+                        'float': tool.get('float', False),
+                        'additionalDetails': tool.get('additionalDetails', '')
+                    }
+                    all_tasks.append(task_info)
+        
+        # Process documentation tasks
+        if 'documentation' in product:
+            for doc in product.get('documentation', []):
+                if isinstance(doc, dict):
+                    task_info = {
+                        'id': f"P{product['id']}_DOC_{doc.get('name', 'Unknown')}",
+                        'name': doc.get('name', 'Unknown'),
+                        'entity_type': 'Documentation',
+                        'entity_name': product.get('name', 'Unknown'),
+                        'entity_id': product.get('id', 'Unknown'),
+                        'start': doc.get('start', ''),
+                        'end': doc.get('end', ''),
+                        'status': doc.get('status', 'Unknown'),
+                        'float': doc.get('float', False),
+                        'additionalDetails': doc.get('additionalDetails', '')
+                    }
+                    all_tasks.append(task_info)
+        
+        # Process special NDT tasks
+        if 'specialNDT' in product:
+            for ndt in product.get('specialNDT', []):
+                if isinstance(ndt, dict):
+                    task_info = {
+                        'id': f"P{product['id']}_NDT_{ndt.get('name', 'Unknown')}",
+                        'name': ndt.get('name', 'Unknown'),
+                        'entity_type': 'Special NDT',
+                        'entity_name': product.get('name', 'Unknown'),
+                        'entity_id': product.get('id', 'Unknown'),
+                        'start': ndt.get('startDate', ''),
+                        'end': ndt.get('endDate', ''),
+                        'status': ndt.get('status', 'Unknown'),
+                        'float': ndt.get('float', False),
+                        'additionalDetails': ndt.get('additionalDetails', '')
+                    }
+                    all_tasks.append(task_info)
+        
+        # Process part acceptance tasks
+        if 'partAcceptance' in product:
+            for acceptance in product.get('partAcceptance', []):
+                if isinstance(acceptance, dict):
+                    task_info = {
+                        'id': f"P{product['id']}_PA_{acceptance.get('name', 'Unknown')}",
+                        'name': acceptance.get('name', 'Unknown'),
+                        'entity_type': 'Part Acceptance',
+                        'entity_name': product.get('name', 'Unknown'),
+                        'entity_id': product.get('id', 'Unknown'),
+                        'start': acceptance.get('startDate', ''),
+                        'end': acceptance.get('endDate', ''),
+                        'status': acceptance.get('status', 'Unknown'),
+                        'float': acceptance.get('float', False),
+                        'additionalDetails': acceptance.get('additionalDetails', '')
+                    }
+                    all_tasks.append(task_info)
     
     # Process material system tasks
     for material in data.get('materialSystems', []):
@@ -97,157 +174,152 @@ def generate_burndown_charts(data, progress_dir):
                     'entity_id': material.get('id', 'Unknown'),
                     'start': task.get('startDate', ''),
                     'end': task.get('endDate', ''),
-                    'status': task.get('status', 'Unknown')
+                    'status': task.get('status', 'Unknown'),
+                    'float': task.get('float', False),
+                    'additionalDetails': task.get('additionalDetails', '')
                 }
                 all_tasks.append(task_info)
     
-    # Create a task status summary
-    status_counts = {
-        'Complete': 0,
-        'In Progress': 0,
-        'Planned': 0
-    }
+    # Filter out tasks without dates
+    valid_tasks = [t for t in all_tasks if t['start'] and t['end']]
     
-    for task in all_tasks:
-        status = task['status']
-        if status in status_counts:
-            status_counts[status] += 1
-        else:
-            status_counts[status] = 1
+    if not valid_tasks:
+        print("No valid tasks with dates found for burndown chart")
+        return
     
-    # Create a simulated burndown chart (since we don't have historical data)
-    today = datetime.now()
-    dates = [today - timedelta(days=x) for x in range(90, -1, -7)]  # Last 90 days
+    # Convert dates to datetime objects
+    for task in valid_tasks:
+        task['start_date'] = datetime.strptime(task['start'], "%Y-%m-%d")
+        task['end_date'] = datetime.strptime(task['end'], "%Y-%m-%d")
     
-    # Generate simulated data
-    total_tasks = sum(status_counts.values())
-    completed_tasks = []
-    remaining_tasks = []
+    # Create a DataFrame for analysis
+    df = pd.DataFrame(valid_tasks)
     
-    # Simulate a burndown trend
-    for i, date in enumerate(dates):
-        progress_ratio = i / len(dates)
-        completed = int(progress_ratio * status_counts['Complete'])
-        completed_tasks.append(completed)
-        remaining_tasks.append(total_tasks - completed)
+    # Calculate overall date range
+    min_date = df['start_date'].min()
+    max_date = df['end_date'].max()
+    date_range = pd.date_range(start=min_date, end=max_date, freq='MS')  # Monthly
     
-    # Create ideal trend line
-    ideal_remaining = []
-    for i, date in enumerate(dates):
-        progress_ratio = i / len(dates)
-        ideal = int(total_tasks * (1 - progress_ratio))
-        ideal_remaining.append(ideal)
+    # Count tasks by status and date
+    status_counts = {}
+    for status in df['status'].unique():
+        status_counts[status] = []
+        
+    # For each month, count tasks that should be complete by that time
+    for date in date_range:
+        for status in status_counts.keys():
+            count = len(df[(df['end_date'] <= date) & (df['status'] == status)])
+            status_counts[status].append(count)
     
-    # Convert dates to strings for Bokeh
-    date_strings = [date.strftime('%Y-%m-%d') for date in dates]
-    
-    # Create Bokeh figure
+    # Create a stacked area chart
     p = figure(
-        title="Task Burndown Chart",
-        x_range=date_strings,
-        width=800,
-        height=400,
-        toolbar_location="right",
+        title="Task Completion Over Time",
+        x_axis_type="datetime",
+        width=1000,
+        height=500,
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
     
-    # Add hover tool
-    hover = HoverTool(
-        tooltips=[
-            ("Date", "@x"),
-            ("Tasks", "@y"),
-        ]
-    )
-    p.add_tools(hover)
+    # Customize appearance
+    p.title.text_font_size = '16pt'
+    p.xaxis.axis_label = "Date"
+    p.yaxis.axis_label = "Number of Tasks"
+    p.grid.grid_line_alpha = 0.3
     
-    # Plot the data
-    source_actual = ColumnDataSource(data=dict(
-        x=date_strings,
-        y=remaining_tasks,
-        completed=completed_tasks
-    ))
-    
-    source_ideal = ColumnDataSource(data=dict(
-        x=date_strings,
-        y=ideal_remaining
-    ))
-    
-    # Plot actual burndown
-    p.line('x', 'y', source=source_actual, line_width=3, line_color='#0066cc', legend_label="Actual Remaining")
-    p.scatter('x', 'y', source=source_actual, size=8, color='#0066cc')
-    
-    # Plot ideal burndown
-    p.line('x', 'y', source=source_ideal, line_width=2, line_color='#ff7f0e', line_dash='dashed', legend_label="Ideal Burndown")
-    
-    # Style the plot
-    p.title.text_font_size = "16px"
-    p.xaxis.major_label_orientation = 1.2
-    p.legend.location = "top_right"
-    p.legend.click_policy = "hide"
-    p.yaxis.axis_label = "Remaining Tasks"
-    
-    # Create a task status summary panel
-    status_data = {
-        'Status': list(status_counts.keys()),
-        'Count': list(status_counts.values())
+    # Define colors for different statuses
+    colors = {
+        'Complete': '#43a047',
+        'In Progress': '#ff9800',
+        'Planned': '#4a89ff',
+        'Not Started': '#9e9e9e',
+        'On Hold': '#9c27b0',
+        'Delayed': '#e53935'
     }
     
-    status_source = ColumnDataSource(data=status_data)
+    # Sort statuses for stacking
+    sorted_statuses = ['Complete', 'In Progress', 'Planned', 'Not Started', 'On Hold', 'Delayed']
+    sorted_statuses = [s for s in sorted_statuses if s in status_counts]
     
-    status_columns = [
-        TableColumn(field="Status", title="Status"),
-        TableColumn(field="Count", title="Count")
+    # Add other statuses that might not be in our predefined list
+    for status in status_counts.keys():
+        if status not in sorted_statuses:
+            sorted_statuses.append(status)
+    
+    # Create a combined data source for all statuses
+    source_data = {'x': list(date_range)}
+    
+    # Add each status as a column
+    for status in sorted_statuses:
+        if status in status_counts:
+            source_data[status] = status_counts[status]
+    
+    source = ColumnDataSource(data=source_data)
+    
+    # Create stacked areas
+    renderers = []
+    bottom = None
+    
+    for status in sorted_statuses:
+        if status not in status_counts:
+            continue
+            
+        color = colors.get(status, '#999999')
+        
+        if bottom is None:
+            # First area starts from zero
+            renderer = p.varea(x='x', y1=0, y2=status, source=source, color=color, alpha=0.8, legend_label=status)
+            bottom = status
+        else:
+            # Create a new column that is the sum of this status and all below it
+            sum_column = f"{status}_sum"
+            source.data[sum_column] = [a + b for a, b in zip(source.data[status], source.data[bottom])]
+            
+            # Stack this area on top of the previous sum
+            renderer = p.varea(x='x', y1=bottom, y2=sum_column, source=source, color=color, alpha=0.8, legend_label=status)
+            bottom = sum_column
+        
+        renderers.append(renderer)
+    
+    # Add hover tool
+    hover = HoverTool(tooltips=[
+        ("Date", "@x{%F}"),
+        ("Tasks", "@$name")
+    ], formatters={"@x": "datetime"})
+    p.add_tools(hover)
+    
+    # Configure legend
+    p.legend.location = "top_left"
+    p.legend.click_policy = "hide"
+    
+    # Add today marker
+    today = datetime.now()
+    today_line = Span(location=today, dimension='height', line_color='red', line_dash='dashed', line_width=2)
+    p.add_layout(today_line)
+    
+    today_label = Label(x=today, y=0, text="Today", text_color='red', text_font_style='bold')
+    p.add_layout(today_label)
+    
+    # Create a table with task details
+    columns = [
+        TableColumn(field="id", title="ID"),
+        TableColumn(field="name", title="Task"),
+        TableColumn(field="entity_type", title="Type"),
+        TableColumn(field="entity_name", title="Entity"),
+        TableColumn(field="start", title="Start Date"),
+        TableColumn(field="end", title="End Date"),
+        TableColumn(field="status", title="Status"),
+        TableColumn(field="float", title="Floating"),
+        TableColumn(field="additionalDetails", title="Details")
     ]
     
-    status_table = DataTable(
-        source=status_source,
-        columns=status_columns,
-        width=300,
-        height=150
-    )
+    source = ColumnDataSource(df)
+    data_table = DataTable(source=source, columns=columns, width=1000, height=300)
     
-    status_div = Div(
-        text="<h3>Task Status Summary</h3>",
-        width=300,
-        height=30
-    )
+    # Create layout
+    layout_obj = column(p, data_table)
     
-    status_panel = column(status_div, status_table)
-    
-    # Create a task completion visualization - simple donut chart using Div with HTML/CSS
-    total_count = sum(status_counts.values())
-    complete_count = status_counts.get('Complete', 0)
-    complete_percentage = round((complete_count / total_count) * 100) if total_count > 0 else 0
-    
-    completion_div = Div(
-        text=f"""
-        <h3>Overall Completion</h3>
-        <div style="position: relative; width: 150px; height: 150px; margin: 0 auto;">
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; 
-                      background: conic-gradient(#43a047 0% {complete_percentage}%, #e0e0e0 {complete_percentage}% 100%);">
-            </div>
-            <div style="position: absolute; top: 20%; left: 20%; width: 60%; height: 60%; 
-                      border-radius: 50%; background: white; display: flex; align-items: center; 
-                      justify-content: center; font-size: 24px; font-weight: bold;">
-                {complete_percentage}%
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 10px;">
-            {complete_count} of {total_count} tasks complete
-        </div>
-        """,
-        width=300,
-        height=250
-    )
-    
-    # Layout everything
-    layout = row(
-        p,
-        column(completion_div, status_panel)
-    )
-    
-    # Save the burndown chart
-    save(layout)
+    # Save the visualization
+    save(layout_obj)
 
 def generate_milestone_tracking(data, progress_dir):
     """Generate milestone achievement tracking"""

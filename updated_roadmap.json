@@ -101,39 +101,17 @@
                 "environmental": "Salt fog resistance, humidity cycling"
             },
             "businessCase": {
-                "costSavings": {
-                    "title": "cost Savings",
-                    "description": "{'description': 'Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.', 'value': 35}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                },
-                "scheduleSavings": {
-                    "title": "schedule Savings",
-                    "description": "{'description': 'Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.', 'value': 12}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                },
-                "performanceGains": {
-                    "title": "performance Gains",
-                    "description": "{'description': '15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry.', 'value': 15}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                }
+                "Save schedule": false,
+                "Save hardware costs": true,
+                "Relieve supply chain constraints": false,
+                "Increase Pwin by hitting PTW": true,
+                "Reduce specialty training": false,
+                "Save weight": false,
+                "Increase performance": true,
+                "Unify parts": false,
+                "Quickly iterate design/EMs": true,
+                "Agility in Design and AI&T": true,
+                "Digital Spares": false
             },
             "programs": [
                 {
@@ -199,7 +177,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
                 },
                 {
                     "name": "SimulateX Thermal",
@@ -208,7 +187,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
                 },
                 {
                     "name": "FEA Structural Analysis",
@@ -217,7 +197,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Dependent on successful completion of previous tasks."
                 }
             ],
             "documentation": [
@@ -228,7 +209,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
                 },
                 {
                     "name": "Material Certification",
@@ -237,7 +219,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Budget constraints may impact timeline."
                 },
                 {
                     "name": "Process Qualification Records",
@@ -246,7 +229,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "This task involves collaboration with multiple teams."
                 },
                 {
                     "name": "First Article Inspection Report",
@@ -255,7 +239,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Budget constraints may impact timeline."
                 }
             ],
             "specialNDT": [
@@ -266,7 +251,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
                 },
                 {
                     "name": "Dye penetrant inspection",
@@ -275,7 +261,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
                 },
                 {
                     "name": "X-ray inspection of critical features",
@@ -284,7 +271,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
                 }
             ],
             "partAcceptance": [
@@ -295,7 +283,8 @@
                     "status": "",
                     "funding": "",
                     "float": true,
-                    "floatDate": "2025-03-11"
+                    "floatDate": "2025-03-11",
+                    "additionalDetails": "Critical path item that requires careful monitoring."
                 },
                 {
                     "name": "Dimensional verification",
@@ -304,7 +293,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Critical path item that requires careful monitoring."
                 },
                 {
                     "name": "Functional testing",
@@ -313,7 +303,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
                 },
                 {
                     "name": "Surface roughness measurement",
@@ -322,7 +313,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": "Budget constraints may impact timeline."
                 }
             ],
             "trl": "7",
@@ -429,26 +421,152 @@
                 }
             ],
             "designTools": [
-                "OrbitSim",
-                "ThermalAnalyzer",
-                "Topology Optimization Suite"
+                {
+                    "name": "OrbitSim",
+                    "start": "2026-10-08",
+                    "end": "2025-09-21",
+                    "status": "In Progress",
+                    "funding": "CRAD",
+                    "float": true,
+                    "floatDate": "2026-05-03",
+                    "additionalDetails": "Critical path item that requires careful monitoring."
+                },
+                {
+                    "name": "ThermalAnalyzer",
+                    "start": "2026-10-21",
+                    "end": "2026-06-18",
+                    "status": "In Progress",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "2025-03-25",
+                    "additionalDetails": "May require additional resources if scope expands."
+                },
+                {
+                    "name": "Topology Optimization Suite",
+                    "start": "2026-01-09",
+                    "end": "2026-01-08",
+                    "status": "Complete",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "2025-11-04",
+                    "additionalDetails": "May require additional resources if scope expands."
+                }
             ],
             "documentation": [
-                "NASA-STD-6016 Compliance",
-                "Thermal Cycling Test Results",
-                "Structural Analysis Report",
-                "Material Traceability Documentation"
+                {
+                    "name": "NASA-STD-6016 Compliance",
+                    "start": "2025-12-24",
+                    "end": "2025-08-09",
+                    "status": "Delayed",
+                    "funding": "External Task",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Budget constraints may impact timeline."
+                },
+                {
+                    "name": "Thermal Cycling Test Results",
+                    "start": "2026-11-16",
+                    "end": "2025-06-08",
+                    "status": "On Hold",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "2025-09-12",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                },
+                {
+                    "name": "Structural Analysis Report",
+                    "start": "2025-06-06",
+                    "end": "2026-09-27",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "2025-11-01",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                },
+                {
+                    "name": "Material Traceability Documentation",
+                    "start": "2026-03-14",
+                    "end": "2025-01-28",
+                    "status": "Complete",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "2026-02-13",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                }
             ],
             "specialNDT": [
-                "Ultrasonic testing",
-                "Radiographic inspection",
-                "Thermal imaging"
+                {
+                    "name": "Ultrasonic testing",
+                    "startDate": "2025-11-19",
+                    "endDate": "2025-01-08",
+                    "status": "On Hold",
+                    "funding": "Program Funded",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "This task involves collaboration with multiple teams."
+                },
+                {
+                    "name": "Radiographic inspection",
+                    "startDate": "2026-09-14",
+                    "endDate": "2025-09-28",
+                    "status": "Delayed",
+                    "funding": "Sector IRAD",
+                    "float": true,
+                    "floatDate": "2026-08-26",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "Thermal imaging",
+                    "startDate": "2025-05-25",
+                    "endDate": "2026-08-07",
+                    "status": "Complete",
+                    "funding": "External Task",
+                    "float": false,
+                    "floatDate": "2026-07-14",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                }
             ],
             "partAcceptance": [
-                "Thermal cycling test",
-                "Vibration test",
-                "Dimensional inspection",
-                "Surface finish verification"
+                {
+                    "name": "Thermal cycling test",
+                    "startDate": "2025-02-27",
+                    "endDate": "2026-09-19",
+                    "status": "Complete",
+                    "funding": "Program Funded",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
+                },
+                {
+                    "name": "Vibration test",
+                    "startDate": "2025-08-13",
+                    "endDate": "2026-11-05",
+                    "status": "Delayed",
+                    "funding": "Sector IRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "Dimensional inspection",
+                    "startDate": "2026-09-14",
+                    "endDate": "2026-01-10",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "This task involves collaboration with multiple teams."
+                },
+                {
+                    "name": "Surface finish verification",
+                    "startDate": "2026-11-21",
+                    "endDate": "2025-03-09",
+                    "status": "Delayed",
+                    "funding": "Unfunded",
+                    "float": false,
+                    "floatDate": "2026-07-02",
+                    "additionalDetails": "Dependent on successful completion of previous tasks."
+                }
             ],
             "roadmap": [
                 {
@@ -497,10 +615,19 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
-            }
+                "Save schedule": false,
+                "Save hardware costs": true,
+                "Relieve supply chain constraints": false,
+                "Increase Pwin by hitting PTW": false,
+                "Reduce specialty training": true,
+                "Save weight": false,
+                "Increase performance": false,
+                "Unify parts": false,
+                "Quickly iterate design/EMs": false,
+                "Agility in Design and AI&T": true,
+                "Digital Spares": true
+            },
+            "lastSaveDate": "2025-03-11"
         },
         {
             "id": "P3",
@@ -551,26 +678,152 @@
                 }
             ],
             "designTools": [
-                "BallisticsCalc",
-                "WindTunnel",
-                "Computational Fluid Dynamics"
+                {
+                    "name": "BallisticsCalc",
+                    "start": "2025-11-17",
+                    "end": "2026-05-14",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "2026-01-09",
+                    "additionalDetails": "Budget constraints may impact timeline."
+                },
+                {
+                    "name": "WindTunnel",
+                    "start": "2026-03-22",
+                    "end": "2025-04-23",
+                    "status": "Not Started",
+                    "funding": "External Task",
+                    "float": true,
+                    "floatDate": "2025-10-23",
+                    "additionalDetails": "Budget constraints may impact timeline."
+                },
+                {
+                    "name": "Computational Fluid Dynamics",
+                    "start": "2025-12-13",
+                    "end": "2025-10-06",
+                    "status": "Delayed",
+                    "funding": "External Task",
+                    "float": true,
+                    "floatDate": "2025-05-05",
+                    "additionalDetails": "Critical path item that requires careful monitoring."
+                }
             ],
             "documentation": [
-                "Defense Manual",
-                "Safety Protocol",
-                "Material Property Database",
-                "Process Qualification Documentation"
+                {
+                    "name": "Defense Manual",
+                    "start": "2025-11-14",
+                    "end": "2025-10-14",
+                    "status": "Not Started",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "2025-12-17",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "Safety Protocol",
+                    "start": "2025-05-21",
+                    "end": "2025-01-26",
+                    "status": "Delayed",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "Material Property Database",
+                    "start": "2026-03-09",
+                    "end": "2025-02-03",
+                    "status": "In Progress",
+                    "funding": "Sector IRAD",
+                    "float": true,
+                    "floatDate": "2025-10-06",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
+                },
+                {
+                    "name": "Process Qualification Documentation",
+                    "start": "2026-11-20",
+                    "end": "2026-04-22",
+                    "status": "Complete",
+                    "funding": "Unfunded",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
+                }
             ],
             "specialNDT": [
-                "Neutron radiography",
-                "Acoustic emission testing",
-                "High-resolution CT scanning"
+                {
+                    "name": "Neutron radiography",
+                    "startDate": "2025-02-05",
+                    "endDate": "2026-11-27",
+                    "status": "Delayed",
+                    "funding": "Program Funded",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Critical path item that requires careful monitoring."
+                },
+                {
+                    "name": "Acoustic emission testing",
+                    "startDate": "2026-02-05",
+                    "endDate": "2025-01-20",
+                    "status": "In Progress",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "2026-09-09",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "High-resolution CT scanning",
+                    "startDate": "2026-09-19",
+                    "endDate": "2026-01-07",
+                    "status": "Not Started",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "This task involves collaboration with multiple teams."
+                }
             ],
             "partAcceptance": [
-                "Impact test",
-                "Pressure test",
-                "Flow testing",
-                "Metallurgical evaluation"
+                {
+                    "name": "Impact test",
+                    "startDate": "2026-10-24",
+                    "endDate": "2025-08-24",
+                    "status": "Complete",
+                    "funding": "Program Funded",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Requires specialized expertise from external consultants."
+                },
+                {
+                    "name": "Pressure test",
+                    "startDate": "2026-01-20",
+                    "endDate": "2025-10-13",
+                    "status": "In Progress",
+                    "funding": "CRAD",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
+                },
+                {
+                    "name": "Flow testing",
+                    "startDate": "2026-06-01",
+                    "endDate": "2026-11-03",
+                    "status": "In Progress",
+                    "funding": "External Task",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                },
+                {
+                    "name": "Metallurgical evaluation",
+                    "startDate": "2025-07-02",
+                    "endDate": "2025-09-01",
+                    "status": "Delayed",
+                    "funding": "External Task",
+                    "float": true,
+                    "floatDate": "2025-05-11",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                }
             ],
             "roadmap": [
                 {
@@ -611,11 +864,20 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+                "Save schedule": true,
+                "Save hardware costs": true,
+                "Relieve supply chain constraints": false,
+                "Increase Pwin by hitting PTW": false,
+                "Reduce specialty training": false,
+                "Save weight": true,
+                "Increase performance": true,
+                "Unify parts": true,
+                "Quickly iterate design/EMs": true,
+                "Agility in Design and AI&T": true,
+                "Digital Spares": true
             },
-            "trlHistory": []
+            "trlHistory": [],
+            "lastSaveDate": "2025-03-11"
         },
         {
             "id": "P4",
@@ -666,26 +928,152 @@
                 }
             ],
             "designTools": [
-                "PropulsionSim",
-                "TrajectoryCalc",
-                "Generative Design Software"
+                {
+                    "name": "PropulsionSim",
+                    "start": "2025-10-17",
+                    "end": "2026-01-08",
+                    "status": "In Progress",
+                    "funding": "CRAD",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
+                },
+                {
+                    "name": "TrajectoryCalc",
+                    "start": "2026-09-06",
+                    "end": "2025-03-20",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
+                },
+                {
+                    "name": "Generative Design Software",
+                    "start": "2025-12-08",
+                    "end": "2025-02-11",
+                    "status": "On Hold",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Dependent on successful completion of previous tasks."
+                }
             ],
             "documentation": [
-                "Launch Manual",
-                "Maintenance Guide",
-                "Design History File",
-                "Process Validation Reports"
+                {
+                    "name": "Launch Manual",
+                    "start": "2026-05-06",
+                    "end": "2026-08-12",
+                    "status": "In Progress",
+                    "funding": "Program Funded",
+                    "float": true,
+                    "floatDate": "2025-09-04",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                },
+                {
+                    "name": "Maintenance Guide",
+                    "start": "2025-02-08",
+                    "end": "2025-07-28",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "2026-01-12",
+                    "additionalDetails": "May require additional resources if scope expands."
+                },
+                {
+                    "name": "Design History File",
+                    "start": "2026-01-06",
+                    "end": "2025-02-27",
+                    "status": "Delayed",
+                    "funding": "Division IRAD",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "This task involves collaboration with multiple teams."
+                },
+                {
+                    "name": "Process Validation Reports",
+                    "start": "2025-12-27",
+                    "end": "2026-11-22",
+                    "status": "In Progress",
+                    "funding": "CRAD",
+                    "float": false,
+                    "floatDate": "2025-09-17",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                }
             ],
             "specialNDT": [
-                "Helium leak testing",
-                "Flow path verification",
-                "Pressure drop testing"
+                {
+                    "name": "Helium leak testing",
+                    "startDate": "2025-04-23",
+                    "endDate": "2025-06-23",
+                    "status": "On Hold",
+                    "funding": "External Task",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                },
+                {
+                    "name": "Flow path verification",
+                    "startDate": "2026-03-13",
+                    "endDate": "2026-06-26",
+                    "status": "In Progress",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "2026-10-20",
+                    "additionalDetails": "Opportunity for process improvement and optimization."
+                },
+                {
+                    "name": "Pressure drop testing",
+                    "startDate": "2025-10-05",
+                    "endDate": "2025-03-13",
+                    "status": "Delayed",
+                    "funding": "Unfunded",
+                    "float": true,
+                    "floatDate": "2026-11-05",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                }
             ],
             "partAcceptance": [
-                "Stress test",
-                "Safety test",
-                "Flow performance verification",
-                "Thermal cycling"
+                {
+                    "name": "Stress test",
+                    "startDate": "2025-02-28",
+                    "endDate": "2026-11-12",
+                    "status": "Complete",
+                    "funding": "Sector IRAD",
+                    "float": true,
+                    "floatDate": "2025-11-25",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
+                },
+                {
+                    "name": "Safety test",
+                    "startDate": "2025-09-16",
+                    "endDate": "2026-01-21",
+                    "status": "Not Started",
+                    "funding": "Division IRAD",
+                    "float": true,
+                    "floatDate": "2025-05-05",
+                    "additionalDetails": "Technical challenges anticipated during implementation."
+                },
+                {
+                    "name": "Flow performance verification",
+                    "startDate": "2026-06-20",
+                    "endDate": "2025-03-07",
+                    "status": "Delayed",
+                    "funding": "Unfunded",
+                    "float": true,
+                    "floatDate": "2026-07-04",
+                    "additionalDetails": "Includes regular progress reviews with stakeholders."
+                },
+                {
+                    "name": "Thermal cycling",
+                    "startDate": "2025-04-27",
+                    "endDate": "2025-02-23",
+                    "status": "Not Started",
+                    "funding": "Unfunded",
+                    "float": true,
+                    "floatDate": "",
+                    "additionalDetails": "Strategic importance for future program development."
+                }
             ],
             "roadmap": [
                 {
@@ -726,11 +1114,20 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+                "Save schedule": false,
+                "Save hardware costs": false,
+                "Relieve supply chain constraints": true,
+                "Increase Pwin by hitting PTW": true,
+                "Reduce specialty training": true,
+                "Save weight": false,
+                "Increase performance": false,
+                "Unify parts": false,
+                "Quickly iterate design/EMs": false,
+                "Agility in Design and AI&T": true,
+                "Digital Spares": true
             },
-            "trlHistory": []
+            "trlHistory": [],
+            "lastSaveDate": "2025-03-11"
         },
         {
             "id": "P5",
@@ -1043,10 +1440,19 @@
             "roadmap": [],
             "milestones": [],
             "businessCase": {
-                "costSavings": "",
-                "scheduleSavings": "",
-                "performanceGains": ""
-            }
+                "Save schedule": true,
+                "Save hardware costs": true,
+                "Relieve supply chain constraints": true,
+                "Increase Pwin by hitting PTW": true,
+                "Reduce specialty training": true,
+                "Save weight": true,
+                "Increase performance": true,
+                "Unify parts": true,
+                "Quickly iterate design/EMs": false,
+                "Agility in Design and AI&T": false,
+                "Digital Spares": false
+            },
+            "lastSaveDate": "2025-03-11"
         },
         {
             "id": "P007",
@@ -1072,10 +1478,19 @@
             "roadmap": [],
             "milestones": [],
             "businessCase": {
-                "costSavings": "",
-                "scheduleSavings": "",
-                "performanceGains": ""
-            }
+                "Save schedule": false,
+                "Save hardware costs": false,
+                "Relieve supply chain constraints": true,
+                "Increase Pwin by hitting PTW": false,
+                "Reduce specialty training": true,
+                "Save weight": true,
+                "Increase performance": false,
+                "Unify parts": false,
+                "Quickly iterate design/EMs": true,
+                "Agility in Design and AI&T": true,
+                "Digital Spares": false
+            },
+            "lastSaveDate": "2025-03-11"
         }
     ],
     "materialSystems": [
@@ -1094,9 +1509,6 @@
                     "startDate": "2025-07-01",
                     "endDate": "2025-09-30",
                     "status": "Complete",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "Division IRAD"
                 },
                 {
@@ -1104,19 +1516,13 @@
                     "startDate": "",
                     "endDate": "",
                     "status": "Planned",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "Sector IRAD"
                 },
                 {
                     "task": "Test",
-                    "startDate": "2025-03-11",
-                    "endDate": "2025-05-11",
+                    "startDate": "",
+                    "endDate": "",
                     "status": "Complete",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "Specifications"
                 }
             ],
@@ -1124,10 +1530,7 @@
                 {
                     "name": "test",
                     "date": "",
-                    "description": "",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": ""
+                    "description": ""
                 }
             ],
             "postProcessing": [
@@ -1188,12 +1591,9 @@
             "roadmap": [
                 {
                     "task": "Preliminary Tests",
-                    "startDate": "2025-03-11",
-                    "endDate": "2027-03-11",
+                    "startDate": "",
+                    "endDate": "",
                     "status": "In Progress",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "CRAD"
                 }
             ],
@@ -1201,10 +1601,7 @@
                 {
                     "name": "Initial Results",
                     "date": "2025-03-31",
-                    "description": "First round of tests completed.",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": ""
+                    "description": "First round of tests completed."
                 }
             ],
             "postProcessing": [
@@ -1514,43 +1911,7 @@
             "qualification": "",
             "qualificationClass": "",
             "statisticalBasis": "",
-            "roadmap": [
-                {
-                    "task": "test",
-                    "startDate": "2025-03-11",
-                    "endDate": "",
-                    "status": "Complete",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": ""
-                }
-            ],
-            "milestones": [],
-            "postProcessing": [],
-            "qualifiedMachines": [],
-            "standardNDT": [],
-            "relatedFundingOpps": []
-        },
-        {
-            "id": "MS7",
-            "name": "test",
-            "process": "",
-            "material": "",
-            "mrl": null,
-            "qualification": "",
-            "qualificationClass": "",
-            "statisticalBasis": "",
-            "roadmap": [
-                {
-                    "task": "asdf",
-                    "startDate": "2025-03-11",
-                    "endDate": "",
-                    "status": "",
-                    "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": ""
-                }
-            ],
+            "roadmap": [],
             "milestones": [],
             "postProcessing": [],
             "qualifiedMachines": [],

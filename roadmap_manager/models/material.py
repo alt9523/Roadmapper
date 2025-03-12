@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from .base import BaseModel
 from ..date_entry import DateEntry
+from datetime import datetime, timedelta
 
 class MaterialModel(BaseModel):
     """Model for managing material systems"""
@@ -252,12 +253,13 @@ class MaterialModel(BaseModel):
         task_header_frame = ttk.Frame(tasks_frame)
         task_header_frame.pack(fill=tk.X, pady=2)
         
-        # Add more descriptive headers with bold font
+        # Add more descriptive headers with bold font and standardized widths
         ttk.Label(task_header_frame, text="Task Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Start Date (MM/DD/YYYY)", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="End Date (MM/DD/YYYY)", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(task_header_frame, text="Start Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(task_header_frame, text="End Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
         ttk.Label(task_header_frame, text="Status", width=12, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Funding Type", width=12, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(task_header_frame, text="Funding Type", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(task_header_frame, text="Float", width=8, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
         
         # Create a frame for task entries
         task_entries_frame = ttk.Frame(tasks_frame)
@@ -266,44 +268,71 @@ class MaterialModel(BaseModel):
         # List to store task entries
         task_entries = []
         
+        # Store the last save date for floating functionality
+        last_save_date = datetime.now()
+        
         # Function to add a new task entry
         def add_task_entry(task_data=None):
             task_frame = ttk.Frame(task_entries_frame)
             task_frame.pack(fill=tk.X, pady=2)
             
+            # Task name
             task_var = tk.StringVar(value=task_data.get("task", "") if task_data else "")
             ttk.Entry(task_frame, textvariable=task_var, width=20).pack(side=tk.LEFT, padx=2)
             
-            # Replace string variables and Entry widgets with DateEntry widgets
+            # Start date
             start_date = task_data.get("startDate", "") if task_data else ""
-            start_entry = DateEntry(task_frame, width=18, initial_date=start_date)
+            start_entry = DateEntry(task_frame, width=15, initial_date=start_date)
             start_entry.pack(side=tk.LEFT, padx=2)
             
+            # End date
             end_date = task_data.get("endDate", "") if task_data else ""
-            end_entry = DateEntry(task_frame, width=18, initial_date=end_date)
+            end_entry = DateEntry(task_frame, width=15, initial_date=end_date)
             end_entry.pack(side=tk.LEFT, padx=2)
             
-            status_options = ["Not Started", "In Progress", "Completed", "Delayed"]
+            # Status dropdown
+            status_options = ["Not Started", "In Progress", "Complete", "Delayed"]
             status_var = tk.StringVar(value=task_data.get("status", "") if task_data else "")
             ttk.Combobox(task_frame, textvariable=status_var, values=status_options, width=12).pack(side=tk.LEFT, padx=2)
             
-            funding_options = ["Internal", "External", "Mixed"]
+            # Funding dropdown with updated options
+            funding_options = ["Unfunded", "Division IRAD", "Sector IRAD", "CRAD", "Program Funded", "External Task"]
             funding_var = tk.StringVar(value=task_data.get("fundingType", "") if task_data else "")
-            ttk.Combobox(task_frame, textvariable=funding_var, values=funding_options, width=12).pack(side=tk.LEFT, padx=2)
+            ttk.Combobox(task_frame, textvariable=funding_var, values=funding_options, width=15).pack(side=tk.LEFT, padx=2)
+            
+            # Float on roadmap checkbox
+            float_var = tk.BooleanVar(value=task_data.get("floatOnRoadmap", False) if task_data else False)
+            ttk.Checkbutton(task_frame, variable=float_var, width=5).pack(side=tk.LEFT, padx=2)
+            
+            # Hidden variable to store the float date
+            float_date = task_data.get("floatDate", "") if task_data else ""
             
             # Button to remove this task
             remove_btn = ttk.Button(task_frame, text="X", width=2,
                                   command=lambda f=task_frame: [f.destroy(), task_entries.remove(entry_data)])
             remove_btn.pack(side=tk.LEFT, padx=2)
             
+            # Create a frame for additional details
+            details_frame = ttk.Frame(task_entries_frame)
+            details_frame.pack(fill=tk.X, pady=(0, 5))
+            
+            # Add additional details text box
+            ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
+            additional_details_var = tk.StringVar(value=task_data.get("additionalDetails", "") if task_data else "")
+            ttk.Entry(details_frame, textvariable=additional_details_var, width=70).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+            
             # Store the entry data
             entry_data = {
                 "frame": task_frame,
+                "details_frame": details_frame,
                 "task": task_var,
                 "start_date": start_entry,
                 "end_date": end_entry,
                 "status": status_var,
-                "fundingType": funding_var
+                "fundingType": funding_var,
+                "float_on_roadmap": float_var,
+                "float_date": float_date,
+                "additional_details": additional_details_var
             }
             task_entries.append(entry_data)
             
@@ -328,10 +357,11 @@ class MaterialModel(BaseModel):
         milestone_header_frame = ttk.Frame(milestones_frame)
         milestone_header_frame.pack(fill=tk.X, pady=2)
         
-        # Add more descriptive headers with bold font
+        # Add more descriptive headers with bold font and standardized widths
         ttk.Label(milestone_header_frame, text="Milestone Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(milestone_header_frame, text="Date (MM/DD/YYYY)", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(milestone_header_frame, text="Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
         ttk.Label(milestone_header_frame, text="Description", width=30, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(milestone_header_frame, text="Float", width=8, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
         
         # Create a frame for milestone entries
         milestone_entries_frame = ttk.Frame(milestones_frame)
@@ -345,28 +375,50 @@ class MaterialModel(BaseModel):
             ms_entry_frame = ttk.Frame(milestone_entries_frame)
             ms_entry_frame.pack(fill=tk.X, pady=2)
             
+            # Milestone name
             name_var = tk.StringVar(value=milestone_data.get("name", "") if milestone_data else "")
             ttk.Entry(ms_entry_frame, textvariable=name_var, width=20).pack(side=tk.LEFT, padx=2)
             
-            # Replace string variable and Entry widget with DateEntry widget
+            # Milestone date
             milestone_date = milestone_data.get("date", "") if milestone_data else ""
-            date_entry = DateEntry(ms_entry_frame, width=18, initial_date=milestone_date)
+            date_entry = DateEntry(ms_entry_frame, width=15, initial_date=milestone_date)
             date_entry.pack(side=tk.LEFT, padx=2)
             
+            # Description
             desc_var = tk.StringVar(value=milestone_data.get("description", "") if milestone_data else "")
             ttk.Entry(ms_entry_frame, textvariable=desc_var, width=30).pack(side=tk.LEFT, padx=2)
+            
+            # Float on roadmap checkbox
+            float_var = tk.BooleanVar(value=milestone_data.get("floatOnRoadmap", False) if milestone_data else False)
+            ttk.Checkbutton(ms_entry_frame, variable=float_var, width=5).pack(side=tk.LEFT, padx=2)
+            
+            # Hidden variable to store the float date
+            float_date = milestone_data.get("floatDate", "") if milestone_data else ""
             
             # Button to remove this milestone
             remove_btn = ttk.Button(ms_entry_frame, text="X", width=2,
                                   command=lambda f=ms_entry_frame: [f.destroy(), milestone_entries.remove(entry_data)])
             remove_btn.pack(side=tk.LEFT, padx=2)
             
+            # Create a frame for additional details
+            details_frame = ttk.Frame(milestone_entries_frame)
+            details_frame.pack(fill=tk.X, pady=(0, 5))
+            
+            # Add additional details text box
+            ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
+            additional_details_var = tk.StringVar(value=milestone_data.get("additionalDetails", "") if milestone_data else "")
+            ttk.Entry(details_frame, textvariable=additional_details_var, width=70).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+            
             # Store the entry data
             entry_data = {
                 "frame": ms_entry_frame,
+                "details_frame": details_frame,
                 "name": name_var,
                 "date": date_entry,
-                "description": desc_var
+                "description": desc_var,
+                "float_on_roadmap": float_var,
+                "float_date": float_date,
+                "additional_details": additional_details_var
             }
             milestone_entries.append(entry_data)
             
@@ -721,11 +773,54 @@ class MaterialModel(BaseModel):
                 if not task_entry["task"].get():  # Skip empty tasks
                     continue
                 
+                # Get the start and end dates
+                start_date = task_entry["start_date"].get_date()
+                end_date = task_entry["end_date"].get_date()
+                
+                # Check if this task should float on the roadmap
+                float_on_roadmap = task_entry["float_on_roadmap"].get()
+                float_date = task_entry["float_date"]
+                
+                # If floating is enabled, adjust dates based on time elapsed since last save
+                if float_on_roadmap and start_date and end_date:
+                    # If this is the first time floating, store the current date
+                    if not float_date:
+                        float_date = datetime.now().strftime("%Y-%m-%d")
+                    
+                    # Calculate time elapsed since last float date
+                    try:
+                        last_float = datetime.strptime(float_date, "%Y-%m-%d")
+                        now = datetime.now()
+                        days_elapsed = (now - last_float).days
+                        
+                        # Adjust dates if there's been elapsed time
+                        if days_elapsed > 0:
+                            if start_date:
+                                start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+                                start_date_obj += timedelta(days=days_elapsed)
+                                start_date = start_date_obj.strftime("%Y-%m-%d")
+                                task_entry["start_date"].set_date(start_date)
+                            
+                            if end_date:
+                                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+                                end_date_obj += timedelta(days=days_elapsed)
+                                end_date = end_date_obj.strftime("%Y-%m-%d")
+                                task_entry["end_date"].set_date(end_date)
+                        
+                        # Update the float date to now
+                        float_date = now.strftime("%Y-%m-%d")
+                    except (ValueError, TypeError):
+                        # If there's an error parsing dates, just use the current dates
+                        float_date = datetime.now().strftime("%Y-%m-%d")
+                
                 task_data = {
                     "task": task_entry["task"].get(),
-                    "startDate": task_entry["start_date"].get_date().strftime("%Y-%m-%d"),
-                    "endDate": task_entry["end_date"].get_date().strftime("%Y-%m-%d"),
-                    "status": task_entry["status"].get()
+                    "startDate": start_date,
+                    "endDate": end_date,
+                    "status": task_entry["status"].get(),
+                    "floatOnRoadmap": float_on_roadmap,
+                    "floatDate": float_date,
+                    "additionalDetails": task_entry["additional_details"].get()
                 }
                 
                 # Add funding type if provided
@@ -740,10 +835,46 @@ class MaterialModel(BaseModel):
                 if not milestone_entry["name"].get():  # Skip empty milestones
                     continue
                 
+                # Get the milestone date
+                milestone_date = milestone_entry["date"].get_date()
+                
+                # Check if this milestone should float on the roadmap
+                float_on_roadmap = milestone_entry["float_on_roadmap"].get()
+                float_date = milestone_entry["float_date"]
+                
+                # If floating is enabled, adjust date based on time elapsed since last save
+                if float_on_roadmap and milestone_date:
+                    # If this is the first time floating, store the current date
+                    if not float_date:
+                        float_date = datetime.now().strftime("%Y-%m-%d")
+                    
+                    # Calculate time elapsed since last float date
+                    try:
+                        last_float = datetime.strptime(float_date, "%Y-%m-%d")
+                        now = datetime.now()
+                        days_elapsed = (now - last_float).days
+                        
+                        # Adjust date if there's been elapsed time
+                        if days_elapsed > 0:
+                            if milestone_date:
+                                date_obj = datetime.strptime(milestone_date, "%Y-%m-%d")
+                                date_obj += timedelta(days=days_elapsed)
+                                milestone_date = date_obj.strftime("%Y-%m-%d")
+                                milestone_entry["date"].set_date(milestone_date)
+                        
+                        # Update the float date to now
+                        float_date = now.strftime("%Y-%m-%d")
+                    except (ValueError, TypeError):
+                        # If there's an error parsing dates, just use the current date
+                        float_date = datetime.now().strftime("%Y-%m-%d")
+                
                 milestone_data = {
                     "name": milestone_entry["name"].get(),
-                    "date": milestone_entry["date"].get_date().strftime("%Y-%m-%d"),
-                    "description": milestone_entry["description"].get()
+                    "date": milestone_date,
+                    "description": milestone_entry["description"].get(),
+                    "floatOnRoadmap": float_on_roadmap,
+                    "floatDate": float_date,
+                    "additionalDetails": milestone_entry["additional_details"].get()
                 }
                 milestones.append(milestone_data)
             

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import datetime
 from ....date_entry import DateEntry
 from .base_tab import BaseTab
 
@@ -8,18 +9,19 @@ class BasicInfoTab(BaseTab):
     
     def __init__(self, form):
         # Initialize attributes before calling parent constructor
-        self.program_entries = []
         self.material_entries = []
+        self.trl_history_entries = []
         super().__init__(form, "Basic Info")
     
     def initialize(self):
         """Initialize the tab content"""
-        # Ensure programs and materialSystems exist and are lists
-        if "programs" not in self.product or not isinstance(self.product["programs"], list):
-            self.product["programs"] = []
-        
+        # Ensure materialSystems exist and are lists
         if "materialSystems" not in self.product or not isinstance(self.product["materialSystems"], list):
             self.product["materialSystems"] = []
+        
+        # Ensure trlHistory exists and is a list
+        if "trlHistory" not in self.product or not isinstance(self.product["trlHistory"], list):
+            self.product["trlHistory"] = []
         
         # Create form fields for basic info
         ttk.Label(self.frame, text="ID:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
@@ -32,29 +34,35 @@ class BasicInfoTab(BaseTab):
         
         ttk.Label(self.frame, text="TRL:").grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
         self.trl_var = tk.StringVar(value=self.product.get("trl", ""))
-        ttk.Combobox(self.frame, textvariable=self.trl_var, values=list(range(1, 10))).grid(row=2, column=1, sticky=tk.W, padx=10, pady=5)
         
-        # Programs selection
-        ttk.Label(self.frame, text="Programs:").grid(row=3, column=0, sticky=tk.NW, padx=10, pady=5)
-        self.programs_frame = ttk.Frame(self.frame)
-        self.programs_frame.grid(row=3, column=1, sticky=tk.W, padx=10, pady=5)
+        # Create a frame for TRL selection and history
+        trl_frame = ttk.Frame(self.frame)
+        trl_frame.grid(row=2, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         
-        # Add button for new program
-        add_prog_btn = ttk.Button(self.programs_frame, text="Add Program", 
-                                command=lambda: self.add_program_entry())
-        add_prog_btn.grid(row=100, column=0, sticky=tk.W, padx=5, pady=5)
+        # TRL dropdown
+        trl_combo = ttk.Combobox(trl_frame, textvariable=self.trl_var, values=list(range(1, 10)), width=5)
+        trl_combo.grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
         
-        # Add existing program entries
-        for prog_entry in self.product["programs"]:
-            if isinstance(prog_entry, dict):
-                program_id = prog_entry.get("programID", "")
-                need_date = prog_entry.get("needDate", "")
-                material_id = prog_entry.get("materialID", "")
-                part = prog_entry.get("part", "")
-                lifetime_demand = prog_entry.get("lifetimeDemand", 0)
-                adoption_status = prog_entry.get("adoptionStatus", "")
-                expected_unit_cost_savings = prog_entry.get("expectedUnitCostSavings", "")
-                self.add_program_entry(program_id, need_date, material_id, part, lifetime_demand, adoption_status, expected_unit_cost_savings)
+        # Add button to record TRL change
+        add_trl_btn = ttk.Button(trl_frame, text="Record TRL Change", 
+                               command=self.record_trl_change)
+        add_trl_btn.grid(row=0, column=1, sticky=tk.W, padx=5, pady=5)
+        
+        # Create a frame for TRL history
+        self.trl_history_frame = ttk.LabelFrame(self.frame, text="TRL History")
+        self.trl_history_frame.grid(row=3, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        # Add headers for TRL history
+        ttk.Label(self.trl_history_frame, text="TRL Level").grid(row=0, column=0, sticky=tk.W, padx=10, pady=2)
+        ttk.Label(self.trl_history_frame, text="Date").grid(row=0, column=1, sticky=tk.W, padx=10, pady=2)
+        ttk.Label(self.trl_history_frame, text="Actions").grid(row=0, column=2, sticky=tk.W, padx=10, pady=2)
+        
+        # Add existing TRL history entries
+        for i, entry in enumerate(self.product.get("trlHistory", [])):
+            if isinstance(entry, dict):
+                trl_level = entry.get("level", "")
+                trl_date = entry.get("date", "")
+                self.add_trl_history_entry(trl_level, trl_date, i+1)
         
         # Material systems selection
         ttk.Label(self.frame, text="Material Systems:").grid(row=4, column=0, sticky=tk.NW, padx=10, pady=5)
@@ -73,125 +81,59 @@ class BasicInfoTab(BaseTab):
                 printers = mat_entry.get("printer", [])
                 self.add_material_entry(material_id, printers)
     
-    def add_program_entry(self, program_id="", need_date="", material_id="", part="", lifetime_demand=0, adoption_status="", expected_unit_cost_savings=""):
-        """Add a program entry to the form"""
-        # Create a frame for this entry
-        row_idx = len(self.program_entries)
-        prog_frame = ttk.Frame(self.programs_frame)
-        prog_frame.grid(row=row_idx, column=0, sticky=tk.W, padx=5, pady=2)
-        
-        # Program dropdown - Row 0
-        ttk.Label(prog_frame, text="Program ID:").grid(row=0, column=0, sticky=tk.W, padx=2)
-        program_var = tk.StringVar(value=program_id)
-        program_combo = ttk.Combobox(prog_frame, textvariable=program_var, width=20)
-        
-        # Create program options list with ID and name
-        program_options = []
-        program_map = {}  # Map to store ID to full name mapping
-        for p in self.model.data.get("programs", []):
-            if isinstance(p, dict) and "id" in p and "name" in p:
-                display_text = f"{p['id']} - {p['name']}"
-                program_options.append(display_text)
-                program_map[p['id']] = display_text
-        
-        program_combo['values'] = program_options
-        # If we have an ID, try to set the display text to include the name
-        if program_id and program_id in program_map:
-            program_var.set(program_map[program_id])
-        program_combo.grid(row=0, column=1, padx=5, sticky=tk.W)
-        
-        # Material System dropdown - Row 0 (continuing)
-        ttk.Label(prog_frame, text="Material ID:").grid(row=0, column=2, sticky=tk.W, padx=2)
-        material_var = tk.StringVar(value=material_id)
-        material_combo = ttk.Combobox(prog_frame, textvariable=material_var, width=20)
-        
-        # Create material options list with ID and name
-        material_options = []
-        material_map = {}  # Map to store ID to full name mapping
-        for m in self.model.data.get("materialSystems", []):
-            if isinstance(m, dict) and "id" in m and "name" in m:
-                display_text = f"{m['id']} - {m['name']}"
-                material_options.append(display_text)
-                material_map[m['id']] = display_text
-        
-        material_combo['values'] = material_options
-        # If we have an ID, try to set the display text to include the name
-        if material_id and material_id in material_map:
-            material_var.set(material_map[material_id])
-        material_combo.grid(row=0, column=3, padx=5, sticky=tk.W)
-        
-        # Part text entry - Row 1 (own row, larger)
-        ttk.Label(prog_frame, text="Part:").grid(row=1, column=0, sticky=tk.W, padx=2)
-        part_var = tk.StringVar(value=part)
-        part_entry = ttk.Entry(prog_frame, textvariable=part_var, width=60)  # Much wider entry
-        part_entry.grid(row=1, column=1, columnspan=3, padx=5, sticky=tk.W+tk.E)  # Span multiple columns
-        
-        # Lifetime Demand entry - Row 2
-        ttk.Label(prog_frame, text="Lifetime Demand:").grid(row=2, column=0, sticky=tk.W, padx=2)
-        lifetime_var = tk.IntVar(value=lifetime_demand)
-        lifetime_entry = ttk.Entry(prog_frame, textvariable=lifetime_var, width=10)
-        lifetime_entry.grid(row=2, column=1, padx=5, sticky=tk.W)
-        
-        # Need date entry - Row 2 (continuing)
-        ttk.Label(prog_frame, text="Need Date: *").grid(row=2, column=2, sticky=tk.W, padx=2)
-        date_var = tk.StringVar(value=need_date)
-        
-        # Create the DateEntry widget with the correct initial value
-        date_entry = DateEntry(prog_frame, textvariable=date_var, width=12)
-        
-        # Explicitly set the date if provided
-        if need_date:
-            date_entry.set_date(need_date)
+    def record_trl_change(self):
+        """Record a change in TRL level"""
+        current_trl = self.trl_var.get()
+        if not current_trl:
+            return
             
-        date_entry.grid(row=2, column=3, padx=5, sticky=tk.W)
+        # Get current date
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         
-        # Expected Unit Cost Savings - Row 3
-        ttk.Label(prog_frame, text="Expected Unit Cost Savings:").grid(row=3, column=0, sticky=tk.W, padx=2)
+        # Add to history
+        row_idx = len(self.trl_history_entries) + 1  # +1 for header row
+        self.add_trl_history_entry(current_trl, current_date, row_idx)
+    
+    def add_trl_history_entry(self, trl_level, trl_date, row_idx):
+        """Add a TRL history entry to the form"""
+        # TRL level
+        trl_level_var = tk.StringVar(value=trl_level)
+        trl_level_entry = ttk.Entry(self.trl_history_frame, textvariable=trl_level_var, width=5)
+        trl_level_entry.grid(row=row_idx, column=0, padx=10, pady=2)
         
-        # Create a frame for the dollar sign and entry
-        cost_savings_frame = ttk.Frame(prog_frame)
-        cost_savings_frame.grid(row=3, column=1, padx=5, sticky=tk.W)
+        # TRL date
+        trl_date_var = tk.StringVar(value=trl_date)
+        trl_date_entry = DateEntry(self.trl_history_frame, textvariable=trl_date_var, width=12)
+        trl_date_entry.grid(row=row_idx, column=1, padx=10, pady=2)
         
-        # Dollar sign label
-        ttk.Label(cost_savings_frame, text="$").pack(side=tk.LEFT)
-        
-        # Cost savings entry
-        cost_savings_var = tk.StringVar(value=expected_unit_cost_savings)
-        cost_savings_entry = ttk.Entry(cost_savings_frame, textvariable=cost_savings_var, width=10)
-        cost_savings_entry.pack(side=tk.LEFT)
-        
-        # Adoption Status dropdown - Row 3 (column 2-3)
-        ttk.Label(prog_frame, text="Adoption Status:").grid(row=3, column=2, sticky=tk.W, padx=2)
-        adoption_var = tk.StringVar(value=adoption_status)
-        adoption_combo = ttk.Combobox(prog_frame, textvariable=adoption_var, width=15, 
-                                       values=["targeting", "developing", "prototyping", "production", "closed", "complete"])
-        adoption_combo.grid(row=3, column=3, padx=5, sticky=tk.W)
-        
-        # Remove button - Row 4
+        # Remove button
         def remove_entry():
-            prog_frame.destroy()
-            self.program_entries.remove(entry_data)
+            # Remove widgets from grid
+            trl_level_entry.grid_forget()
+            trl_date_entry.grid_forget()
+            remove_btn.grid_forget()
+            
+            # Remove from list
+            self.trl_history_entries.remove(entry_data)
+            
+            # Reindex remaining entries
+            for i, entry in enumerate(self.trl_history_entries):
+                entry["trl_level_entry"].grid(row=i+1, column=0)
+                entry["trl_date_entry"].grid(row=i+1, column=1)
+                entry["remove_btn"].grid(row=i+1, column=2)
         
-        remove_btn = ttk.Button(prog_frame, text="Remove", command=remove_entry)
-        remove_btn.grid(row=4, column=3, padx=5, sticky=tk.E)
-        
-        # Add separator for visual clarity between program entries
-        separator = ttk.Separator(prog_frame, orient="horizontal")
-        separator.grid(row=5, column=0, columnspan=4, sticky=tk.E+tk.W, pady=10)
+        remove_btn = ttk.Button(self.trl_history_frame, text="Remove", command=remove_entry)
+        remove_btn.grid(row=row_idx, column=2, padx=10, pady=2)
         
         # Store entry data
         entry_data = {
-            "program_var": program_var,
-            "part_var": part_var,
-            "material_var": material_var,
-            "lifetime_var": lifetime_var,
-            "date_var": date_var,
-            "adoption_var": adoption_var,
-            "cost_savings_var": cost_savings_var,
-            "date_entry": date_entry,  # Store the actual DateEntry widget
-            "frame": prog_frame
+            "trl_level_var": trl_level_var,
+            "trl_date_var": trl_date_var,
+            "trl_level_entry": trl_level_entry,
+            "trl_date_entry": trl_date_entry,
+            "remove_btn": remove_btn
         }
-        self.program_entries.append(entry_data)
+        self.trl_history_entries.append(entry_data)
     
     def add_material_entry(self, material_id="", printers=None):
         """Add a material system entry to the form"""
@@ -207,13 +149,29 @@ class BasicInfoTab(BaseTab):
         material_var = tk.StringVar(value=material_id)
         material_combo = ttk.Combobox(mat_frame, textvariable=material_var, width=30)
         
-        # Create material options list
+        # Create material options list and a mapping for display to ID
         material_options = []
+        material_id_to_name = {}
+        material_name_to_id = {}
+        material_id_to_printers = {}  # Map to store qualified printers for each material
+        
         for m in self.model.data.get("materialSystems", []):
             if isinstance(m, dict) and "id" in m and "name" in m:
-                material_options.append(f"{m['id']} - {m['name']}")
+                display_text = f"{m['id']} - {m['name']}"
+                material_options.append(display_text)
+                material_id_to_name[m['id']] = m['name']
+                material_name_to_id[m['name']] = m['id']
+                
+                # Store qualified printers for this material
+                if "qualifiedPrinters" in m and isinstance(m["qualifiedPrinters"], list):
+                    material_id_to_printers[m['id']] = m["qualifiedPrinters"]
         
         material_combo['values'] = material_options
+        
+        # If we have a material ID, set the display to show the name
+        if material_id and material_id in material_id_to_name:
+            material_var.set(material_id_to_name[material_id])
+        
         material_combo.grid(row=0, column=0, padx=5)
         
         # Create a frame for printers
@@ -223,6 +181,31 @@ class BasicInfoTab(BaseTab):
         # List to store printer entries
         printer_entries = []
         
+        # Function to get qualified printers for the selected material
+        def get_qualified_printers():
+            selected_material = material_var.get()
+            material_id = None
+            
+            # First check if it's in ID-Name format
+            if " - " in selected_material:
+                material_id = selected_material.split(" - ")[0]
+            else:
+                # Look up by name
+                material_id = material_name_to_id.get(selected_material)
+            
+            if material_id and material_id in material_id_to_printers:
+                return material_id_to_printers[material_id]
+            return []
+        
+        # Function to update printer dropdowns when material changes
+        def update_printer_options(*args):
+            qualified_printers = get_qualified_printers()
+            for entry in printer_entries:
+                entry["printer_combo"]['values'] = qualified_printers
+        
+        # Bind material selection to update printer options
+        material_var.trace_add("write", update_printer_options)
+        
         # Function to add a printer entry
         def add_printer(printer=""):
             # Create a frame for this printer
@@ -230,10 +213,13 @@ class BasicInfoTab(BaseTab):
             printer_frame = ttk.Frame(printers_frame)
             printer_frame.grid(row=row_idx, column=0, sticky=tk.W, padx=5, pady=2)
             
-            # Printer entry
+            # Printer dropdown
             printer_var = tk.StringVar(value=printer)
-            printer_entry = ttk.Entry(printer_frame, textvariable=printer_var, width=30)
-            printer_entry.grid(row=0, column=0, padx=5)
+            qualified_printers = get_qualified_printers()
+            
+            printer_combo = ttk.Combobox(printer_frame, textvariable=printer_var, width=30)
+            printer_combo['values'] = qualified_printers
+            printer_combo.grid(row=0, column=0, padx=5)
             
             # Remove button
             def remove_printer():
@@ -246,6 +232,7 @@ class BasicInfoTab(BaseTab):
             # Store printer data
             printer_data = {
                 "printer_var": printer_var,
+                "printer_combo": printer_combo,
                 "frame": printer_frame
             }
             printer_entries.append(printer_data)
@@ -281,73 +268,43 @@ class BasicInfoTab(BaseTab):
         self.product["name"] = self.name_var.get()
         self.product["trl"] = self.trl_var.get()
         
-        # Get selected programs
-        selected_programs = []
-        validation_errors = []
-        
-        for entry in self.program_entries:
-            program_full = entry["program_var"].get()
-            if program_full:
-                # Extract program ID from the dropdown value (format: "ID - Name")
-                program_id = program_full.split(" - ")[0] if " - " in program_full else program_full
-                
-                # Get the part
-                part = entry["part_var"].get()
-                
-                # Extract material ID from the dropdown value
-                material_full = entry["material_var"].get()
-                material_id = material_full.split(" - ")[0] if " - " in material_full else material_full
-                
-                # Get lifetime demand
-                try:
-                    lifetime_demand = int(entry["lifetime_var"].get())
-                except (ValueError, TypeError):
-                    lifetime_demand = 0
-                
-                # Get expected unit cost savings (strip $ if present)
-                cost_savings = entry["cost_savings_var"].get().strip()
-                # Remove any $ sign if the user entered it
-                if cost_savings.startswith('$'):
-                    cost_savings = cost_savings[1:]
-                
-                # Get adoption status
-                adoption_status = entry["adoption_var"].get()
-                
-                # Get the date directly from the DateEntry widget to ensure we have the most up-to-date value
-                need_date = entry["date_entry"].get_date() if hasattr(entry, "date_entry") and entry["date_entry"] else entry["date_var"].get()
-                
-                # Validate that we have a need date (required field)
-                if not need_date:
-                    validation_errors.append(f"Need Date is required for program {program_id}")
-                    continue
-                
-                selected_programs.append({
-                    "programID": program_id,
-                    "part": part,
-                    "materialID": material_id,
-                    "lifetimeDemand": lifetime_demand,
-                    "needDate": need_date,
-                    "adoptionStatus": adoption_status,
-                    "expectedUnitCostSavings": cost_savings
+        # Get TRL history
+        trl_history = []
+        for entry in self.trl_history_entries:
+            trl_level = entry["trl_level_var"].get()
+            trl_date = entry["trl_date_var"].get()
+            
+            if trl_level and trl_date:
+                trl_history.append({
+                    "level": trl_level,
+                    "date": trl_date
                 })
         
-        # Raise error if there are validation issues - but don't throw an exception so the form stays open
-        if validation_errors:
-            error_message = "\n".join(validation_errors)
-            from tkinter import messagebox
-            messagebox.showerror("Validation Error", error_message)
-            # Return False to indicate validation failed without closing the form
-            return False
-            
-        self.product["programs"] = selected_programs
+        # Sort TRL history by date
+        trl_history.sort(key=lambda x: x["date"] if x["date"] else "")
+        self.product["trlHistory"] = trl_history
         
         # Get selected material systems
         selected_materials = []
         for entry in self.material_entries:
-            material_full = entry["material_var"].get()
-            if material_full:
-                # Extract material ID from the dropdown value (format: "ID - Name")
-                material_id = material_full.split(" - ")[0] if " - " in material_full else material_full
+            material_name = entry["material_var"].get()
+            if material_name:
+                # Find the material ID for this name
+                material_id = None
+                
+                # First check if it's already in ID format
+                if " - " in material_name:
+                    material_id = material_name.split(" - ")[0]
+                else:
+                    # Look up the ID by name
+                    for m in self.model.data.get("materialSystems", []):
+                        if isinstance(m, dict) and "id" in m and "name" in m and m["name"] == material_name:
+                            material_id = m["id"]
+                            break
+                
+                # If we couldn't find an ID, use the name as is (might be a direct ID)
+                if not material_id:
+                    material_id = material_name
                 
                 # Get printers from printer entries
                 printers = []
