@@ -13,7 +13,7 @@ def generate_material_visualizations(data, output_dir, status_colors):
     print("Generating material system visualizations...")
     
     # Create materials directory if it doesn't exist
-    material_dir = os.path.join(output_dir, "materials")
+    material_dir = os.path.join('roadmap_visualizations', "materials")
     if not os.path.exists(material_dir):
         os.makedirs(material_dir)
     
@@ -43,8 +43,9 @@ def generate_material_page(material, data, material_dir, status_colors):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
     
-    # Customize appearance
+    # Customize appearance based on styling guide
     p.title.text_font_size = '16pt'
+    p.title.text_color = "#2c3e50"
     p.xaxis.axis_label = "Timeline"
     p.yaxis.axis_label = "Tasks"
     p.grid.grid_line_alpha = 0.3
@@ -161,40 +162,78 @@ def generate_material_page(material, data, material_dir, status_colors):
         p.x_range.start = min_date
         p.x_range.end = max_date
     
-    # Create material info section
+    # Create page header
+    header = f"""
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Material System: {material['name']} ({material_id})</h1>
+            <div>
+                <a href="../index.html" class="nav-link">Back to Dashboard</a>
+                <a href="material_summary.html" class="nav-link">All Materials</a>
+                <a href="material_product_distribution.html" class="nav-link">Material Usage</a>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Create material info section (styled according to guide)
     material_info = f"""
-    <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px;">
-        <h2>Material System Details: {material['name']}</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>ID:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material_id}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Process:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('process', 'N/A')}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Material:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('material', 'N/A')}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>MRL:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('mrl', 'N/A')}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Qualification:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('qualification', 'N/A')}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Qualification Class:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('qualificationClass', 'N/A')}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Statistical Basis:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('statisticalBasis', 'N/A')}</td>
-            </tr>
-        </table>
+    <div class="summary-card">
+        <h2>Material System Details</h2>
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-label">ID</div>
+                <div class="metric-value">{material_id}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Process</div>
+                <div class="metric-value">{material.get('process', 'N/A')}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Material</div>
+                <div class="metric-value">{material.get('material', 'N/A')}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">MRL</div>
+                <div class="metric-value">{material.get('mrl', 'N/A')}</div>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Add qualifications section (new information)
+    qualifications_section = ""
+    if 'qualifications' in material and material['qualifications']:
+        qualifications_section = f"""
+        <div class="summary-card">
+            <h2>Qualification Status</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; margin-bottom: 20px;">
+        """
+        
+        for qual in material['qualifications']:
+            # Create badge color based on qualification status
+            qual_status = qual.get('qualification', 'Unknown')
+            
+            # Map qualification status to color
+            status_color_map = {
+                "Qualified": "#27ae60",  # green
+                "In Progress": "#f39c12",  # orange
+                "Planned": "#3498db",  # blue
+                "Pending": "#95a5a6"   # light gray
+            }
+            
+            qual_color = status_color_map.get(qual_status, "#7f8c8d")  # default dark gray
+            
+            qualifications_section += f"""
+            <div class="part-card" style="background-color: #f8f9fa; border-radius: 4px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <p><strong>Class:</strong> {qual.get('qualificationClass', 'N/A')}</p>
+                <p><strong>Status:</strong> <span class="status-badge" style="display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; margin: 5px; background-color: {qual_color};">{qual_status}</span></p>
+                <p><strong>Statistical Basis:</strong> {qual.get('statisticalBasis', 'N/A')}</p>
+            </div>
+            """
+            
+        qualifications_section += """
+            </div>
     </div>
     """
     
@@ -202,18 +241,27 @@ def generate_material_page(material, data, material_dir, status_colors):
     properties_section = ""
     if 'properties' in material:
         properties_section = """
-        <div style="margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-radius: 5px;">
-            <h3>Material Properties</h3>
-            <table style="width: 100%; border-collapse: collapse;">
+        <div class="summary-card">
+            <h2>Material Properties</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
-        for prop_name, prop_value in material['properties'].items():
+        for i, (prop_name, prop_value) in enumerate(material['properties'].items()):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
             properties_section += f"""
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>{prop_name}:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{prop_value}</td>
-            </tr>
+                <tr style="{row_style}">
+                    <td><strong>{prop_name}</strong></td>
+                    <td>{prop_value}</td>
+                </tr>
             """
         properties_section += """
+                </tbody>
             </table>
         </div>
         """
@@ -222,19 +270,47 @@ def generate_material_page(material, data, material_dir, status_colors):
     processing_section = ""
     if 'processingParameters' in material:
         processing_section = """
-        <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-            <h3>Processing Parameters</h3>
-            <table style="width: 100%; border-collapse: collapse;">
+        <div class="summary-card">
+            <h2>Processing Parameters</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
-        for param_name, param_value in material['processingParameters'].items():
+        for i, (param_name, param_value) in enumerate(material['processingParameters'].items()):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
             processing_section += f"""
-            <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>{param_name}:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{param_value}</td>
-            </tr>
+                <tr style="{row_style}">
+                    <td><strong>{param_name}</strong></td>
+                    <td>{param_value}</td>
+                </tr>
             """
         processing_section += """
+                </tbody>
             </table>
+        </div>
+        """
+    
+    # Add standard NDT information (new information)
+    ndt_section = ""
+    if 'standardNDT' in material and material['standardNDT']:
+        ndt_section = """
+        <div class="summary-card">
+            <h2>Standard NDT Methods</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
+        """
+        for ndt in material['standardNDT']:
+            ndt_section += f"""
+            <div class="material-item" style="display: inline-block; margin: 5px 10px; padding: 10px 15px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #ddd;">
+                {ndt}
+            </div>
+            """
+        ndt_section += """
+            </div>
         </div>
         """
     
@@ -242,20 +318,32 @@ def generate_material_page(material, data, material_dir, status_colors):
     post_processing_section = ""
     if 'postProcessing' in material:
         post_processing_section = """
-        <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px;">
-            <h3>Post-Processing</h3>
-            <ul>
+        <div class="summary-card">
+            <h2>Post-Processing</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
         """
         for pp in material['postProcessing']:
-            suppliers = ""
+            supplier_html = ""
             if 'Supplier' in pp and pp['Supplier']:
+                supplier_html = "<div style='margin-top: 10px;'><strong>Suppliers:</strong> "
                 supplier_links = []
                 for s in pp['Supplier']:
-                    supplier_links.append(f'<a href="../suppliers/supplier_{s}.html">{s}</a>')
-                suppliers = f" - Suppliers: {', '.join(supplier_links)}"
-            post_processing_section += f"<li><strong>{pp['name']}</strong>{suppliers}</li>"
+                    if isinstance(s, dict) and 'id' in s:
+                        supplier_id = s['id']
+                        qual_status = s.get('qualStatus', 'Unknown')
+                        supplier_links.append(f'<a href="../suppliers/supplier_{supplier_id}.html">{supplier_id}</a> ({qual_status})')
+                    else:
+                        supplier_links.append(f'<a href="../suppliers/supplier_{s}.html">{s}</a>')
+                supplier_html += ", ".join(supplier_links) + "</div>"
+                
+            post_processing_section += f"""
+            <div class="part-card" style="background-color: #f8f9fa; border-radius: 4px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-width: 200px;">
+                <h3 style="margin-top: 0; font-size: 16px;">{pp['name']}</h3>
+                {supplier_html}
+            </div>
+            """
         post_processing_section += """
-            </ul>
+            </div>
         </div>
         """
     
@@ -263,43 +351,82 @@ def generate_material_page(material, data, material_dir, status_colors):
     machines_section = ""
     if 'qualifiedMachines' in material:
         machines_section = """
-        <div style="margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-radius: 5px;">
-            <h3>Qualified Machines</h3>
-            <ul>
+        <div class="summary-card">
+            <h2>Qualified Machines</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
         """
         for machine in material['qualifiedMachines']:
-            suppliers = ""
+            supplier_html = ""
             if 'Supplier' in machine and machine['Supplier']:
+                supplier_html = "<div style='margin-top: 10px;'><strong>Suppliers:</strong> "
                 supplier_links = []
                 for s in machine['Supplier']:
-                    supplier_links.append(f'<a href="../suppliers/supplier_{s}.html">{s}</a>')
-                suppliers = f" - Suppliers: {', '.join(supplier_links)}"
-            machines_section += f"<li><strong>{machine['machine']}</strong>{suppliers}</li>"
+                    if isinstance(s, dict) and 'id' in s:
+                        supplier_id = s['id']
+                        qual_status = s.get('qualStatus', 'Unknown')
+                        supplier_links.append(f'<a href="../suppliers/supplier_{supplier_id}.html">{supplier_id}</a> ({qual_status})')
+                    else:
+                        supplier_links.append(f'<a href="../suppliers/supplier_{s}.html">{s}</a>')
+                supplier_html += ", ".join(supplier_links) + "</div>"
+                
+            machines_section += f"""
+            <div class="part-card" style="background-color: #f8f9fa; border-radius: 4px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-width: 200px;">
+                <h3 style="margin-top: 0; font-size: 16px;">{machine['machine']}</h3>
+                {supplier_html}
+            </div>
+            """
         machines_section += """
-            </ul>
+            </div>
         </div>
         """
     
-    # Add standard NDT information
-    ndt_section = ""
-    if 'standardNDT' in material and material['standardNDT']:
-        ndt_section = """
-        <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-            <h3>Standard NDT Methods</h3>
-            <ul>
+    # Add related funding opportunities section (new information)
+    funding_section = ""
+    if 'relatedFundingOpps' in material and material['relatedFundingOpps']:
+        funding_section = """
+        <div class="summary-card">
+            <h2>Related Funding Opportunities</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Opportunity ID</th>
+                        <th>Pursuit ID</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
-        for ndt in material['standardNDT']:
-            ndt_section += f"<li>{ndt}</li>"
-        ndt_section += """
-            </ul>
+        for i, funding in enumerate(material['relatedFundingOpps']):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            
+            # Check if funding is a string or dictionary
+            if isinstance(funding, dict):
+                opp_id = funding.get('opportunityID', 'N/A')
+                pursuit_id = funding.get('pursuitID', 'N/A')
+            else:
+                # Handle case where funding is just a string
+                opp_id = funding
+                pursuit_id = 'N/A'
+            
+            funding_section += f"""
+                <tr style="{row_style}">
+                    <td>
+                        <a href="../funding/opportunity_{opp_id}.html" style="color: #3498db;">{opp_id}</a>
+                    </td>
+                    <td>
+                        <a href="../pursuits/pursuit_{pursuit_id}.html" style="color: #3498db;">{pursuit_id}</a>
+                    </td>
+                </tr>
+            """
+        funding_section += """
+                </tbody>
+            </table>
         </div>
         """
     
     # Add related products section
     products_section = """
-    <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px;">
-        <h3>Related Products</h3>
-        <ul>
+    <div class="summary-card">
+        <h2>Related Products</h2>
     """
     
     related_products = []
@@ -311,27 +438,208 @@ def generate_material_page(material, data, material_dir, status_colors):
                 related_products.append(product)
     
     if related_products:
-        for product in related_products:
-            products_section += f"<li><a href='../products/product_{product['id']}.html'>{product['name']} ({product['id']})</a></li>"
+        products_section += """
+        <table>
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+        for i, product in enumerate(related_products):
+            row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+            products_section += f"""
+                <tr style="{row_style}">
+                    <td>{product['id']}</td>
+                    <td>
+                        <a href="../products/product_{product['id']}.html" style="color: #3498db;">{product['name']}</a>
+                    </td>
+                </tr>
+            """
+        products_section += """
+            </tbody>
+        </table>
+        """
     else:
-        products_section += "<li>No related products found</li>"
+        products_section += """
+        <div style="padding: 20px; text-align: center; color: #7f8c8d;">
+            No related products found
+        </div>
+        """
     
     products_section += """
-        </ul>
     </div>
     """
     
-    # Combine all elements
-    info_div = Div(text=material_info + properties_section + processing_section + 
-                       post_processing_section + machines_section + ndt_section + products_section, 
-                   width=1200)
+    # Create page CSS
+    css_styles = """
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 1200px;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        .header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .summary-card h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 22px;
+            text-align: center;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            text-align: center;
+        }
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+        .chart-container {
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    """
     
-    # Create layout
-    layout_obj = column(info_div, p)
+    # Combine all elements
+    page_html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Material System: {material['name']} | Roadmap Visualization</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Include Bokeh scripts -->
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.6.3.min.js"></script>
+        
+        {css_styles}
+    </head>
+    <body>
+        <div class="container">
+            {header}
+            {material_info}
+            {qualifications_section}
+            
+            <div class="summary-card">
+                <h2>Material Roadmap</h2>
+                <div class="chart-container" id="roadmap-chart"></div>
+            </div>
+            
+            {properties_section}
+            {processing_section}
+            {ndt_section}
+            {post_processing_section}
+            {machines_section}
+            {funding_section}
+            {products_section}
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Create a div element with the HTML content
+    template_div = Div(text=page_html, width=1200)
+    
+    # Create layout for the roadmap chart
+    roadmap_div = Div(text="", width=1200, height=0)
     
     # Output to file
     output_file(os.path.join(material_dir, f"material_{material_id}.html"))
-    save(layout_obj)
+    save(layout([template_div, roadmap_div, p]))
 
 def generate_material_summary(data, material_dir):
     """Generate a summary page for all material systems"""
@@ -354,6 +662,15 @@ def generate_material_summary(data, material_dir):
         tools=""
     )
     
+    # Customize appearance based on styling guide
+    p1.title.text_font_size = '14pt'
+    p1.title.text_color = "#2c3e50"
+    p1.xaxis.axis_label = "Process"
+    p1.yaxis.axis_label = "Number of Material Systems"
+    p1.xgrid.grid_line_color = None
+    p1.xaxis.major_label_orientation = 45
+    p1.background_fill_color = "#f8f9fa"
+    
     # Add bars
     p1.vbar(
         x=list(processes.keys()),
@@ -362,13 +679,6 @@ def generate_material_summary(data, material_dir):
         color=Category10[10][0:len(processes)],
         alpha=0.8
     )
-    
-    # Customize appearance
-    p1.title.text_font_size = '14pt'
-    p1.xaxis.axis_label = "Process"
-    p1.yaxis.axis_label = "Number of Material Systems"
-    p1.xgrid.grid_line_color = None
-    p1.xaxis.major_label_orientation = 45
     
     # Create a figure for material distribution by MRL
     mrls = {}
@@ -414,6 +724,14 @@ def generate_material_summary(data, material_dir):
         tools=""
     )
     
+    # Customize appearance based on styling guide
+    p2.title.text_font_size = '14pt'
+    p2.title.text_color = "#2c3e50"
+    p2.xaxis.axis_label = "MRL"
+    p2.yaxis.axis_label = "Number of Material Systems"
+    p2.xgrid.grid_line_color = None
+    p2.background_fill_color = "#f8f9fa"
+    
     # Add bars
     p2.vbar(
         x=[str(mrl) for mrl in sorted_mrls],
@@ -423,60 +741,132 @@ def generate_material_summary(data, material_dir):
         alpha=0.8
     )
     
-    # Customize appearance
-    p2.title.text_font_size = '14pt'
-    p2.xaxis.axis_label = "MRL"
-    p2.yaxis.axis_label = "Number of Material Systems"
-    p2.xgrid.grid_line_color = None
-    
-    # Create a figure for material distribution by qualification status
-    qualifications = {}
+    # Count qualification statuses
+    qualification_statuses = {}
     for material in data['materialSystems']:
-        qual = material.get('qualification', 'Unknown')
-        if qual in qualifications:
-            qualifications[qual] += 1
+        # Get qualification statuses from the qualifications array (new format)
+        if 'qualifications' in material and material['qualifications']:
+            for qual in material['qualifications']:
+                status = qual.get('qualification', 'Unknown')
+                if status in qualification_statuses:
+                    qualification_statuses[status] += 1
+                else:
+                    qualification_statuses[status] = 1
+        # Also include the legacy qualification field if available
+        elif 'qualification' in material:
+            status = material['qualification']
+            if status in qualification_statuses:
+                qualification_statuses[status] += 1
         else:
-            qualifications[qual] = 1
+                qualification_statuses[status] = 1
     
-    # Create a figure for the qualification distribution
+    # Create a figure for qualification status distribution
     p3 = figure(
         title="Material Systems by Qualification Status",
-        x_range=list(qualifications.keys()),
+        x_range=list(qualification_statuses.keys()),
         width=1200,
         height=400,
         toolbar_location=None,
         tools=""
     )
     
-    # Add bars
-    p3.vbar(
-        x=list(qualifications.keys()),
-        top=list(qualifications.values()),
-        width=0.5,
-        color=Category10[10][0:len(qualifications)],
-        alpha=0.8
-    )
-    
-    # Customize appearance
+    # Customize appearance based on styling guide
     p3.title.text_font_size = '14pt'
+    p3.title.text_color = "#2c3e50"
     p3.xaxis.axis_label = "Qualification Status"
     p3.yaxis.axis_label = "Number of Material Systems"
     p3.xgrid.grid_line_color = None
+    p3.background_fill_color = "#f8f9fa"
     
-    # Create material list section
+    # Add bars with appropriate colors based on status
+    status_colors = {
+        "Qualified": "#27ae60",  # green
+        "In Progress": "#f39c12",  # orange
+        "Planned": "#3498db",    # blue
+        "Pending": "#95a5a6",    # light gray
+        "Unknown": "#7f8c8d"     # dark gray
+    }
+    
+    colors = [status_colors.get(status, "#7f8c8d") for status in qualification_statuses.keys()]
+    
+    p3.vbar(
+        x=list(qualification_statuses.keys()),
+        top=list(qualification_statuses.values()),
+        width=0.5,
+        color=colors,
+        alpha=0.8
+    )
+    
+    # Create page header
+    header = """
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Material Systems Summary</h1>
+            <div>
+                <a href="../index.html" class="nav-link">Back to Dashboard</a>
+                <a href="material_product_distribution.html" class="nav-link">Material Usage</a>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Create statistics cards section
+    total_materials = len(data['materialSystems'])
+    qualified_count = sum(1 for m in data['materialSystems'] 
+                        if any(q.get('qualification') == 'Qualified' 
+                              for q in m.get('qualifications', []))
+                        or m.get('qualification') == 'Qualified')
+    
+    in_progress_count = sum(1 for m in data['materialSystems'] 
+                          if any(q.get('qualification') == 'In Progress' 
+                                for q in m.get('qualifications', []))
+                          or m.get('qualification') == 'In Progress')
+    
+    stats_section = f"""
+    <div class="summary-card">
+        <h2>Material Statistics</h2>
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-label">Total Material Systems</div>
+                <div class="metric-value">{total_materials}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Qualified Materials</div>
+                <div class="metric-value" style="color: #27ae60;">{qualified_count}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">In Progress</div>
+                <div class="metric-value" style="color: #f39c12;">{in_progress_count}</div>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Create distribution charts section
+    charts_section = """
+    <div class="summary-card">
+        <h2>Material Distributions</h2>
+        <div class="chart-container" id="process-chart"></div>
+        <div class="chart-container" id="mrl-chart"></div>
+        <div class="chart-container" id="qualification-chart"></div>
+    </div>
+    """
+    
+    # Create material list section with qualifications
     material_list = """
-    <div style="margin-top: 30px;">
-        <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">All Material Systems</h2>
+    <div class="summary-card">
+        <h2>All Material Systems</h2>
         <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <table>
                 <thead>
-                    <tr style="background-color: #3498db; color: white;">
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material Name</th>
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">ID</th>
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Process</th>
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Material</th>
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">MRL</th>
-                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Qualification</th>
+                    <tr>
+                        <th>Material Name</th>
+                        <th>ID</th>
+                        <th>Process</th>
+                        <th>Material</th>
+                        <th>MRL</th>
+                        <th>Qualification Status</th>
+                        <th>Statistical Basis</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -485,14 +875,51 @@ def generate_material_summary(data, material_dir):
     # Add rows for each material system
     for i, material in enumerate(sorted(data['materialSystems'], key=lambda x: x['name'])):
         row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+        
+        # Handle qualifications display (new format)
+        qual_status_display = ""
+        qual_stat_basis = ""
+        
+        if 'qualifications' in material and material['qualifications']:
+            # Get qualifications from array (new format)
+            qual_badges = []
+            for qual in material['qualifications']:
+                status = qual.get('qualification', 'Unknown')
+                qual_class = qual.get('qualificationClass', 'N/A')
+                status_color = status_colors.get(status, "#7f8c8d")
+                
+                qual_badges.append(
+                    f'<span class="status-badge" style="display: inline-block; padding: 5px 10px; '
+                    f'border-radius: 4px; color: white; font-weight: bold; margin: 5px; '
+                    f'background-color: {status_color};">{status} ({qual_class})</span>'
+                )
+                
+                # Get the statistical basis for display in the table
+                if qual.get('statisticalBasis'):
+                    qual_stat_basis += f"{qual.get('statisticalBasis')} ({qual_class}), "
+                
+            qual_status_display = "".join(qual_badges)
+            qual_stat_basis = qual_stat_basis[:-2] if qual_stat_basis else "N/A"
+        else:
+            # Legacy format handling
+            status = material.get('qualification', 'Unknown')
+            status_color = status_colors.get(status, "#7f8c8d")
+            qual_status_display = (
+                f'<span class="status-badge" style="display: inline-block; padding: 5px 10px; '
+                f'border-radius: 4px; color: white; font-weight: bold; margin: 5px; '
+                f'background-color: {status_color};">{status}</span>'
+            )
+            qual_stat_basis = material.get('statisticalBasis', 'N/A')
+            
         material_list += f"""
         <tr style="{row_style}">
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href='material_{material['id']}.html' style="color: #3498db;">{material['name']}</a></td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material['id']}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('process', 'N/A')}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('material', 'N/A')}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('mrl', 'N/A')}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{material.get('qualification', 'N/A')}</td>
+            <td><a href='material_{material['id']}.html' style="color: #3498db;">{material['name']}</a></td>
+            <td>{material['id']}</td>
+            <td>{material.get('process', 'N/A')}</td>
+            <td>{material.get('material', 'N/A')}</td>
+            <td>{material.get('mrl', 'N/A')}</td>
+            <td>{qual_status_display}</td>
+            <td>{qual_stat_basis}</td>
         </tr>
         """
     
@@ -503,30 +930,163 @@ def generate_material_summary(data, material_dir):
     </div>
     """
     
-    # Create header
-    header = """
-    <div style="margin-bottom: 20px;">
-        <h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Material Systems Summary</h1>
-        <p>This page provides an overview of all material systems and their distributions.</p>
-        <p><a href="../index.html" style="color: #3498db; text-decoration: none;">Back to Dashboard</a></p>
-    </div>
+    # Create page CSS
+    css_styles = """
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 1200px;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        .header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .summary-card h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 22px;
+            text-align: center;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            text-align: center;
+        }
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+        .chart-container {
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
     """
     
-    # Combine all elements
-    header_div = Div(text=header, width=1200)
-    material_list_div = Div(text=material_list, width=1200)
+    # Combine all elements into HTML page
+    page_html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Material Systems Summary | Roadmap Visualization</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Include Bokeh scripts -->
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.6.3.min.js"></script>
+        
+        {css_styles}
+    </head>
+    <body>
+        <div class="container">
+            {header}
+            {stats_section}
+            {charts_section}
+            {material_list}
+        </div>
+    </body>
+    </html>
+    """
     
-    # Create layout
-    layout_obj = layout([
-        [header_div],
-        [p1, p2],
-        [p3],
-        [material_list_div]
-    ])
+    # Create a div element with the HTML content
+    template_div = Div(text=page_html, width=1200)
+    
+    # Create div elements for charts
+    process_div = Div(text="", width=1200, height=0)
+    mrl_div = Div(text="", width=1200, height=0)
+    qual_div = Div(text="", width=1200, height=0)
     
     # Output to file
     output_file(os.path.join(material_dir, "material_summary.html"))
-    save(layout_obj)
+    save(layout([template_div, process_div, p1, mrl_div, p2, qual_div, p3]))
 
 def generate_material_distribution_charts(data, material_dir):
     """Generate distribution charts for material systems"""
@@ -568,21 +1128,23 @@ def generate_material_distribution_charts(data, material_dir):
         tools="pan,wheel_zoom,box_zoom,reset,save",
     )
     
+    # Customize appearance based on styling guide
+    p.title.text_font_size = '16pt'
+    p.title.text_color = "#2c3e50"
+    p.xaxis.axis_label = "Material System"
+    p.yaxis.axis_label = "Number of Products"
+    p.xgrid.grid_line_color = None
+    p.xaxis.major_label_orientation = 45
+    p.background_fill_color = "#f8f9fa"
+    
     # Add bars
     p.vbar(
         x=material_names,
         top=product_counts,
         width=0.7,
-        color=Category10[10][2],
+        color="#3498db",  # Use blue color from style guide
         alpha=0.8
     )
-    
-    # Customize appearance
-    p.title.text_font_size = '14pt'
-    p.xaxis.axis_label = "Material System"
-    p.yaxis.axis_label = "Number of Products"
-    p.xgrid.grid_line_color = None
-    p.xaxis.major_label_orientation = 45
     
     # Add hover tool
     hover = HoverTool()
@@ -592,6 +1154,180 @@ def generate_material_distribution_charts(data, material_dir):
     ]
     p.add_tools(hover)
     
+    # Create page header
+    header = """
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Material Usage Distribution</h1>
+            <div>
+                <a href="../index.html" class="nav-link">Back to Dashboard</a>
+                <a href="material_summary.html" class="nav-link">All Materials</a>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Create description
+    description = """
+    <div class="summary-card">
+        <h2>Material Usage Analysis</h2>
+        <p>This chart shows the number of products that use each material system. Materials used in more products may require higher priority for qualification and development.</p>
+    </div>
+    """
+    
+    # Create data table with statistics
+    top_materials = sorted([(name, count) for name, count in zip(material_names, product_counts)], key=lambda x: x[1], reverse=True)[:5]
+    
+    usage_table = """
+    <div class="summary-card">
+        <h2>Top 5 Used Materials</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material System</th>
+                    <th>Number of Products</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+    
+    for i, (name, count) in enumerate(top_materials):
+        row_style = "background-color: #f2f9ff;" if i % 2 == 0 else "background-color: #ffffff;"
+        usage_table += f"""
+        <tr style="{row_style}">
+            <td>{name}</td>
+            <td>{count}</td>
+        </tr>
+        """
+    
+    usage_table += """
+            </tbody>
+        </table>
+    </div>
+    """
+    
+    # Create page CSS
+    css_styles = """
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 1200px;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        .header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .summary-card h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 22px;
+            text-align: center;
+        }
+        .chart-container {
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+    """
+    
+    # Combine all elements into HTML page
+    page_html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Material Usage Distribution | Roadmap Visualization</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Include Bokeh scripts -->
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.6.3.min.js"></script>
+        
+        {css_styles}
+    </head>
+    <body>
+        <div class="container">
+            {header}
+            {description}
+            <div class="summary-card">
+                <h2>Material Usage Distribution</h2>
+                <div class="chart-container" id="usage-chart"></div>
+            </div>
+            {usage_table}
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Create a div element with the HTML content
+    template_div = Div(text=page_html, width=1200)
+    
+    # Create div for chart
+    chart_div = Div(text="", width=1200, height=0)
+    
     # Output to file
     output_file(os.path.join(material_dir, "material_product_distribution.html"))
-    save(p) 
+    save(layout([template_div, chart_div, p])) 

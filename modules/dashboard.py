@@ -4,7 +4,7 @@ from bokeh.models import Div
 from bokeh.layouts import layout
 from bokeh.plotting import output_file, save
 
-def generate_dashboard(data, output_dir, network_analysis_path=None, progress_path=None):
+def generate_dashboard(data, output_dir, network_analysis_path=None, progress_path=None, implementation_path=None):
     """Generate the main dashboard/index page"""
     print("Generating main dashboard...")
     
@@ -22,6 +22,11 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
         for funding in data['fundingOpportunities']:
             pursuit_count += len(funding.get('pursuits', []))
     
+    # Count implementation metrics
+    implementation_count = 0
+    for program in data.get('programs', []):
+        implementation_count += len(program.get('productMaterialCombinations', []))
+    
     # Create the dashboard HTML
     dashboard_html = f"""
     <!DOCTYPE html>
@@ -29,18 +34,50 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
     <head>
         <title>Additive Manufacturing Roadmap Dashboard</title>
         <style>
-            body {{ font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }}
-            .container {{ max-width: 1200px; margin: 0 auto; padding: 20px; }}
+            body {{ 
+                font-family: Arial, sans-serif; 
+                margin: 0; 
+                padding: 0; 
+                background-color: #f8f9fa; 
+            }}
+            .container {{ 
+                width: 1200px; 
+                max-width: 100%; 
+                margin: 0 auto; 
+                padding: 20px; 
+                box-sizing: border-box;
+            }}
             .header {{ 
-                background-color: #0066cc; 
+                background: linear-gradient(to right, #3498db, #2c3e50);
                 color: white; 
                 padding: 20px; 
                 text-align: center;
-                border-radius: 5px 5px 0 0;
+                border-radius: 8px;
                 margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }}
-            .header h1 {{ margin: 0; }}
-            .header p {{ margin: 10px 0 0 0; }}
+            .header h1 {{ 
+                margin: 0; 
+                font-size: 28px;
+            }}
+            .header p {{ 
+                margin: 10px 0 0 0; 
+            }}
+            .nav-links {{
+                margin-top: 15px;
+            }}
+            .nav-link {{
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+            }}
+            .nav-link:hover {{
+                background-color: rgba(255,255,255,0.3);
+            }}
             .card-grid {{
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -49,9 +86,9 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
             }}
             .card {{ 
                 background-color: white; 
-                border-radius: 5px; 
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                padding: 20px;
+                border-radius: 8px; 
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
                 transition: transform 0.3s ease;
             }}
             .card:hover {{ 
@@ -59,12 +96,15 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }}
             .card h2 {{ 
-                color: #0066cc; 
+                color: #2c3e50; 
                 margin-top: 0;
-                border-bottom: 2px solid #f0f0f0;
+                border-bottom: 2px solid #3498db;
                 padding-bottom: 10px;
+                font-size: 22px;
             }}
-            .card-content {{ margin-bottom: 15px; }}
+            .card-content {{ 
+                margin-bottom: 15px; 
+            }}
             .card-footer {{ 
                 display: flex;
                 justify-content: space-between;
@@ -72,22 +112,24 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
             .btn {{
                 display: inline-block;
                 padding: 8px 15px;
-                background-color: #0066cc;
+                background-color: #3498db;
                 color: white;
                 text-decoration: none;
                 border-radius: 4px;
                 transition: background-color 0.3s ease;
             }}
-            .btn:hover {{ background-color: #004c99; }}
+            .btn:hover {{ 
+                background-color: #2980b9; 
+            }}
             .stats {{ 
                 display: flex; 
                 flex-wrap: wrap;
                 justify-content: space-between;
                 margin-bottom: 20px;
                 background-color: white;
-                border-radius: 5px;
-                padding: 15px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                padding: 25px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             }}
             .stat-item {{ 
                 text-align: center; 
@@ -96,29 +138,45 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
                 min-width: 120px;
             }}
             .stat-value {{ 
-                font-size: 24px; 
+                font-size: 28px; 
                 font-weight: bold; 
-                color: #0066cc;
+                color: #3498db;
                 margin: 5px 0;
             }}
-            .stat-label {{ color: #666; }}
+            .stat-label {{ 
+                color: #7f8c8d; 
+            }}
             .footer {{ 
                 text-align: center; 
                 margin-top: 30px; 
                 padding-top: 20px; 
                 border-top: 1px solid #ddd;
-                color: #666;
+                color: #7f8c8d;
             }}
             .overview-image {{
                 max-width: 100%;
                 height: auto;
                 border: 1px solid #ddd;
-                border-radius: 5px;
+                border-radius: 8px;
                 margin-top: 10px;
             }}
             .feature-card {{
-                background-color: #f9f9ff;
-                border-left: 4px solid #0066cc;
+                background-color: #f8f9fa;
+                border-left: 4px solid #3498db;
+            }}
+            .overview-card {{
+                width: 1200px;
+                max-width: 100%;
+                box-sizing: border-box;
+                margin-bottom: 20px;
+            }}
+            @media (max-width: 768px) {{
+                .card-grid {{
+                    grid-template-columns: 1fr;
+                }}
+                .stat-item {{
+                    min-width: 100px;
+                }}
             }}
         </style>
     </head>
@@ -127,6 +185,14 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
             <div class="header">
                 <h1>Additive Manufacturing Roadmap Dashboard</h1>
                 <p>Interactive visualizations for roadmap data</p>
+                <div class="nav-links">
+                    <a href="programs/program_summary.html" class="nav-link">Programs</a>
+                    <a href="products/product_summary.html" class="nav-link">Products</a>
+                    <a href="materials/material_summary.html" class="nav-link">Materials</a>
+                    <a href="suppliers/supplier_summary.html" class="nav-link">Suppliers</a>
+                    <a href="funding/funding_summary.html" class="nav-link">Funding</a>
+                    <a href="implementation/index.html" class="nav-link">Implementation</a>
+                </div>
             </div>
             
             <div class="stats">
@@ -233,6 +299,16 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
                 </div>
 
                 <div class="card">
+                    <h2>Implementation Metrics</h2>
+                    <div class="card-content">
+                        <p>Analyze adoption metrics, cost and schedule savings, and implementation status across programs and material systems.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{implementation_path if implementation_path else 'implementation/index.html'}" class="btn">View Metrics</a>
+                    </div>
+                </div>
+
+                <div class="card">
                     <h2>Advanced Network Analysis</h2>
                     <div class="card-content">
                         <p>Advanced network graph analysis with centrality metrics, dependency chains, and impact analysis.</p>
@@ -243,7 +319,7 @@ def generate_dashboard(data, output_dir, network_analysis_path=None, progress_pa
                 </div>
             </div>
             
-            <div class="card">
+            <div class="card overview-card">
                 <h2>Roadmap Overview</h2>
                 <div class="card-content">
                     <p>This network graph shows the relationships between all entities in the roadmap data.</p>

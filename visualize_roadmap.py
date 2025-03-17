@@ -90,12 +90,12 @@ def generate_product_roadmap(product_id):
                         lane_tasks.append(task)
         
         # Sort tasks by start date
-        lane_tasks.sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"))
+        lane_tasks.sort(key=lambda x: datetime.strptime(x.get('start', '2025-01-01'), "%Y-%m-%d") if x.get('start') else datetime.now())
         
         for task in lane_tasks:
             y_pos -= 1
-            start_date = datetime.strptime(task['start'], "%Y-%m-%d")
-            end_date = datetime.strptime(task['end'], "%Y-%m-%d")
+            start_date = datetime.strptime(task.get('start', '2025-01-01'), "%Y-%m-%d") if task.get('start') else datetime.now()
+            end_date = datetime.strptime(task.get('end', '2025-12-31'), "%Y-%m-%d") if task.get('end') else start_date + timedelta(days=30)
             
             # Add funding type if available
             funding = f" ({task.get('fundingType', '')})" if 'fundingType' in task else ""
@@ -146,6 +146,8 @@ def generate_product_roadmap(product_id):
     
     # Add milestones as vertical lines
     for milestone in product.get('milestones', []):
+        if not milestone.get('date'):
+            continue
         milestone_date = datetime.strptime(milestone['date'], "%Y-%m-%d")
         milestone_line = Span(location=milestone_date, dimension='height', 
                              line_color='red', line_dash='dashed', line_width=2)
@@ -195,18 +197,21 @@ def generate_product_roadmap(product_id):
     # Find date range for x-axis
     all_dates = []
     for task in all_tasks:
-        all_dates.append(datetime.strptime(task['start'], "%Y-%m-%d"))
-        all_dates.append(datetime.strptime(task['end'], "%Y-%m-%d"))
+        if task.get('start'):
+            all_dates.append(datetime.strptime(task['start'], "%Y-%m-%d"))
+        if task.get('end'):
+            all_dates.append(datetime.strptime(task['end'], "%Y-%m-%d"))
 
     # Add program need dates
     for program_id in product.get('programs', []):
         program = next((prog for prog in data['programs'] if prog['id'] == program_id), None)
-        if program and 'needDate' in program:
+        if program and program.get('needDate'):
             all_dates.append(datetime.strptime(program['needDate'], "%Y-%m-%d"))
 
     # Add milestone dates
     for milestone in product.get('milestones', []):
-        all_dates.append(datetime.strptime(milestone['date'], "%Y-%m-%d"))
+        if milestone.get('date'):
+            all_dates.append(datetime.strptime(milestone['date'], "%Y-%m-%d"))
 
     if all_dates:
         min_date = min(all_dates)
@@ -264,13 +269,22 @@ def generate_index_page():
     
     for product in data['products']:
         product_id = product['id']
+        
+        # Format material systems correctly
+        material_systems = []
+        for ms in product.get('materialSystems', []):
+            if isinstance(ms, str):
+                material_systems.append(ms)
+            elif isinstance(ms, dict) and 'materialID' in ms:
+                material_systems.append(ms['materialID'])
+        
         html += f"""
         <div class="product-item">
             <h2>{product['name']} ({product_id})</h2>
             <div class="product-details">
                 <strong>TRL:</strong> {product.get('trl', 'N/A')} | 
                 <strong>Programs:</strong> {', '.join(product.get('programs', []))} |
-                <strong>Material Systems:</strong> {', '.join(product.get('materialSystems', []))}
+                <strong>Material Systems:</strong> {', '.join(material_systems)}
             </div>
             <a href="bokeh_product_{product_id}.html" class="product-link">View Roadmap</a>
         </div>
@@ -304,246 +318,278 @@ print(f"Bokeh roadmap visualizations generated in the '{output_dir}' directory."
 print(f"Open '{output_dir}/index.html' in your browser to view the roadmaps.")
 
 def create_simple_sankey():
-    # Create a figure
-    plt.figure(figsize=(15, 10))
+    # Check if we have enough data to create a Sankey diagram
+    if not data.get('products') or not any(p.get('programs') for p in data.get('products', [])):
+        print("Not enough data to create a Sankey diagram")
+        return
     
-    # Initialize the Sankey diagram
-    sankey = Sankey(ax=plt.gca(), scale=0.01, offset=0.2, head_angle=120, margin=0.4, shoulder=0)
-    
-    # Collect all the flows
-    program_to_product = {}
-    product_to_material = {}
-    material_to_supplier = {}
-    
-    # Count program to product flows
-    for product in data['products']:
-        for program_id in product.get('programs', []):
-            if program_id not in program_to_product:
-                program_to_product[program_id] = 0
-            program_to_product[program_id] += 1
-    
-    # Count product to material flows
-    for product in data['products']:
-        for material_id in product.get('materialSystems', []):
-            key = (product['id'], material_id)
-            if key not in product_to_material:
-                product_to_material[key] = 0
-            product_to_material[key] += 1
-    
-    # Count material to supplier flows
-    for supplier in data['suppliers']:
-        for material_id in supplier.get('materials', []):
-            key = (material_id, supplier['id'])
-            if key not in material_to_supplier:
-                material_to_supplier[key] = 0
-            material_to_supplier[key] += 1
-    
-    # Add the first stage: Programs to Products
-    program_names = [p['name'] for p in data['programs']]
-    program_flows = [-sum(program_to_product.values())]  # Total outflow
-    
-    # Add the diagram
-    sankey.add(flows=program_flows, 
-               labels=['Programs'],
-               orientations=[0],
-               pathlengths=[0.25],
-               facecolor='#1f77b4')
-    
-    # Add the second stage: Products
-    product_inflow = sum(program_to_product.values())
-    product_outflow = sum(len(p.get('materialSystems', [])) for p in data['products'])
-    product_flows = [product_inflow, -product_outflow]
-    
-    sankey.add(flows=product_flows,
-               labels=['Products'],
-               orientations=[0, 0],
-               pathlengths=[0.25, 0.25],
-               facecolor='#ff7f0e',
-               prior=0,
-               connect=(0, 0))
-    
-    # Add the third stage: Materials
-    material_inflow = product_outflow
-    material_outflow = sum(len(s.get('materials', [])) for s in data['suppliers'])
-    material_flows = [material_inflow, -material_outflow]
-    
-    sankey.add(flows=material_flows,
-               labels=['Materials'],
-               orientations=[0, 0],
-               pathlengths=[0.25, 0.25],
-               facecolor='#2ca02c',
-               prior=1,
-               connect=(1, 0))
-    
-    # Add the fourth stage: Suppliers
-    supplier_inflow = material_outflow
-    supplier_flows = [supplier_inflow]
-    
-    sankey.add(flows=supplier_flows,
-               labels=['Suppliers'],
-               orientations=[0],
-               pathlengths=[0.25],
-               facecolor='#d62728',
-               prior=2,
-               connect=(1, 0))
-    
-    # Finish the diagram
-    sankey.finish()
-    plt.title('Roadmap Relationships Flow Diagram', fontsize=16)
-    
-    # Save the figure
-    plt.savefig(os.path.join(output_dir, "sankey_diagram.png"), dpi=300, bbox_inches='tight')
-    plt.close()
-    
-    # Create a more detailed network graph as an alternative
-    create_network_graph()
-    
-    print(f"Sankey diagram generated in '{output_dir}/sankey_diagram.png'")
-    print(f"Network graph generated in '{output_dir}/network_graph.png'")
+    try:
+        # Create a figure
+        plt.figure(figsize=(15, 10))
+        
+        # Initialize the Sankey diagram
+        sankey = Sankey(ax=plt.gca(), scale=0.01, offset=0.2, head_angle=120, margin=0.4, shoulder=0)
+        
+        # Collect all the flows
+        program_to_product = {}
+        product_to_material = {}
+        material_to_supplier = {}
+        
+        # Count program to product flows
+        for product in data['products']:
+            for program_id in product.get('programs', []):
+                if program_id not in program_to_product:
+                    program_to_product[program_id] = 0
+                program_to_product[program_id] += 1
+        
+        # If no program to product flows, we can't create a Sankey diagram
+        if not program_to_product:
+            print("No program to product flows found, skipping Sankey diagram")
+            return
+        
+        # Count product to material flows
+        for product in data['products']:
+            for ms in product.get('materialSystems', []):
+                # Handle both string and dict formats for material systems
+                if isinstance(ms, str):
+                    material_id = ms
+                elif isinstance(ms, dict) and 'materialID' in ms:
+                    material_id = ms['materialID']
+                else:
+                    continue
+                    
+                key = (product['id'], material_id)
+                if key not in product_to_material:
+                    product_to_material[key] = 0
+                product_to_material[key] += 1
+        
+        # Count material to supplier flows
+        if 'suppliers' in data:
+            for supplier in data['suppliers']:
+                for material_id in supplier.get('materials', []):
+                    key = (material_id, supplier['id'])
+                    if key not in material_to_supplier:
+                        material_to_supplier[key] = 0
+                    material_to_supplier[key] += 1
+        
+        # Add the first stage: Programs to Products
+        program_names = [p['name'] for p in data['programs']]
+        program_flows = [-sum(program_to_product.values())]  # Total outflow
+        
+        # Add the diagram
+        sankey.add(flows=program_flows, 
+                   labels=['Programs'],
+                   orientations=[0],
+                   pathlengths=[0.25],
+                   facecolor='#1f77b4')
+        
+        # Add the second stage: Products
+        product_inflow = sum(program_to_product.values())
+        product_outflow = sum(len(p.get('materialSystems', [])) for p in data['products'])
+        product_flows = [product_inflow, -product_outflow]
+        
+        sankey.add(flows=product_flows,
+                   labels=['Products'],
+                   orientations=[0, 0],
+                   pathlengths=[0.25, 0.25],
+                   facecolor='#ff7f0e',
+                   prior=0,
+                   connect=(0, 0))
+        
+        # Add the third stage: Materials
+        material_inflow = product_outflow
+        material_outflow = sum(len(s.get('materials', [])) for s in data.get('suppliers', []))
+        material_flows = [material_inflow, -material_outflow]
+        
+        sankey.add(flows=material_flows,
+                   labels=['Materials'],
+                   orientations=[0, 0],
+                   pathlengths=[0.25, 0.25],
+                   facecolor='#2ca02c',
+                   prior=1,
+                   connect=(1, 0))
+        
+        # Add the fourth stage: Suppliers
+        supplier_inflow = material_outflow
+        supplier_flows = [supplier_inflow]
+        
+        sankey.add(flows=supplier_flows,
+                   labels=['Suppliers'],
+                   orientations=[0],
+                   pathlengths=[0.25],
+                   facecolor='#d62728',
+                   prior=2,
+                   connect=(1, 0))
+        
+        # Finish the diagram
+        sankey.finish()
+        plt.title('Roadmap Relationships Flow Diagram', fontsize=16)
+        
+        # Save the figure
+        plt.savefig(os.path.join(output_dir, "sankey_diagram.png"), dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        # Create a more detailed network graph as an alternative
+        create_network_graph()
+        
+        print(f"Sankey diagram generated in '{output_dir}/sankey_diagram.png'")
+        print(f"Network graph generated in '{output_dir}/network_graph.png'")
+    except Exception as e:
+        print(f"Error creating Sankey diagram: {e}")
+        print("Skipping Sankey diagram generation")
 
 def create_network_graph():
-    # Create a directed graph
-    G = nx.DiGraph()
-    
-    # Add program nodes
-    for program in data['programs']:
-        G.add_node(program['id'], label=program['name'], type='program', layer=0)
-    
-    # Add product nodes
-    for product in data['products']:
-        G.add_node(product['id'], label=product['name'], type='product', layer=1)
+    try:
+        # Create a directed graph
+        G = nx.DiGraph()
         
-        # Add edges from programs to products
-        for program_id in product.get('programs', []):
-            G.add_edge(program_id, product['id'], weight=2)
-    
-    # Add material system nodes
-    for material in data['materialSystems']:
-        G.add_node(material['id'], label=material['name'], type='material', layer=2)
+        # Add program nodes
+        for program in data['programs']:
+            G.add_node(program['id'], label=program['name'], type='program', layer=0)
         
-        # Add edges from products to materials
+        # Add product nodes
         for product in data['products']:
-            if material['id'] in product.get('materialSystems', []):
-                G.add_edge(product['id'], material['id'], weight=2)
-    
-    # Add supplier nodes
-    for supplier in data['suppliers']:
-        G.add_node(supplier['id'], label=supplier['name'], type='supplier', layer=3)
+            G.add_node(product['id'], label=product['name'], type='product', layer=1)
+            
+            # Add edges from programs to products
+            for program_id in product.get('programs', []):
+                G.add_edge(program_id, product['id'], weight=2)
         
-        # Add edges from materials to suppliers
-        for material_id in supplier.get('materials', []):
-            G.add_edge(material_id, supplier['id'], weight=2)
-    
-    # Create the figure with a white background
-    plt.figure(figsize=(20, 12), facecolor='white')
-    
-    # Use the 'layer' attribute directly instead of a lambda function
-    pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
-    
-    # Adjust vertical positions to avoid overlapping
-    layer_counts = [0, 0, 0, 0]
-    for node in G.nodes():
-        layer = G.nodes[node]['layer']
-        layer_counts[layer] += 1
-    
-    # Spread nodes vertically within each layer
-    for node in G.nodes():
-        layer = G.nodes[node]['layer']
-        if layer_counts[layer] > 1:
-            # Find the index of this node among nodes in the same layer
-            same_layer_nodes = [n for n in G.nodes() if G.nodes[n]['layer'] == layer]
-            idx = same_layer_nodes.index(node)
-            # Adjust vertical position
-            pos[node][1] = (idx / (layer_counts[layer] - 1) - 0.5) * 0.9 if layer_counts[layer] > 1 else 0
-    
-    # Set node colors and sizes based on type
-    node_colors = []
-    node_sizes = []
-    for node in G.nodes():
-        node_type = G.nodes[node]['type']
-        if node_type == 'program':
-            node_colors.append('#1f77b4')  # Blue
-            node_sizes.append(800)
-        elif node_type == 'product':
-            node_colors.append('#ff7f0e')  # Orange
-            node_sizes.append(700)
-        elif node_type == 'material':
-            node_colors.append('#2ca02c')  # Green
-            node_sizes.append(600)
-        else:  # supplier
-            node_colors.append('#d62728')  # Red
-            node_sizes.append(500)
-    
-    # Draw edges with curved arrows
-    nx.draw_networkx_edges(
-        G, pos, 
-        width=1.2, 
-        alpha=0.7, 
-        edge_color='gray', 
-        arrows=True,
-        arrowsize=15,
-        connectionstyle='arc3,rad=0.1'  # Curved edges
-    )
-    
-    # Draw nodes
-    nx.draw_networkx_nodes(
-        G, pos, 
-        node_size=node_sizes, 
-        node_color=node_colors, 
-        alpha=0.9,
-        edgecolors='black',
-        linewidths=1
-    )
-    
-    # Add labels with white background for better readability
-    labels = {node: G.nodes[node]['label'] for node in G.nodes()}
-    
-    # Draw labels with a white background
-    for node, (x, y) in pos.items():
-        plt.text(
-            x, y, 
-            labels[node],
-            fontsize=9,
-            ha='center',
-            va='center',
-            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.9)
+        # Add material system nodes
+        for material in data['materialSystems']:
+            G.add_node(material['id'], label=material['name'], type='material', layer=2)
+            
+            # Add edges from products to materials
+            for product in data['products']:
+                for ms in product.get('materialSystems', []):
+                    # Handle both string and dict formats for material systems
+                    if isinstance(ms, str) and ms == material['id']:
+                        G.add_edge(product['id'], material['id'], weight=2)
+                    elif isinstance(ms, dict) and ms.get('materialID') == material['id']:
+                        G.add_edge(product['id'], material['id'], weight=2)
+        
+        # Add supplier nodes if available
+        if 'suppliers' in data:
+            for supplier in data['suppliers']:
+                G.add_node(supplier['id'], label=supplier['name'], type='supplier', layer=3)
+                
+                # Add edges from materials to suppliers
+                for material_id in supplier.get('materials', []):
+                    G.add_edge(material_id, supplier['id'], weight=2)
+        
+        # Create the figure with a white background
+        plt.figure(figsize=(20, 12), facecolor='white')
+        
+        # Use the 'layer' attribute directly instead of a lambda function
+        pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
+        
+        # Adjust vertical positions to avoid overlapping
+        layer_counts = [0, 0, 0, 0]
+        for node in G.nodes():
+            layer = G.nodes[node]['layer']
+            layer_counts[layer] += 1
+        
+        # Spread nodes vertically within each layer
+        for node in G.nodes():
+            layer = G.nodes[node]['layer']
+            if layer_counts[layer] > 1:
+                # Find the index of this node among nodes in the same layer
+                same_layer_nodes = [n for n in G.nodes() if G.nodes[n]['layer'] == layer]
+                idx = same_layer_nodes.index(node)
+                # Adjust vertical position
+                pos[node][1] = (idx / (layer_counts[layer] - 1) - 0.5) * 0.9 if layer_counts[layer] > 1 else 0
+        
+        # Set node colors and sizes based on type
+        node_colors = []
+        node_sizes = []
+        for node in G.nodes():
+            node_type = G.nodes[node]['type']
+            if node_type == 'program':
+                node_colors.append('#1f77b4')  # Blue
+                node_sizes.append(800)
+            elif node_type == 'product':
+                node_colors.append('#ff7f0e')  # Orange
+                node_sizes.append(700)
+            elif node_type == 'material':
+                node_colors.append('#2ca02c')  # Green
+                node_sizes.append(600)
+            else:  # supplier
+                node_colors.append('#d62728')  # Red
+                node_sizes.append(500)
+        
+        # Draw edges with curved arrows
+        nx.draw_networkx_edges(
+            G, pos, 
+            width=1.2, 
+            alpha=0.7, 
+            edge_color='gray', 
+            arrows=True,
+            arrowsize=15,
+            connectionstyle='arc3,rad=0.1'  # Curved edges
         )
-    
-    # Add column headers
-    plt.text(0.0, 1.05, "Programs", fontsize=16, ha='center', fontweight='bold')
-    plt.text(0.33, 1.05, "Products", fontsize=16, ha='center', fontweight='bold')
-    plt.text(0.67, 1.05, "Material Systems", fontsize=16, ha='center', fontweight='bold')
-    plt.text(1.0, 1.05, "Suppliers", fontsize=16, ha='center', fontweight='bold')
-    
-    # Add a legend
-    legend_elements = [
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#1f77b4', markersize=15, label='Programs'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#ff7f0e', markersize=15, label='Products'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#2ca02c', markersize=15, label='Material Systems'),
-        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#d62728', markersize=15, label='Suppliers')
-    ]
-    plt.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=4)
-    
-    # Add title and remove axes
-    plt.title('Roadmap Relationships Network', fontsize=20, pad=20)
-    plt.axis('off')
-    
-    # Add a grid background to separate the columns
-    plt.axvline(x=0.165, color='lightgray', linestyle='--', alpha=0.5)
-    plt.axvline(x=0.5, color='lightgray', linestyle='--', alpha=0.5)
-    plt.axvline(x=0.835, color='lightgray', linestyle='--', alpha=0.5)
-    
-    # Save the figure with high resolution
-    plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "network_graph.png"), dpi=300, bbox_inches='tight')
-    
-    # Also save as SVG for better quality
-    plt.savefig(os.path.join(output_dir, "network_graph.svg"), format='svg', bbox_inches='tight')
-    
-    plt.close()
-    
-    # Update the index.html to include the network graph
-    update_index_with_network_graph()
+        
+        # Draw nodes
+        nx.draw_networkx_nodes(
+            G, pos, 
+            node_size=node_sizes, 
+            node_color=node_colors, 
+            alpha=0.9,
+            edgecolors='black',
+            linewidths=1
+        )
+        
+        # Add labels with white background for better readability
+        labels = {node: G.nodes[node]['label'] for node in G.nodes()}
+        
+        # Draw labels with a white background
+        for node, (x, y) in pos.items():
+            plt.text(
+                x, y, 
+                labels[node],
+                fontsize=9,
+                ha='center',
+                va='center',
+                bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.9)
+            )
+        
+        # Add column headers
+        plt.text(0.0, 1.05, "Programs", fontsize=16, ha='center', fontweight='bold')
+        plt.text(0.33, 1.05, "Products", fontsize=16, ha='center', fontweight='bold')
+        plt.text(0.67, 1.05, "Material Systems", fontsize=16, ha='center', fontweight='bold')
+        plt.text(1.0, 1.05, "Suppliers", fontsize=16, ha='center', fontweight='bold')
+        
+        # Add a legend
+        legend_elements = [
+            plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#1f77b4', markersize=15, label='Programs'),
+            plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#ff7f0e', markersize=15, label='Products'),
+            plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#2ca02c', markersize=15, label='Material Systems'),
+            plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#d62728', markersize=15, label='Suppliers')
+        ]
+        plt.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=4)
+        
+        # Add title and remove axes
+        plt.title('Roadmap Relationships Network', fontsize=20, pad=20)
+        plt.axis('off')
+        
+        # Add a grid background to separate the columns
+        plt.axvline(x=0.165, color='lightgray', linestyle='--', alpha=0.5)
+        plt.axvline(x=0.5, color='lightgray', linestyle='--', alpha=0.5)
+        plt.axvline(x=0.835, color='lightgray', linestyle='--', alpha=0.5)
+        
+        # Save the figure with high resolution
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, "network_graph.png"), dpi=300, bbox_inches='tight')
+        
+        # Also save as SVG for better quality
+        plt.savefig(os.path.join(output_dir, "network_graph.svg"), format='svg', bbox_inches='tight')
+        
+        plt.close()
+        
+        # Update the index.html to include the network graph
+        update_index_with_network_graph()
+    except Exception as e:
+        print(f"Error creating network graph: {e}")
+        print("Skipping network graph generation")
 
 def update_index_with_network_graph():
     """Update the index.html to include the network graph"""

@@ -464,685 +464,61 @@ class RoadmapManager:
             )
             self.products_tree.insert("", tk.END, values=values)
 
-    def add_product(self):
-        # Create a new window for adding a product
-        add_window = tk.Toplevel(self.root)
-        add_window.title("Add Product")
-        add_window.geometry("600x700")
-        add_window.grab_set()  # Make window modal
+    def edit_product(self, event):
+        # Get selected item
+        selected_item = self.products_tree.selection()
+        if not selected_item:
+            return
         
-        # Create a new empty product
-        product = {"id": "", "name": ""}
+        # Get values
+        values = self.products_tree.item(selected_item, "values")
+        product_id = values[0]
         
-        # Create a notebook for product details
-        product_notebook = ttk.Notebook(add_window)
-        product_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        # Find product in data
+        product = None
+        for p in self.data["products"]:
+            if p["id"] == product_id:
+                product = p
+                break
         
-        # Basic info tab
-        basic_frame = ttk.Frame(product_notebook)
-        product_notebook.add(basic_frame, text="Basic Info")
-        
-        # Create form fields for basic info
-        ttk.Label(basic_frame, text="ID:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        id_var = tk.StringVar()
-        ttk.Entry(basic_frame, textvariable=id_var).grid(row=0, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        ttk.Label(basic_frame, text="Name:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
-        name_var = tk.StringVar()
-        ttk.Entry(basic_frame, textvariable=name_var).grid(row=1, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        ttk.Label(basic_frame, text="TRL:").grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
-        trl_var = tk.StringVar()
-        ttk.Combobox(basic_frame, textvariable=trl_var, values=list(range(1, 10))).grid(row=2, column=1, sticky=tk.W, padx=10, pady=5)
-        
-        # Programs selection
-        ttk.Label(basic_frame, text="Programs:").grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
-        programs_frame = ttk.Frame(basic_frame)
-        programs_frame.grid(row=3, column=1, sticky=tk.W, padx=10, pady=5)
-        
-        program_vars = {}
-        for i, program in enumerate(self.data["programs"]):
-            var = tk.BooleanVar()
-            ttk.Checkbutton(programs_frame, text=f"{program['id']} - {program['name']}", variable=var).grid(row=i, column=0, sticky=tk.W)
-            program_vars[program["id"]] = var
-        
-        # Material systems selection
-        ttk.Label(basic_frame, text="Material Systems:").grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
-        materials_frame = ttk.Frame(basic_frame)
-        materials_frame.grid(row=4, column=1, sticky=tk.W, padx=10, pady=5)
-        
-        # Get existing material systems
-        existing_material_ids = []
-        for mat in product.get("materialSystems", []):
-            if isinstance(mat, dict) and "materialID" in mat:
-                existing_material_ids.append(mat["materialID"])
-            elif isinstance(mat, str):
-                existing_material_ids.append(mat)
-        
-        material_vars = {}
-        for i, material in enumerate(self.data["materialSystems"]):
-            var = tk.BooleanVar(value=material["id"] in existing_material_ids)
-            ttk.Checkbutton(materials_frame, text=f"{material['id']} - {material['name']}", variable=var).grid(row=i, column=0, sticky=tk.W)
-            material_vars[material["id"]] = var
-        
-        # Requirements tab
-        requirements_frame = ttk.Frame(product_notebook)
-        product_notebook.add(requirements_frame, text="Requirements")
-        
-        # Get existing requirements or create empty dict
-        requirements = product.get("requirements", {})
-        
-        # Create a frame for requirements
-        req_fields_frame = ttk.Frame(requirements_frame)
-        req_fields_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # Dictionary to store requirement field variables
-        req_vars = {}
-        
-        # Function to add a requirement field
-        def add_requirement_field(name="", value=""):
-            # Get the next row index
-            row = len(req_vars)
+        if not product:
+            return
             
-            # Create label and entry for field name
-            ttk.Label(req_fields_frame, text="Field:").grid(row=row, column=0, sticky=tk.W, padx=5, pady=5)
-            name_var = tk.StringVar(value=name)
-            ttk.Entry(req_fields_frame, textvariable=name_var, width=15).grid(row=row, column=1, sticky=tk.W, padx=5, pady=5)
-            
-            # Create label and entry for field value
-            ttk.Label(req_fields_frame, text="Value:").grid(row=row, column=2, sticky=tk.W, padx=5, pady=5)
-            value_var = tk.StringVar(value=value)
-            value_entry = ttk.Entry(req_fields_frame, textvariable=value_var, width=40)
-            value_entry.grid(row=row, column=3, sticky=tk.W+tk.E, padx=5, pady=5)
-            
-            # Button to remove this field
-            def remove_field():
-                # Remove all widgets in this row
-                for widget in req_fields_frame.grid_slaves(row=row):
-                    widget.grid_forget()
-                # Remove from dictionary
-                if name_var.get() in req_vars:
-                    del req_vars[name_var.get()]
-            
-            remove_btn = ttk.Button(req_fields_frame, text="X", width=2, command=remove_field)
-            remove_btn.grid(row=row, column=4, padx=5, pady=5)
-            
-            # Store variables
-            req_vars[name] = (name_var, value_var, remove_btn)
-            
-            return name_var, value_var
+        # Create a new window for editing a product
+        edit_window = tk.Toplevel(self.root)
+        edit_window.title("Edit Product")
+        edit_window.geometry("800x600")
+        edit_window.grab_set()  # Make window modal
         
-        # Add existing requirements
-        for req_name, req_value in requirements.items():
-            add_requirement_field(req_name, req_value)
+        # Create basic info frame
+        basic_frame = ttk.Frame(edit_window)
+        basic_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        # Button to add a new requirement field
-        add_req_button = ttk.Button(requirements_frame, text="Add Requirement", 
-                                   command=lambda: add_requirement_field())
-        add_req_button.pack(pady=10)
+        # Create variables for form fields
+        id_var = tk.StringVar(value=product.get("id", ""))
+        name_var = tk.StringVar(value=product.get("name", ""))
+        trl_var = tk.StringVar(value=str(product.get("trl", "")))
         
-        # Post-Processing Suppliers tab
-        post_proc_frame = ttk.Frame(product_notebook)
-        product_notebook.add(post_proc_frame, text="Post-Processing")
+        # Create entry widgets
+        ttk.Label(basic_frame, text="ID:").grid(row=0, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(basic_frame, textvariable=id_var, state="readonly").grid(row=0, column=1, sticky=tk.W, pady=5)
         
-        # Get existing post-processing suppliers
-        post_proc_suppliers = product.get("postProcessingSuppliers", [])
+        ttk.Label(basic_frame, text="Name:").grid(row=1, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(basic_frame, textvariable=name_var, width=40).grid(row=1, column=1, sticky=tk.W, pady=5)
         
-        # Create a frame for post-processing suppliers
-        post_proc_list_frame = ttk.Frame(post_proc_frame)
-        post_proc_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        ttk.Label(basic_frame, text="TRL:").grid(row=2, column=0, sticky=tk.W, pady=5)
+        ttk.Combobox(basic_frame, textvariable=trl_var, values=["1", "2", "3", "4", "5", "6", "7", "8", "9"]).grid(row=2, column=1, sticky=tk.W, pady=5)
         
-        # List to store post-processing supplier entries
-        post_proc_entries = []
-        
-        # Function to add a post-processing supplier entry
-        def add_post_proc_entry(entry=None):
-            # Default values
-            process = ""
-            suppliers = []
-            
-            # If entry is provided, use its values
-            if entry:
-                if isinstance(entry, dict):
-                    process = entry.get("process", "")
-                    suppliers = entry.get("supplier", [])
-            
-            # Create a frame for this entry
-            entry_frame = ttk.Frame(post_proc_list_frame)
-            entry_frame.pack(fill=tk.X, pady=5)
-            
-            # Process field
-            ttk.Label(entry_frame, text="Process:").grid(row=0, column=0, sticky=tk.W, padx=5)
-            process_var = tk.StringVar(value=process)
-            ttk.Entry(entry_frame, textvariable=process_var, width=20).grid(row=0, column=1, sticky=tk.W+tk.E, padx=5)
-            
-            # Suppliers field (comma-separated list)
-            ttk.Label(entry_frame, text="Suppliers:").grid(row=0, column=2, sticky=tk.W, padx=5)
-            suppliers_var = tk.StringVar(value=", ".join(suppliers))
-            ttk.Entry(entry_frame, textvariable=suppliers_var, width=30).grid(row=0, column=3, sticky=tk.W+tk.E, padx=5)
-            
-            # Button to remove this entry
-            def remove_entry():
-                entry_frame.destroy()
-                post_proc_entries.remove(entry_data)
-            
-            remove_btn = ttk.Button(entry_frame, text="X", width=2, command=remove_entry)
-            remove_btn.grid(row=0, column=4, padx=5)
-            
-            # Store entry data
-            entry_data = {
-                "frame": entry_frame,
-                "process": process_var,
-                "suppliers": suppliers_var
-            }
-            post_proc_entries.append(entry_data)
-            
-            return entry_data
-        
-        # Add existing post-processing suppliers
-        for entry in post_proc_suppliers:
-            add_post_proc_entry(entry)
-        
-        # Button to add a new post-processing supplier
-        add_post_proc_button = ttk.Button(post_proc_frame, text="Add Post-Processing Supplier", 
-                                        command=lambda: add_post_proc_entry())
-        add_post_proc_button.pack(pady=10)
-        
-        # Business Case tab
-        business_case_frame = ttk.Frame(product_notebook)
-        product_notebook.add(business_case_frame, text="Business Case")
-        
-        # Get existing business case or create empty dict
-        business_case = product.get("businessCase", {})
-        
-        # Create form fields for business case
-        ttk.Label(business_case_frame, text="Cost Savings:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        cost_savings_var = tk.StringVar(value=business_case.get("costSavings", ""))
-        cost_savings_entry = ttk.Entry(business_case_frame, textvariable=cost_savings_var, width=60)
-        cost_savings_entry.grid(row=0, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        ttk.Label(business_case_frame, text="Schedule Savings:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
-        schedule_savings_var = tk.StringVar(value=business_case.get("scheduleSavings", ""))
-        schedule_savings_entry = ttk.Entry(business_case_frame, textvariable=schedule_savings_var, width=60)
-        schedule_savings_entry.grid(row=1, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        ttk.Label(business_case_frame, text="Performance Gains:").grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
-        performance_gains_var = tk.StringVar(value=business_case.get("performanceGains", ""))
-        performance_gains_entry = ttk.Entry(business_case_frame, textvariable=performance_gains_var, width=60)
-        performance_gains_entry.grid(row=2, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        # Additional Info tab
-        additional_info_frame = ttk.Frame(product_notebook)
-        product_notebook.add(additional_info_frame, text="Additional Info")
-        
-        # Create a notebook for additional info
-        additional_info_notebook = ttk.Notebook(additional_info_frame)
-        additional_info_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # Design Tools tab
-        design_tools_frame = ttk.Frame(additional_info_notebook)
-        additional_info_notebook.add(design_tools_frame, text="Design Tools")
-        
-        # Get existing design tools
-        design_tools = product.get("designTools", [])
-        
-        # Create a frame for design tools
-        design_tools_list_frame = ttk.Frame(design_tools_frame)
-        design_tools_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # List to store design tool entries
-        design_tool_entries = []
-        
-        # Function to add a design tool entry
-        def add_design_tool_entry(tool=""):
-            # Create a frame for this entry
-            entry_frame = ttk.Frame(design_tools_list_frame)
-            entry_frame.pack(fill=tk.X, pady=2)
-            
-            # Tool field
-            tool_var = tk.StringVar(value=tool)
-            tool_entry = ttk.Entry(entry_frame, textvariable=tool_var, width=50)
-            tool_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-            
-            # Button to remove this entry
-            def remove_entry():
-                entry_frame.destroy()
-                design_tool_entries.remove(entry_data)
-            
-            remove_btn = ttk.Button(entry_frame, text="X", width=2, command=remove_entry)
-            remove_btn.pack(side=tk.RIGHT, padx=5)
-            
-            # Store entry data
-            entry_data = {
-                "frame": entry_frame,
-                "tool": tool_var
-            }
-            design_tool_entries.append(entry_data)
-            
-            return entry_data
-        
-        # Add existing design tools
-        for tool in design_tools:
-            add_design_tool_entry(tool)
-        
-        # Button to add a new design tool
-        add_design_tool_button = ttk.Button(design_tools_frame, text="Add Design Tool", 
-                                          command=lambda: add_design_tool_entry())
-        add_design_tool_button.pack(pady=10)
-        
-        # Documentation tab
-        documentation_frame = ttk.Frame(additional_info_notebook)
-        additional_info_notebook.add(documentation_frame, text="Documentation")
-        
-        # Get existing documentation
-        documentation = product.get("documentation", [])
-        
-        # Create a frame for documentation
-        documentation_list_frame = ttk.Frame(documentation_frame)
-        documentation_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # List to store documentation entries
-        documentation_entries = []
-        
-        # Function to add a documentation entry
-        def add_documentation_entry(doc=""):
-            # Create a frame for this entry
-            entry_frame = ttk.Frame(documentation_list_frame)
-            entry_frame.pack(fill=tk.X, pady=2)
-            
-            # Documentation field
-            doc_var = tk.StringVar(value=doc)
-            doc_entry = ttk.Entry(entry_frame, textvariable=doc_var, width=50)
-            doc_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-            
-            # Button to remove this entry
-            def remove_entry():
-                entry_frame.destroy()
-                documentation_entries.remove(entry_data)
-            
-            remove_btn = ttk.Button(entry_frame, text="X", width=2, command=remove_entry)
-            remove_btn.pack(side=tk.RIGHT, padx=5)
-            
-            # Store entry data
-            entry_data = {
-                "frame": entry_frame,
-                "doc": doc_var
-            }
-            documentation_entries.append(entry_data)
-            
-            return entry_data
-        
-        # Add existing documentation
-        for doc in documentation:
-            add_documentation_entry(doc)
-        
-        # Button to add a new documentation
-        add_documentation_button = ttk.Button(documentation_frame, text="Add Documentation", 
-                                            command=lambda: add_documentation_entry())
-        add_documentation_button.pack(pady=10)
-        
-        # Special NDT tab
-        special_ndt_frame = ttk.Frame(additional_info_notebook)
-        additional_info_notebook.add(special_ndt_frame, text="Special NDT")
-        
-        # Get existing special NDT
-        special_ndt = product.get("specialNDT", [])
-        
-        # Create a frame for special NDT
-        special_ndt_list_frame = ttk.Frame(special_ndt_frame)
-        special_ndt_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # List to store special NDT entries
-        special_ndt_entries = []
-        
-        # Function to add a special NDT entry
-        def add_special_ndt_entry(ndt=""):
-            # Create a frame for this entry
-            entry_frame = ttk.Frame(special_ndt_list_frame)
-            entry_frame.pack(fill=tk.X, pady=2)
-            
-            # Special NDT field
-            ndt_var = tk.StringVar(value=ndt)
-            ndt_entry = ttk.Entry(entry_frame, textvariable=ndt_var, width=50)
-            ndt_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-            
-            # Button to remove this entry
-            def remove_entry():
-                entry_frame.destroy()
-                special_ndt_entries.remove(entry_data)
-            
-            remove_btn = ttk.Button(entry_frame, text="X", width=2, command=remove_entry)
-            remove_btn.pack(side=tk.RIGHT, padx=5)
-            
-            # Store entry data
-            entry_data = {
-                "frame": entry_frame,
-                "ndt": ndt_var
-            }
-            special_ndt_entries.append(entry_data)
-            
-            return entry_data
-        
-        # Add existing special NDT
-        for ndt in special_ndt:
-            add_special_ndt_entry(ndt)
-        
-        # Button to add a new special NDT
-        add_special_ndt_button = ttk.Button(special_ndt_frame, text="Add Special NDT", 
-                                          command=lambda: add_special_ndt_entry())
-        add_special_ndt_button.pack(pady=10)
-        
-        # Part Acceptance tab
-        part_acceptance_frame = ttk.Frame(additional_info_notebook)
-        additional_info_notebook.add(part_acceptance_frame, text="Part Acceptance")
-        
-        # Get existing part acceptance
-        part_acceptance = product.get("partAcceptance", [])
-        
-        # Create a frame for part acceptance
-        part_acceptance_list_frame = ttk.Frame(part_acceptance_frame)
-        part_acceptance_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # List to store part acceptance entries
-        part_acceptance_entries = []
-        
-        # Function to add a part acceptance entry
-        def add_part_acceptance_entry(acceptance=""):
-            # Create a frame for this entry
-            entry_frame = ttk.Frame(part_acceptance_list_frame)
-            entry_frame.pack(fill=tk.X, pady=2)
-            
-            # Part acceptance field
-            acceptance_var = tk.StringVar(value=acceptance)
-            acceptance_entry = ttk.Entry(entry_frame, textvariable=acceptance_var, width=50)
-            acceptance_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-            
-            # Button to remove this entry
-            def remove_entry():
-                entry_frame.destroy()
-                part_acceptance_entries.remove(entry_data)
-            
-            remove_btn = ttk.Button(entry_frame, text="X", width=2, command=remove_entry)
-            remove_btn.pack(side=tk.RIGHT, padx=5)
-            
-            # Store entry data
-            entry_data = {
-                "frame": entry_frame,
-                "acceptance": acceptance_var
-            }
-            part_acceptance_entries.append(entry_data)
-            
-            return entry_data
-        
-        # Add existing part acceptance
-        for acceptance in part_acceptance:
-            add_part_acceptance_entry(acceptance)
-        
-        # Button to add a new part acceptance
-        add_part_acceptance_button = ttk.Button(part_acceptance_frame, text="Add Part Acceptance", 
-                                              command=lambda: add_part_acceptance_entry())
-        add_part_acceptance_button.pack(pady=10)
-        
-        # Roadmap tab
-        roadmap_frame = ttk.Frame(product_notebook)
-        product_notebook.add(roadmap_frame, text="Roadmap")
-        
-        # Roadmap tasks list
-        ttk.Label(roadmap_frame, text="Roadmap Tasks:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        
-        # Create a frame for the task list
-        tasks_frame = ttk.Frame(roadmap_frame)
-        tasks_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        # List to store task entries
-        task_entries = []
-        
-        # Function to add a new task entry
-        def add_task_entry(task=None):
-            task_frame = ttk.Frame(tasks_frame)
-            task_frame.pack(fill=tk.X, pady=5)
-            
-            ttk.Label(task_frame, text="Task:").grid(row=0, column=0, sticky=tk.W)
-            task_var = tk.StringVar(value=task["task"] if task else "")
-            ttk.Entry(task_frame, textvariable=task_var, width=20).grid(row=0, column=1, sticky=tk.W)
-            
-            ttk.Label(task_frame, text="Start:").grid(row=0, column=2, sticky=tk.W, padx=(10, 0))
-            start_entry = DateEntry(task_frame, width=10)
-            if task:
-                try:
-                    start_date = datetime.strptime(task["start"], "%Y-%m-%d")
-                    start_entry.set_date(start_date)
-                except (ValueError, TypeError):
-                    pass
-            start_entry.grid(row=0, column=3, sticky=tk.W)
-            
-            ttk.Label(task_frame, text="End:").grid(row=0, column=4, sticky=tk.W, padx=(10, 0))
-            end_entry = DateEntry(task_frame, width=10)
-            if task:
-                try:
-                    end_date = datetime.strptime(task["end"], "%Y-%m-%d")
-                    end_entry.set_date(end_date)
-                except (ValueError, TypeError):
-                    pass
-            end_entry.grid(row=0, column=5, sticky=tk.W)
-            
-            ttk.Label(task_frame, text="Status:").grid(row=0, column=6, sticky=tk.W, padx=(10, 0))
-            status_var = tk.StringVar(value=task["status"] if task else "")
-            ttk.Combobox(task_frame, textvariable=status_var, values=["Planned", "In Progress", "Complete"], width=10).grid(row=0, column=7, sticky=tk.W)
-            
-            ttk.Label(task_frame, text="Funding:").grid(row=0, column=8, sticky=tk.W, padx=(10, 0))
-            funding_var = tk.StringVar(value=task.get("fundingType", "") if task else "")
-            ttk.Combobox(task_frame, textvariable=funding_var, values=["Division IRAD", "Sector IRAD", "CRAD", ""], width=12).grid(row=0, column=9, sticky=tk.W)
-            
-            # Button to remove this task
-            def remove_task():
-                task_frame.destroy()
-                task_entries.remove(entry_data)
-            
-            ttk.Button(task_frame, text="X", width=2, command=remove_task).grid(row=0, column=10, padx=5)
-            
-            # Store the entry data
-            entry_data = {
-                "frame": task_frame,
-                "task": task_var,
-                "start": start_entry,
-                "end": end_entry,
-                "status": status_var,
-                "fundingType": funding_var
-            }
-            task_entries.append(entry_data)
-        
-        # Add existing tasks
-        for task in product.get("roadmap", []):
-            add_task_entry(task)
-        
-        # Add button for tasks
-        ttk.Button(roadmap_frame, text="Add Task", command=lambda: add_task_entry()).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
-        
-        # Milestones tab
-        milestones_frame = ttk.Frame(product_notebook)
-        product_notebook.add(milestones_frame, text="Milestones")
-        
-        # Milestones list
-        ttk.Label(milestones_frame, text="Milestones:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        
-        # Create a frame for the milestone list
-        ms_frame = ttk.Frame(milestones_frame)
-        ms_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        # List to store milestone entries
-        milestone_entries = []
-        
-        # Function to add a new milestone entry
-        def add_milestone_entry(milestone=None):
-            ms_entry_frame = ttk.Frame(ms_frame)
-            ms_entry_frame.pack(fill=tk.X, pady=5)
-            
-            ttk.Label(ms_entry_frame, text="Name:").grid(row=0, column=0, sticky=tk.W)
-            name_var = tk.StringVar(value=milestone["name"] if milestone else "")
-            ttk.Entry(ms_entry_frame, textvariable=name_var, width=20).grid(row=0, column=1, sticky=tk.W)
-            
-            ttk.Label(ms_entry_frame, text="Date:").grid(row=0, column=2, sticky=tk.W, padx=(10, 0))
-            date_entry = DateEntry(ms_entry_frame, width=10)
-            if milestone:
-                try:
-                    milestone_date = datetime.strptime(milestone["date"], "%Y-%m-%d")
-                    date_entry.set_date(milestone_date)
-                except (ValueError, TypeError):
-                    pass
-            date_entry.grid(row=0, column=3, sticky=tk.W)
-            
-            ttk.Label(ms_entry_frame, text="Description:").grid(row=0, column=4, sticky=tk.W, padx=(10, 0))
-            desc_var = tk.StringVar(value=milestone.get("description", "") if milestone else "")
-            ttk.Entry(ms_entry_frame, textvariable=desc_var, width=30).grid(row=0, column=5, sticky=tk.W)
-            
-            # Button to remove this milestone
-            def remove_milestone():
-                ms_entry_frame.destroy()
-                milestone_entries.remove(entry_data)
-            
-            ttk.Button(ms_entry_frame, text="X", width=2, command=remove_milestone).grid(row=0, column=6, padx=5)
-            
-            # Store the entry data
-            entry_data = {
-                "frame": ms_entry_frame,
-                "name": name_var,
-                "date": date_entry,
-                "description": desc_var
-            }
-            milestone_entries.append(entry_data)
-        
-        # Add existing milestones
-        for milestone in product.get("milestones", []):
-            add_milestone_entry(milestone)
-        
-        # Add button for milestones
-        ttk.Button(milestones_frame, text="Add Milestone", command=lambda: add_milestone_entry()).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
-        
-        # Save button
+        # Save function
         def save_product():
             # Validate required fields
             if not id_var.get() or not name_var.get():
                 messagebox.showerror("Error", "ID and Name are required fields")
                 return
             
-            # Get selected programs
-            selected_programs = []
-            for prog_id, var in program_vars.items():
-                if var.get():
-                    # Create program entry with programID
-                    selected_programs.append({"programID": prog_id})
-            
-            # Get selected material systems
-            selected_materials = []
-            for mat_id, var in material_vars.items():
-                if var.get():
-                    # Create material entry with materialID
-                    selected_materials.append({"materialID": mat_id})
-            
-            # Get requirements
-            requirements = {}
-            for name_var, value_var, _ in req_vars.values():
-                if name_var.get():  # Only add if field name is not empty
-                    requirements[name_var.get()] = value_var.get()
-            
-            # Get post-processing suppliers
-            post_proc_suppliers = []
-            for entry in post_proc_entries:
-                if not entry["process"].get():  # Skip empty entries
-                    continue
-                
-                # Parse comma-separated supplier list
-                suppliers = [s.strip() for s in entry["suppliers"].get().split(",") if s.strip()]
-                
-                post_proc_suppliers.append({
-                    "process": entry["process"].get(),
-                    "supplier": suppliers
-                })
-            
-            # Get design tools
-            design_tools = []
-            for entry in design_tool_entries:
-                if entry["tool"].get():  # Only add non-empty tools
-                    design_tools.append(entry["tool"].get())
-            
-            # Get documentation
-            documentation = []
-            for entry in documentation_entries:
-                if entry["doc"].get():  # Only add non-empty docs
-                    documentation.append(entry["doc"].get())
-            
-            # Get special NDT
-            special_ndt = []
-            for entry in special_ndt_entries:
-                if entry["ndt"].get():  # Only add non-empty NDT
-                    special_ndt.append(entry["ndt"].get())
-            
-            # Get part acceptance
-            part_acceptance = []
-            for entry in part_acceptance_entries:
-                if entry["acceptance"].get():  # Only add non-empty acceptance
-                    part_acceptance.append(entry["acceptance"].get())
-            
-            # Get roadmap tasks
-            roadmap_tasks = []
-            for entry in task_entries:
-                if not entry["task"].get():  # Skip empty tasks
-                    continue
-                    
-                task = {
-                    "task": entry["task"].get(),
-                    "start": entry["start"].get_date(),
-                    "end": entry["end"].get_date(),
-                    "status": entry["status"].get()
-                }
-                
-                # Add lane if provided
-                if "lane" in entry and entry["lane"].get():
-                    task["lane"] = entry["lane"].get()
-                
-                # Add funding type if provided
-                if entry["fundingType"].get():
-                    task["fundingType"] = entry["fundingType"].get()
-                
-                roadmap_tasks.append(task)
-            
-            # Get milestones
-            milestones = []
-            for entry in milestone_entries:
-                if not entry["name"].get():  # Skip empty milestones
-                    continue
-                    
-                milestone = {
-                    "name": entry["name"].get(),
-                    "date": entry["date"].get_date(),
-                    "description": entry["description"].get()
-                }
-                milestones.append(milestone)
-            
-            # Get business case data
-            business_case = {}
-            if cost_savings_var.get():
-                business_case["costSavings"] = cost_savings_var.get()
-            if schedule_savings_var.get():
-                business_case["scheduleSavings"] = schedule_savings_var.get()
-            if performance_gains_var.get():
-                business_case["performanceGains"] = performance_gains_var.get()
-            
             # Update product
             product["name"] = name_var.get()
             product["trl"] = int(trl_var.get()) if trl_var.get() else None
-            product["programs"] = selected_programs
-            product["materialSystems"] = selected_materials
-            product["requirements"] = requirements
-            product["postProcessingSuppliers"] = post_proc_suppliers
-            product["designTools"] = design_tools
-            product["documentation"] = documentation
-            product["specialNDT"] = special_ndt
-            product["partAcceptance"] = part_acceptance
-            product["roadmap"] = roadmap_tasks
-            product["milestones"] = milestones
-            product["businessCase"] = business_case
             
             # Refresh treeview
             self.populate_products_tree()
@@ -1173,6 +549,65 @@ class RoadmapManager:
         ttk.Button(button_frame, text="Save", command=save_product).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Delete", command=delete_product).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Cancel", command=edit_window.destroy).pack(side=tk.LEFT, padx=5)
+
+    def add_product(self):
+        # Create a new window for adding a product
+        add_window = tk.Toplevel(self.root)
+        add_window.title("Add Product")
+        add_window.geometry("500x400")
+        add_window.grab_set()  # Make window modal
+        
+        # Create form fields
+        ttk.Label(add_window, text="ID:").grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
+        id_var = tk.StringVar()
+        ttk.Entry(add_window, textvariable=id_var).grid(row=0, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        ttk.Label(add_window, text="Name:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
+        name_var = tk.StringVar()
+        ttk.Entry(add_window, textvariable=name_var).grid(row=1, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        ttk.Label(add_window, text="TRL:").grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
+        trl_var = tk.StringVar()
+        ttk.Entry(add_window, textvariable=trl_var).grid(row=2, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        ttk.Label(add_window, text="Programs:").grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
+        programs_var = tk.StringVar()
+        ttk.Entry(add_window, textvariable=programs_var).grid(row=3, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        ttk.Label(add_window, text="Material Systems:").grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
+        materials_var = tk.StringVar()
+        ttk.Entry(add_window, textvariable=materials_var).grid(row=4, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        
+        # Save button
+        def save_product():
+            # Validate required fields
+            if not id_var.get() or not name_var.get():
+                messagebox.showerror("Error", "ID and Name are required fields")
+                return
+            
+            # Create new product
+            new_product = {
+                "id": id_var.get(),
+                "name": name_var.get(),
+                "trl": int(trl_var.get()) if trl_var.get() else None,
+                "programs": [{"programID": program_id.strip()} for program_id in programs_var.get().split(",")],
+                "materialSystems": [{"materialID": material_id.strip()} for material_id in materials_var.get().split(",")],
+                "requirements": {}
+            }
+            
+            # Add to data
+            self.data["products"].append(new_product)
+            
+            # Refresh treeview
+            self.populate_products_tree()
+            
+            # Close window
+            add_window.destroy()
+            
+            self.status_var.set(f"Added product: {new_product['name']}")
+        
+        ttk.Button(add_window, text="Save", command=save_product).grid(row=5, column=1, sticky=tk.E, padx=10, pady=20)
+        ttk.Button(add_window, text="Cancel", command=add_window.destroy).grid(row=5, column=0, sticky=tk.W, padx=10, pady=20)
 
     def create_materials_tab(self):
         materials_frame = ttk.Frame(self.notebook)
@@ -2434,15 +1869,6 @@ class RoadmapManager:
         ttk.Button(button_frame, text="Save", command=save_opp).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Delete", command=delete_opp).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Cancel", command=edit_window.destroy).pack(side=tk.LEFT, padx=5)
-
-    def save_data(self):
-        try:
-            with open(self.data_file, 'w') as f:
-                json.dump(self.data, f, indent=4)
-            
-            self.status_var.set(f"Data saved to {self.data_file}")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to save data: {str(e)}")
 
 if __name__ == "__main__":
     root = tk.Tk()

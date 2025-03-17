@@ -31,7 +31,7 @@
                     "materialID": "MS2",
                     "partName": "tes",
                     "partNumber": "test",
-                    "lifetimeDemand": "test",
+                    "lifetimeDemand": "10",
                     "unitCostSavings": "5",
                     "unitScheduleSavings": "6",
                     "needDate": "2025-03-11",
@@ -51,7 +51,63 @@
             "name": "Missile Defense",
             "division": "T",
             "customerName": "N/A",
-            "missionClass": "Class D"
+            "missionClass": "Class D",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P2",
+                    "materialID": "MS3",
+                    "partName": "Missile Nose Cone",
+                    "partNumber": "MNC-4578",
+                    "lifetimeDemand": "25",
+                    "unitCostSavings": "8",
+                    "unitScheduleSavings": "14",
+                    "needDate": "2025-06-15",
+                    "adoptionStatus": "In Progress",
+                    "statusHistory": [
+                        {
+                            "status": "In Progress",
+                            "date": "2025-06-15",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                },
+                {
+                    "productID": "P4",
+                    "materialID": "MS2",
+                    "partName": "Guidance System Housing",
+                    "partNumber": "GSH-1234",
+                    "lifetimeDemand": "30",
+                    "unitCostSavings": "6",
+                    "unitScheduleSavings": "10",
+                    "needDate": "2025-08-22",
+                    "adoptionStatus": "Planned",
+                    "statusHistory": [
+                        {
+                            "status": "Planned",
+                            "date": "2025-08-22",
+                            "previousStatus": ""
+                        }
+                    ]
+                },
+                {
+                    "productID": "P5",
+                    "materialID": "MS4",
+                    "partName": "Control Surface Bracket",
+                    "partNumber": "CSB-9876",
+                    "lifetimeDemand": "40",
+                    "unitCostSavings": "3",
+                    "unitScheduleSavings": "7",
+                    "needDate": "2025-07-10",
+                    "adoptionStatus": "Baselined",
+                    "statusHistory": [
+                        {
+                            "status": "Baselined",
+                            "date": "2025-07-10",
+                            "previousStatus": ""
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "PRG3",
@@ -59,28 +115,198 @@
             "division": "B",
             "customerName": "N/A",
             "missionClass": "Class A",
-            "sector": ""
+            "sector": "",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P1",
+                    "materialID": "MS5",
+                    "partName": "Propellant Injector",
+                    "partNumber": "PI-5432",
+                    "lifetimeDemand": "15",
+                    "unitCostSavings": "12",
+                    "unitScheduleSavings": "21",
+                    "needDate": "2025-04-30",
+                    "adoptionStatus": "Complete",
+                    "statusHistory": [
+                        {
+                            "status": "Complete",
+                            "date": "2025-04-30",
+                            "previousStatus": "In Progress"
+                        }
+                    ]
+                },
+                {
+                    "productID": "P3",
+                    "materialID": "MS1",
+                    "partName": "Thrust Chamber Mount",
+                    "partNumber": "TCM-7890",
+                    "lifetimeDemand": "8",
+                    "unitCostSavings": "15",
+                    "unitScheduleSavings": "18",
+                    "needDate": "2025-05-15",
+                    "adoptionStatus": "In Progress",
+                    "statusHistory": [
+                        {
+                            "status": "In Progress",
+                            "date": "2025-05-15",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "PRG4",
             "name": "Space Exploration",
             "division": "L",
             "customerName": "N/A",
-            "missionClass": "Class C"
+            "missionClass": "Class C",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P2",
+                    "materialID": "MS6",
+                    "partName": "Rover Wheel Hub",
+                    "partNumber": "RWH-2468",
+                    "lifetimeDemand": "24",
+                    "unitCostSavings": "7",
+                    "unitScheduleSavings": "12",
+                    "needDate": "2025-09-20",
+                    "adoptionStatus": "Planned",
+                    "statusHistory": [
+                        {
+                            "status": "Planned",
+                            "date": "2025-09-20",
+                            "previousStatus": ""
+                        }
+                    ]
+                },
+                {
+                    "productID": "P4",
+                    "materialID": "MS3",
+                    "partName": "Sample Collection Arm",
+                    "partNumber": "SCA-1357",
+                    "lifetimeDemand": "6",
+                    "unitCostSavings": "20",
+                    "unitScheduleSavings": "30",
+                    "needDate": "2025-10-15",
+                    "adoptionStatus": "On Hold",
+                    "statusHistory": [
+                        {
+                            "status": "On Hold",
+                            "date": "2025-10-15",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                },
+                {
+                    "productID": "P5",
+                    "materialID": "MS7",
+                    "partName": "Instrument Housing",
+                    "partNumber": "IH-9753",
+                    "lifetimeDemand": "12",
+                    "unitCostSavings": "9",
+                    "unitScheduleSavings": "15",
+                    "needDate": "2025-11-05",
+                    "adoptionStatus": "Baselined",
+                    "statusHistory": [
+                        {
+                            "status": "Baselined",
+                            "date": "2025-11-05",
+                            "previousStatus": ""
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "PRG5",
             "name": "Communications",
             "division": "P",
             "customerName": "N/A",
-            "missionClass": "Class B"
+            "missionClass": "Class B",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P1",
+                    "materialID": "MS2",
+                    "partName": "Antenna Mount",
+                    "partNumber": "AM-6543",
+                    "lifetimeDemand": "35",
+                    "unitCostSavings": "4",
+                    "unitScheduleSavings": "9",
+                    "needDate": "2025-07-25",
+                    "adoptionStatus": "In Progress",
+                    "statusHistory": [
+                        {
+                            "status": "In Progress",
+                            "date": "2025-07-25",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                },
+                {
+                    "productID": "P3",
+                    "materialID": "MS4",
+                    "partName": "Waveguide Support",
+                    "partNumber": "WS-8642",
+                    "lifetimeDemand": "20",
+                    "unitCostSavings": "5",
+                    "unitScheduleSavings": "8",
+                    "needDate": "2025-08-10",
+                    "adoptionStatus": "Complete",
+                    "statusHistory": [
+                        {
+                            "status": "Complete",
+                            "date": "2025-08-10",
+                            "previousStatus": "In Progress"
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "PRG6",
             "name": "test program",
             "division": "test",
             "customerName": "test",
-            "missionClass": "test"
+            "missionClass": "test",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P2",
+                    "materialID": "MS1",
+                    "partName": "Test Component A",
+                    "partNumber": "TCA-1111",
+                    "lifetimeDemand": "10",
+                    "unitCostSavings": "3",
+                    "unitScheduleSavings": "5",
+                    "needDate": "2025-02-15",
+                    "adoptionStatus": "Planned",
+                    "statusHistory": [
+                        {
+                            "status": "Planned",
+                            "date": "2025-02-15",
+                            "previousStatus": ""
+                        }
+                    ]
+                },
+                {
+                    "productID": "P4",
+                    "materialID": "MS5",
+                    "partName": "Test Component B",
+                    "partNumber": "TCB-2222",
+                    "lifetimeDemand": "15",
+                    "unitCostSavings": "2",
+                    "unitScheduleSavings": "4",
+                    "needDate": "2025-03-20",
+                    "adoptionStatus": "In Progress",
+                    "statusHistory": [
+                        {
+                            "status": "In Progress",
+                            "date": "2025-03-20",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "PRG7",
@@ -88,7 +314,45 @@
             "sector": "",
             "division": "",
             "customerName": "",
-            "missionClass": ""
+            "missionClass": "",
+            "productMaterialCombinations": [
+                {
+                    "productID": "P5",
+                    "materialID": "MS3",
+                    "partName": "Another Test Part",
+                    "partNumber": "ATP-3333",
+                    "lifetimeDemand": "5",
+                    "unitCostSavings": "1",
+                    "unitScheduleSavings": "3",
+                    "needDate": "2025-01-10",
+                    "adoptionStatus": "Complete",
+                    "statusHistory": [
+                        {
+                            "status": "Complete",
+                            "date": "2025-01-10",
+                            "previousStatus": "In Progress"
+                        }
+                    ]
+                },
+                {
+                    "productID": "P1",
+                    "materialID": "MS7",
+                    "partName": "Yet Another Test Part",
+                    "partNumber": "YATP-4444",
+                    "lifetimeDemand": "8",
+                    "unitCostSavings": "2",
+                    "unitScheduleSavings": "6",
+                    "needDate": "2025-02-05",
+                    "adoptionStatus": "On Hold",
+                    "statusHistory": [
+                        {
+                            "status": "On Hold",
+                            "date": "2025-02-05",
+                            "previousStatus": "Planned"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "products": [
@@ -96,65 +360,23 @@
             "id": "P1",
             "name": "SatCom Terminal Housing",
             "requirements": {
-                "mechanical": "Withstand 10G acceleration, -40\u00c2\u00b0C to +85\u00c2\u00b0C temperature range",
+                "mechanical": "Withstand 10G acceleration, -40\u00b0C to +85\u00b0C temperature range",
                 "electrical": "EMI shielding, grounding requirements",
                 "environmental": "Salt fog resistance, humidity cycling"
             },
             "businessCase": {
-                "costSavings": {
-                    "title": "cost Savings",
-                    "description": "{'description': 'Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.', 'value': 35}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                },
-                "scheduleSavings": {
-                    "title": "schedule Savings",
-                    "description": "{'description': 'Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.', 'value': 12}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                },
-                "performanceGains": {
-                    "title": "performance Gains",
-                    "description": "{'description': '15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry.', 'value': 15}",
-                    "value": "",
-                    "startDate": "",
-                    "endDate": "",
-                    "status": "",
-                    "funding": "",
-                    "float": false,
-                    "floatDate": ""
-                }
+                "Save schedule": true,
+                "Save hardware costs": false,
+                "Relieve supply chain constraints": false,
+                "Increase Pwin by hitting PTW": false,
+                "Reduce specialty training": false,
+                "Save weight": false,
+                "Increase performance": true,
+                "Unify parts": false,
+                "Quickly iterate design/EMs": true,
+                "Agility in Design and AI&T": false,
+                "Digital Spares": false
             },
-            "programs": [
-                {
-                    "programID": "PRG1",
-                    "part": "Housing Shell",
-                    "materialID": "MS1",
-                    "lifetimeDemand": 50,
-                    "needDate": "2025-06-30",
-                    "adoptionStatus": "production",
-                    "expectedUnitCostSavings": "4000"
-                },
-                {
-                    "programID": "PRG3",
-                    "part": "Terminal Enclosure",
-                    "materialID": "MS2",
-                    "lifetimeDemand": 100,
-                    "needDate": "2025-09-01",
-                    "adoptionStatus": "prototyping",
-                    "expectedUnitCostSavings": ""
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS1",
@@ -196,28 +418,31 @@
                     "name": "CADPro Advanced",
                     "start": "",
                     "end": "",
-                    "status": "",
+                    "status": "Complete",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "SimulateX Thermal",
                     "start": "",
                     "end": "",
-                    "status": "",
+                    "status": "In Progress",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "FEA Structural Analysis",
                     "start": "",
                     "end": "",
-                    "status": "",
+                    "status": "Planned",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 }
             ],
             "documentation": [
@@ -228,7 +453,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Material Certification",
@@ -237,7 +463,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Process Qualification Records",
@@ -246,7 +473,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "First Article Inspection Report",
@@ -255,7 +483,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 }
             ],
             "specialNDT": [
@@ -266,7 +495,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Dye penetrant inspection",
@@ -275,7 +505,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "X-ray inspection of critical features",
@@ -284,18 +515,20 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 }
             ],
             "partAcceptance": [
                 {
                     "name": "Visual inspection per AWS D17.1",
-                    "startDate": "2025-03-11",
-                    "endDate": "2025-08-11",
+                    "startDate": "2025-03-19",
+                    "endDate": "2025-08-19",
                     "status": "",
                     "funding": "",
                     "float": true,
-                    "floatDate": "2025-03-11"
+                    "floatDate": "2025-03-11",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Dimensional verification",
@@ -304,7 +537,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Functional testing",
@@ -313,7 +547,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 },
                 {
                     "name": "Surface roughness measurement",
@@ -322,7 +557,8 @@
                     "status": "",
                     "funding": "",
                     "float": false,
-                    "floatDate": ""
+                    "floatDate": "",
+                    "additionalDetails": ""
                 }
             ],
             "trl": "7",
@@ -378,7 +614,8 @@
                 }
             ],
             "trlHistory": [],
-            "lastSaveDate": "2025-03-11"
+            "lastSaveDate": "2025-03-16",
+            "programs": []
         },
         {
             "id": "P2",
@@ -389,16 +626,6 @@
                 "thermal": "Low CTE, thermal stability in space environment",
                 "environmental": "Vacuum compatibility, radiation resistance"
             },
-            "programs": [
-                {
-                    "programID": "PRG1",
-                    "part": "Mounting Bracket",
-                    "materialID": "MS2",
-                    "lifetimeDemand": 25,
-                    "needDate": "2025-08-15",
-                    "adoptionStatus": "developing"
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS2",
@@ -429,26 +656,152 @@
                 }
             ],
             "designTools": [
-                "OrbitSim",
-                "ThermalAnalyzer",
-                "Topology Optimization Suite"
+                {
+                    "name": "OrbitSim",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "ThermalAnalyzer",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Topology Optimization Suite",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                }
             ],
             "documentation": [
-                "NASA-STD-6016 Compliance",
-                "Thermal Cycling Test Results",
-                "Structural Analysis Report",
-                "Material Traceability Documentation"
+                {
+                    "name": "NASA-STD-6016 Compliance",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Thermal Cycling Test Results",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Structural Analysis Report",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Material Traceability Documentation",
+                    "start": "",
+                    "end": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                }
             ],
             "specialNDT": [
-                "Ultrasonic testing",
-                "Radiographic inspection",
-                "Thermal imaging"
+                {
+                    "name": "Ultrasonic testing",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Radiographic inspection",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Thermal imaging",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                }
             ],
             "partAcceptance": [
-                "Thermal cycling test",
-                "Vibration test",
-                "Dimensional inspection",
-                "Surface finish verification"
+                {
+                    "name": "Thermal cycling test",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Vibration test",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Dimensional inspection",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                },
+                {
+                    "name": "Surface finish verification",
+                    "startDate": "",
+                    "endDate": "",
+                    "status": "",
+                    "funding": "",
+                    "float": false,
+                    "floatDate": "",
+                    "additionalDetails": ""
+                }
             ],
             "roadmap": [
                 {
@@ -497,10 +850,20 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
-            }
+                "Save schedule": true,
+                "Save hardware costs": true,
+                "Relieve supply chain constraints": false,
+                "Increase Pwin by hitting PTW": false,
+                "Reduce specialty training": false,
+                "Save weight": true,
+                "Increase performance": false,
+                "Unify parts": true,
+                "Quickly iterate design/EMs": false,
+                "Agility in Design and AI&T": false,
+                "Digital Spares": true
+            },
+            "trlHistory": [],
+            "lastSaveDate": "2025-03-14"
         },
         {
             "id": "P3",
@@ -508,19 +871,9 @@
             "trl": 5,
             "requirements": {
                 "mechanical": "High temperature strength, erosion resistance",
-                "thermal": "Withstand 1200\u00c2\u00b0C operating temperature",
+                "thermal": "Withstand 1200\u00b0C operating temperature",
                 "performance": "Specific thrust profile, weight constraints"
             },
-            "programs": [
-                {
-                    "programID": "PRG2",
-                    "part": "Nozzle Assembly",
-                    "materialID": "MS2",
-                    "lifetimeDemand": 200,
-                    "needDate": "2025-10-15",
-                    "adoptionStatus": "targeting"
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS2",
@@ -611,9 +964,17 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+                "Save schedule": true,
+                "Save hardware costs": true,
+                "Digital Spares": false,
+                "Reduce specialty training": false,
+                "Relieve supply chain constraints": true,
+                "Agility in Design and AI&T": false,
+                "Increase Pwin by hitting PTW": false,
+                "Unify parts": false,
+                "Save weight": true,
+                "Increase performance": true,
+                "Quickly iterate design/EMs": false
             },
             "trlHistory": []
         },
@@ -626,16 +987,6 @@
                 "thermal": "Thermal shock resistance, high heat flux",
                 "fluid": "Complex internal channels, specific flow characteristics"
             },
-            "programs": [
-                {
-                    "programID": "PRG3",
-                    "part": "Injector Assembly",
-                    "materialID": "MS1",
-                    "lifetimeDemand": 75,
-                    "needDate": "2025-07-30",
-                    "adoptionStatus": "production"
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS1",
@@ -726,9 +1077,17 @@
                 }
             ],
             "businessCase": {
-                "costSavings": "Reduces manufacturing costs by 35% compared to traditional methods due to reduced part count and elimination of complex machining operations.",
-                "scheduleSavings": "Shortens procurement lead time from 16 weeks to 4 weeks, enabling faster system integration and testing.",
-                "performanceGains": "15% weight reduction compared to conventional design, improving overall system performance. Enhanced thermal management through optimized internal geometry."
+                "Save schedule": false,
+                "Save hardware costs": true,
+                "Digital Spares": false,
+                "Reduce specialty training": false,
+                "Relieve supply chain constraints": true,
+                "Agility in Design and AI&T": true,
+                "Increase Pwin by hitting PTW": false,
+                "Unify parts": true,
+                "Save weight": true,
+                "Increase performance": true,
+                "Quickly iterate design/EMs": false
             },
             "trlHistory": []
         },
@@ -741,16 +1100,6 @@
                 "environmental": "Lunar dust resistance, extreme temperature cycling",
                 "operational": "Energy absorption, traction on regolith"
             },
-            "programs": [
-                {
-                    "programID": "PRG4",
-                    "part": "Rover Wheel Frame",
-                    "materialID": "MS3",
-                    "lifetimeDemand": 30,
-                    "needDate": "2025-12-15",
-                    "adoptionStatus": "developing"
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS3",
@@ -991,16 +1340,16 @@
             ],
             "businessCase": {
                 "Save schedule": false,
-                "Save hardware costs": false,
-                "Relieve supply chain constraints": false,
+                "Save hardware costs": true,
+                "Digital Spares": true,
+                "Reduce specialty training": true,
+                "Relieve supply chain constraints": true,
+                "Agility in Design and AI&T": true,
                 "Increase Pwin by hitting PTW": true,
-                "Reduce specialty training": false,
-                "Save weight": true,
-                "Increase performance": false,
-                "Unify parts": true,
-                "Quickly iterate design/EMs": false,
-                "Agility in Design and AI&T": false,
-                "Digital Spares": false
+                "Unify parts": false,
+                "Save weight": false,
+                "Increase performance": true,
+                "Quickly iterate design/EMs": false
             },
             "trlHistory": [],
             "lastSaveDate": "2025-03-11"
@@ -1009,16 +1358,6 @@
             "id": "P006",
             "name": "tester",
             "trl": "",
-            "programs": [
-                {
-                    "programID": "PRG7",
-                    "part": "Test Component",
-                    "materialID": "MS6",
-                    "lifetimeDemand": 10,
-                    "needDate": "2025-02-28",
-                    "adoptionStatus": "targeting"
-                }
-            ],
             "materialSystems": [
                 {
                     "materialID": "MS6",
@@ -1043,25 +1382,23 @@
             "roadmap": [],
             "milestones": [],
             "businessCase": {
-                "costSavings": "",
-                "scheduleSavings": "",
-                "performanceGains": ""
+                "Save schedule": true,
+                "Save hardware costs": true,
+                "Digital Spares": false,
+                "Reduce specialty training": true,
+                "Relieve supply chain constraints": true,
+                "Agility in Design and AI&T": false,
+                "Increase Pwin by hitting PTW": false,
+                "Unify parts": false,
+                "Save weight": false,
+                "Increase performance": true,
+                "Quickly iterate design/EMs": true
             }
         },
         {
             "id": "P007",
             "name": "test",
             "trl": "",
-            "programs": [
-                {
-                    "programID": "PRG2",
-                    "part": "Test Part",
-                    "materialID": "MS2",
-                    "lifetimeDemand": 5,
-                    "needDate": "2025-03-28",
-                    "adoptionStatus": "closed"
-                }
-            ],
             "materialSystems": [],
             "requirements": {},
             "postProcessingSuppliers": [],
@@ -1072,9 +1409,17 @@
             "roadmap": [],
             "milestones": [],
             "businessCase": {
-                "costSavings": "",
-                "scheduleSavings": "",
-                "performanceGains": ""
+                "Save schedule": false,
+                "Save hardware costs": true,
+                "Digital Spares": true,
+                "Reduce specialty training": false,
+                "Relieve supply chain constraints": true,
+                "Agility in Design and AI&T": false,
+                "Increase Pwin by hitting PTW": false,
+                "Unify parts": false,
+                "Save weight": true,
+                "Increase performance": false,
+                "Quickly iterate design/EMs": true
             }
         }
     ],
@@ -1085,18 +1430,15 @@
             "process": "Laser Powder Bed Fusion",
             "material": "Ti-6Al-4V",
             "mrl": 6,
-            "qualification": "Qualified",
-            "qualificationClass": "Class 1",
-            "statisticalBasis": "S",
             "roadmap": [
                 {
                     "task": "Material Certification",
                     "startDate": "2025-07-01",
                     "endDate": "2025-09-30",
                     "status": "Complete",
+                    "lane": "Parameter Development",
                     "floatOnRoadmap": false,
                     "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "Division IRAD"
                 },
                 {
@@ -1104,9 +1446,9 @@
                     "startDate": "",
                     "endDate": "",
                     "status": "Planned",
+                    "lane": "Parameter Development",
                     "floatOnRoadmap": false,
                     "floatDate": "",
-                    "additionalDetails": "",
                     "fundingType": "Sector IRAD"
                 },
                 {
@@ -1114,28 +1456,35 @@
                     "startDate": "2025-03-11",
                     "endDate": "2025-05-11",
                     "status": "Complete",
+                    "lane": "Parameter Development",
                     "floatOnRoadmap": false,
                     "floatDate": "",
-                    "additionalDetails": "",
-                    "fundingType": "Specifications"
+                    "fundingType": "CRAD"
+                },
+                {
+                    "task": "test",
+                    "startDate": "2025-03-16",
+                    "endDate": "2025-03-19",
+                    "status": "Complete",
+                    "lane": "Parameter Development",
+                    "floatOnRoadmap": true,
+                    "floatDate": "2025-03-16",
+                    "fundingType": "External Task"
                 }
             ],
             "milestones": [
                 {
-                    "name": "test",
-                    "date": "",
+                    "name": "MRL 7 QRB 3",
+                    "date": "2026-03-16",
                     "description": "",
                     "floatOnRoadmap": false,
-                    "floatDate": "",
-                    "additionalDetails": ""
+                    "floatDate": ""
                 }
             ],
             "postProcessing": [
                 {
                     "name": "Stress relief heat treatment",
-                    "Supplier": [
-                        "PSUP1"
-                    ]
+                    "Supplier": []
                 },
                 {
                     "name": "Hot Isostatic Pressing (HIP)",
@@ -1150,13 +1499,23 @@
                 {
                     "machine": "EOS M290",
                     "Supplier": [
-                        "SUP1"
+                        {
+                            "id": "SUP1",
+                            "qualStatus": "In-Development"
+                        }
                     ]
                 },
                 {
                     "machine": "Concept Laser M2",
                     "Supplier": [
-                        "SUP1"
+                        {
+                            "id": "SUP1",
+                            "qualStatus": "Planned"
+                        },
+                        {
+                            "id": "SUP3",
+                            "qualStatus": "Planned"
+                        }
                     ]
                 }
             ],
@@ -1173,6 +1532,21 @@
                 {
                     "opportunityID": "OPP2",
                     "pursuitID": "PUR2"
+                }
+            ],
+            "qualification": "Qualified",
+            "qualificationClass": "Class 1",
+            "statisticalBasis": "S",
+            "qualifications": [
+                {
+                    "qualificationClass": "Class 1",
+                    "qualification": "Qualified",
+                    "statisticalBasis": "S"
+                },
+                {
+                    "qualificationClass": "Class 4",
+                    "qualification": "In Progress",
+                    "statisticalBasis": "A-Basis"
                 }
             ]
         },
@@ -1260,12 +1634,12 @@
                 "tensileStrength": "330-360 MPa",
                 "yieldStrength": "220-240 MPa",
                 "elongation": "3-5%",
-                "density": "2.67 g/cm\u00c2\u00b3"
+                "density": "2.67 g/cm\u00b3"
             },
             "processingParameters": {
                 "laserPower": "350-370W",
                 "scanSpeed": "1150-1250 mm/s",
-                "layerThickness": "30 \u00ce\u00bcm",
+                "layerThickness": "30 \u03bcm",
                 "hatchSpacing": "0.13 mm"
             },
             "postProcessing": [
@@ -1345,13 +1719,13 @@
                 "tensileStrength": "930-1020 MPa",
                 "yieldStrength": "860-930 MPa",
                 "elongation": "10-14%",
-                "density": "4.43 g/cm\u00c2\u00b3"
+                "density": "4.43 g/cm\u00b3"
             },
             "processingParameters": {
                 "beamPower": "600-1000W",
                 "scanSpeed": "4500-5500 mm/s",
-                "layerThickness": "50-70 \u00ce\u00bcm",
-                "preheatingTemperature": "700-750\u00c2\u00b0C"
+                "layerThickness": "50-70 \u03bcm",
+                "preheatingTemperature": "700-750\u00b0C"
             },
             "postProcessing": [
                 {
@@ -1432,7 +1806,7 @@
                 "tensileStrength": "520-620 MPa",
                 "yieldStrength": "280-350 MPa",
                 "elongation": "30-40%",
-                "density": "7.99 g/cm\u00c2\u00b3"
+                "density": "7.99 g/cm\u00b3"
             },
             "processingParameters": {
                 "laserPower": "800-1200W",
@@ -1554,6 +1928,34 @@
             "milestones": [],
             "postProcessing": [],
             "qualifiedMachines": [],
+            "standardNDT": [],
+            "relatedFundingOpps": []
+        },
+        {
+            "id": "MS8",
+            "name": "test",
+            "process": "",
+            "material": "",
+            "mrl": null,
+            "roadmap": [],
+            "milestones": [],
+            "postProcessing": [
+                {
+                    "name": "",
+                    "Supplier": []
+                }
+            ],
+            "qualifiedMachines": [
+                {
+                    "machine": "test",
+                    "Supplier": [
+                        {
+                            "id": "SUP2",
+                            "qualStatus": "Qualified"
+                        }
+                    ]
+                }
+            ],
             "standardNDT": [],
             "relatedFundingOpps": []
         }

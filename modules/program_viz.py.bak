@@ -1,0 +1,1342 @@
+import os
+from datetime import datetime, timedelta
+from bokeh.plotting import figure, save, output_file
+from bokeh.models import ColumnDataSource, HoverTool, Label, Range1d, Span, Legend, LegendItem, Div, Tabs, Panel
+from bokeh.layouts import column, row, layout
+from bokeh.palettes import Category10, Spectral6
+import matplotlib.pyplot as plt
+import numpy as np
+from bokeh.embed import components, file_html
+from bokeh.resources import CDN
+
+def generate_program_visualizations(data, output_dir):
+    """Generate visualizations for programs"""
+    print("Generating program visualizations...")
+    
+    # Create program directory if it doesn't exist
+    program_dir = os.path.join(output_dir, "programs")
+    if not os.path.exists(program_dir):
+        os.makedirs(program_dir)
+    
+    # Generate individual program pages
+    for program in data['programs']:
+        generate_program_page(program, data, program_dir)
+    
+    # Generate program summary page
+    generate_program_summary(data, program_dir)
+    
+    # Generate program distribution charts
+    generate_program_distribution_charts(data, program_dir)
+    
+    print(f"Program visualizations generated in '{program_dir}'")
+
+def generate_program_page(program, data, program_dir):
+    """Generate a detailed page for a single program"""
+    program_id = program['id']
+    
+    # Create a figure for the program timeline
+    p = figure(
+        title=f"Program: {program['name']} ({program_id})",
+        x_axis_type="datetime",
+        width=1200,
+        height=600,
+        toolbar_location="above",
+        tools="pan,wheel_zoom,box_zoom,reset,save",
+        sizing_mode="fixed",
+    )
+    
+    # Customize appearance
+    p.title.text_font_size = '16pt'
+    p.xaxis.axis_label = "Timeline"
+    p.yaxis.axis_label = "Products"
+    p.grid.grid_line_alpha = 0.3
+    p.background_fill_color = "#f8f9fa"
+    
+    # Find all products associated with this program
+    associated_products = []
+    
+    # Method 1: Check products that reference this program in their 'programs' array
+    for product in data['products']:
+        for prog in product.get('programs', []):
+            if isinstance(prog, str) and prog == program_id:
+                associated_products.append(product)
+                break
+            elif isinstance(prog, dict) and prog.get('programID') == program_id:
+                associated_products.append(product)
+                break
+    
+    # Method 2: Check products listed in the program's productMaterialCombinations
+    for combo in program.get('productMaterialCombinations', []):
+        product_id = combo.get('productID')
+        if product_id:
+            product = next((p for p in data['products'] if p['id'] == product_id), None)
+            if product and product not in associated_products:
+                associated_products.append(product)
+    
+    # Sort products by name
+    associated_products.sort(key=lambda x: x['name'])
+    
+    # Plot products on timeline
+    y_pos = 0
+    all_dates = []
+    has_renderers = False
+    
+    for product in associated_products:
+        y_pos -= 1
+        
+        # Find the need date for this program-product relationship from productMaterialCombinations
+        need_date = None
+        part_name = None
+        part_number = None
+        need_date_str = "N/A"
+        
+        # First check in productMaterialCombinations (preferred source)
+        for combo in program.get('productMaterialCombinations', []):
+            if combo.get('productID') == product['id'] and 'needDate' in combo:
+                need_date_str = combo['needDate']
+                need_date = datetime.strptime(need_date_str, "%Y-%m-%d")
+                part_name = combo.get('partName', 'N/A')
+                part_number = combo.get('partNumber', 'N/A')
+                all_dates.append(need_date)
+                
+                # Remove the vertical line and label for the need date
+                break
+        
+        # If not found in productMaterialCombinations, check in product's programs array (fallback)
+        if not need_date:
+            for prog in product.get('programs', []):
+                if isinstance(prog, dict) and prog.get('programID') == program_id and 'needDate' in prog:
+                    need_date_str = prog['needDate']
+                    need_date = datetime.strptime(need_date_str, "%Y-%m-%d")
+                    all_dates.append(need_date)
+                    break
+        
+        # If no need date found, skip this product
+        if not need_date:
+            continue
+        
+        # Add product as a point on the timeline
+        p.scatter(
+            x=need_date, 
+            y=y_pos, 
+            size=15, 
+            color=Category10[10][0], 
+            alpha=0.8,
+            legend_label="Product Need Date"
+        )
+        has_renderers = True
+        
+        # Add product label with part name and part number if available
+        display_text = f"{product['name']} ({product['id']})"
+        if part_name and part_number and part_name != 'N/A' and part_number != 'N/A':
+            display_text += f" - {part_name} ({part_number})"
+        
+        source = ColumnDataSource(data=dict(
+            x=[need_date],
+            y=[y_pos],
+            text=[display_text],
+            product_name=[product['name']],
+            product_id=[product['id']],
+            part_name=[part_name if part_name else "N/A"],
+            part_number=[part_number if part_number else "N/A"],
+            need_date_str=[need_date_str]
+        ))
+        
+        p.text(
+            x='x', 
+            y='y', 
+            text='text',
+            source=source,
+            text_font_size="10pt",
+            text_baseline="middle",
+            text_align="left",
+            x_offset=10
+        )
+        
+        # Add all tasks from the product roadmap to the timeline
+        if 'roadmap' in product and isinstance(product['roadmap'], dict) and 'tasks' in product['roadmap']:
+            for task in product['roadmap']['tasks']:
+                if 'start' in task and 'end' in task:
+                    start_date = datetime.strptime(task['start'], "%Y-%m-%d")
+                    end_date = datetime.strptime(task['end'], "%Y-%m-%d")
+                    all_dates.extend([start_date, end_date])
+                    
+                    # Add task bar
+                    p.hbar(
+                        y=y_pos,
+                        left=start_date,
+                        right=end_date,
+                        height=0.3,
+                        color=Category10[10][1],
+                        alpha=0.6
+                    )
+                    has_renderers = True
+    
+    # Add hover tool
+    hover = HoverTool()
+    hover.tooltips = [
+        ("Product", "@product_name (@product_id)"),
+        ("Part", "@part_name (@part_number)"),
+        ("Need Date", "@need_date_str"),
+    ]
+    p.add_tools(hover)
+    
+    # Set y-range with padding
+    p.y_range = Range1d(y_pos - 1, 1)
+    
+    # Set x-range based on all dates
+    if all_dates:
+        min_date = min(all_dates)
+        max_date = max(all_dates)
+        # Add some padding (3 months before and after)
+        min_date = min_date - timedelta(days=90)
+        max_date = max_date + timedelta(days=90)
+        p.x_range.start = min_date
+        p.x_range.end = max_date
+    
+    # Create modern header with navigation links - using same approach as implementation metrics
+    header = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Program: {program['name']}</title>
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.3.min.js"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }
+            .container {
+                width: 1200px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 25px;
+                box-sizing: border-box;
+            }
+            .header {
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                color: white;
+                padding: 20px;
+                text-align: center;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+            }
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+            .info-row {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .info-col {
+                flex: 1;
+                min-width: 300px;
+            }
+            /* Additional styles */
+            .bk-root {
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>{program['name']} ({program_id})</h1>
+                    <div>
+                        <a href="program_summary.html" class="nav-link">Program Summary</a>
+                        <a href="../index.html" class="nav-link">Main Dashboard</a>
+                    </div>
+                </div>
+            </div>
+    """
+    
+    # Create program info section with modern styling
+    program_info = f"""
+            <div class="info-row">
+                <div class="info-col summary-card">
+                    <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program Details</h2>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;"><strong>ID:</strong></td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;">{program_id}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;"><strong>Sector:</strong></td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;">{program.get('sector', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;"><strong>Division:</strong></td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;">{program.get('division', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;"><strong>Customer:</strong></td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;">{program.get('customerName', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;"><strong>Mission Class:</strong></td>
+                            <td style="padding: 12px 8px; border-bottom: 1px solid #eee;">{program.get('missionClass', 'N/A')}</td>
+                        </tr>
+                    </table>
+                </div>
+    """
+    
+    # Calculate total cost and schedule savings
+    total_cost_savings = 0
+    total_schedule_savings = 0
+    
+    for combo in program.get('productMaterialCombinations', []):
+        try:
+            # Calculate cost savings (unit cost savings * lifetime demand)
+            unit_cost = float(combo.get('unitCostSavings', 0))
+            lifetime = float(combo.get('lifetimeDemand', 0))
+            total_cost_savings += unit_cost * lifetime
+            
+            # Add schedule savings (in days)
+            total_schedule_savings += float(combo.get('unitScheduleSavings', 0))
+        except (ValueError, TypeError):
+            # Skip if values can't be converted to float
+            pass
+    
+    program_info += f"""
+        <div class="info-col summary-card">
+            <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program Summary</h2>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <div style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px; width: 30%;">
+                    <div style="font-size: 36px; font-weight: bold; color: #3498db;">{len(associated_products)}</div>
+                    <div style="color: #7f8c8d; font-size: 14px;">Associated Products</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px; width: 30%;">
+                    <div style="font-size: 36px; font-weight: bold; color: #27ae60;">${total_cost_savings:,.0f}</div>
+                    <div style="color: #7f8c8d; font-size: 14px;">Total Cost Savings</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px; width: 30%;">
+                    <div style="font-size: 36px; font-weight: bold; color: #2980b9;">{total_schedule_savings:,.0f}</div>
+                    <div style="color: #7f8c8d; font-size: 14px;">Total Days Saved</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                <h3 style="margin-top: 0; color: #2c3e50; font-size: 18px;">Adoption Status</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+    """
+    
+    # Count adoption statuses
+    adoption_statuses = {}
+    for combo in program.get('productMaterialCombinations', []):
+        status = combo.get('adoptionStatus', 'N/A')
+        if status in adoption_statuses:
+            adoption_statuses[status] += 1
+        else:
+            adoption_statuses[status] = 1
+    
+    # Add adoption status badges
+    status_colors = {
+        'Baselined': '#3498db',
+        'Complete': '#27ae60',
+        'In Progress': '#f39c12',
+        'Planned': '#95a5a6',
+        'On Hold': '#9b59b6',
+        'Cancelled': '#e74c3c',
+        'N/A': '#7f8c8d'
+    }
+    
+    for status, count in adoption_statuses.items():
+        color = status_colors.get(status, '#7f8c8d')
+        program_info += f"""
+                    <div style="background-color: {color}; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px;">
+                        {status}: {count}
+                    </div>
+        """
+    
+    program_info += """
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Create product list section with modern styling
+    product_list = """
+    <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px; width: 1200px; max-width: 100%; margin-left: auto; margin-right: auto;">
+        <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Associated Products</h2>
+    """
+    
+    if associated_products:
+        product_list += """
+        <div style="overflow-x: auto; margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden;">
+                <thead>
+                    <tr style="background: linear-gradient(to right, #3498db, #2980b9); color: white;">
+                        <th style="padding: 15px; text-align: left; border: none;">Product</th>
+                        <th style="padding: 15px; text-align: center; border: none;">TRL</th>
+                        <th style="padding: 15px; text-align: left; border: none;">Part Name</th>
+                        <th style="padding: 15px; text-align: left; border: none;">Part Number</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Lifetime Demand</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Unit Cost Savings</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Unit Schedule Savings</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Need Date</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Adoption Status</th>
+                        <th style="padding: 15px; text-align: left; border: none;">Material System</th>
+                        <th style="padding: 15px; text-align: center; border: none;">Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+        
+        for i, product in enumerate(associated_products):
+            # Alternate row colors for better readability
+            row_style = "background-color: #f8f9fa;" if i % 2 == 0 else "background-color: white;"
+            
+            # Get program-product relationship details
+            need_date = "N/A"
+            adoption_status = "N/A"
+            relevant_material_id = None
+            part_name = "N/A"
+            part_number = "N/A"
+            lifetime_demand = "N/A"
+            unit_cost_savings = "N/A"
+            unit_schedule_savings = "N/A"
+            
+            # Find the program-product combination in the program's productMaterialCombinations
+            for combo in program.get('productMaterialCombinations', []):
+                if combo.get('productID') == product['id']:
+                    need_date = combo.get('needDate', 'N/A')
+                    adoption_status = combo.get('adoptionStatus', 'N/A')
+                    relevant_material_id = combo.get('materialID')
+                    part_name = combo.get('partName', 'N/A')
+                    part_number = combo.get('partNumber', 'N/A')
+                    lifetime_demand = combo.get('lifetimeDemand', 'N/A')
+                    unit_cost_savings = combo.get('unitCostSavings', 'N/A')
+                    unit_schedule_savings = combo.get('unitScheduleSavings', 'N/A')
+                    break
+            
+            # Get the relevant material system
+            material_system_display = "None"
+            if relevant_material_id:
+                material = next((m for m in data['materialSystems'] if m['id'] == relevant_material_id), None)
+                if material:
+                    material_system_display = f"{material['name']} ({material['id']})"
+            
+            # Count tasks
+            task_count = 0
+            if 'roadmap' in product:
+                if isinstance(product['roadmap'], list):
+                    task_count += len(product['roadmap'])
+                elif isinstance(product['roadmap'], dict) and 'tasks' in product['roadmap']:
+                    task_count += len(product['roadmap']['tasks'])
+            
+            # Add design tools, documentation, special NDT, and part acceptance
+            task_count += len(product.get('designTools', []))
+            task_count += len(product.get('documentation', []))
+            task_count += len(product.get('specialNDT', []))
+            task_count += len(product.get('partAcceptance', []))
+            
+            # Get status color for adoption status
+            status_color = status_colors.get(adoption_status, '#7f8c8d')
+            
+            # Add row to table
+            product_list += f"""
+                <tr style="{row_style}">
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">
+                        <a href='../products/product_{product['id']}.html' style="color: #3498db; font-weight: bold; text-decoration: none;">
+                            {product['name']} ({product['id']})
+                        </a>
+                    </td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">{product.get('trl', 'N/A')}</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{part_name}</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{part_number}</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">{lifetime_demand}</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee; color: #27ae60;">${unit_cost_savings}</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee; color: #2980b9;">{unit_schedule_savings} days</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">{need_date}</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">
+                        <span style="background-color: {status_color}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px;">
+                            {adoption_status}
+                        </span>
+                    </td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{material_system_display}</td>
+                    <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">{task_count}</td>
+                </tr>
+            """
+        
+        product_list += """
+                </tbody>
+            </table>
+        </div>
+        """
+    else:
+        product_list += """
+        <div style="text-align: center; padding: 40px; color: #7f8c8d; background-color: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p style="font-size: 18px; margin: 0;">No associated products found for this program.</p>
+        </div>
+        """
+    
+    product_list += """
+    </div>
+    """
+    
+    # Combine all elements
+    combined_html = header + program_info + product_list
+    info_div = Div(text=combined_html, width=1200)
+    
+    # Create chart wrapper for centering
+    chart_wrapper_start = Div(text='<div class="chart-wrapper">', width=1200)
+    chart_wrapper_end = Div(text='</div>', width=1200)
+    
+    # If there's no data to display, add a message
+    if not has_renderers:
+        no_data_message = Div(
+            text="""
+            <div style="text-align: center; margin: 50px auto; padding: 40px; background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); width: 1200px; max-width: 100%;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <h3 style="color: #2c3e50; margin-bottom: 10px;">No timeline data available for this program</h3>
+                <p style="color: #7f8c8d;">There are no products with need dates associated with this program.</p>
+            </div>
+            """,
+            width=1200
+        )
+        layout = column(info_div, no_data_message, sizing_mode="fixed", width=1200, align="center")
+    else:
+        # Add a title to the timeline
+        timeline_title = Div(
+            text="""
+            <div style="background-color: white; padding: 25px; border-radius: 8px 8px 0 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px; width: 1200px; max-width: 100%; margin-left: auto; margin-right: auto;">
+                <h2 style="color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program Timeline</h2>
+            </div>
+            """,
+            width=1200
+        )
+        
+        # Create layout with all elements
+        layout = column(info_div, timeline_title, chart_wrapper_start, p, chart_wrapper_end, sizing_mode="fixed", width=1200, align="center")
+    
+    # Add a wrapper div to center everything
+    wrapper_start = Div(text="""
+    <div style="display: flex; justify-content: center; width: 100%;">
+        <div style="width: 1200px; max-width: 100%;">
+    """, width=1200)
+    
+    wrapper_end = Div(text="""
+        </div>
+    </div>
+    """, width=1200)
+    
+    # Create final layout with wrapper
+    final_layout = column(wrapper_start, layout, wrapper_end, width=1200)
+    
+    # Output to file
+    output_file(os.path.join(program_dir, f"program_{program_id}.html"))
+    
+    # Close the HTML container structure
+    footer = """
+            </div><!-- Close the container -->
+        </body>
+    </html>
+    """
+    
+    # Create the script for embedding the Bokeh plot
+    script, div = components(p)
+    
+    # Get Bokeh resources
+    bokeh_resources = CDN.render()
+    
+    # Create HTML with full container structure
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Program: {program['name']}</title>
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.3.min.js"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }
+            .container {
+                width: 1200px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 25px;
+                box-sizing: border-box;
+            }
+            .header {
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                color: white;
+                padding: 20px;
+                text-align: center;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+            }
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+            .info-row {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .info-col {
+                flex: 1;
+                min-width: 300px;
+            }
+            /* Additional styles */
+            .bk-root {
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>{program['name']} ({program_id})</h1>
+                    <div>
+                        <a href="program_summary.html" class="nav-link">Program Summary</a>
+                        <a href="../index.html" class="nav-link">Main Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            
+            {program_info.replace("</div>", "")}
+            
+            <div class="summary-card">
+                <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program Timeline</h2>
+                <div class="chart-wrapper">
+                    {div}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Include Bokeh script at the end of body -->
+        {script}
+    </body>
+    </html>
+    """
+    
+    # Write to file
+    with open(os.path.join(program_dir, f"program_{program_id}.html"), "w") as f:
+        f.write(html)
+    
+    print(f"Generated program page for {program_id}")
+
+def generate_program_summary(data, program_dir):
+    """Generate a summary page for all programs"""
+    print("Generating program summary page...")
+    
+    # Create a figure for program distribution by mission class
+    mission_classes = {}
+    for program in data['programs']:
+        mission_class = program.get('missionClass', 'Unknown')
+        if mission_class in mission_classes:
+            mission_classes[mission_class] += 1
+        else:
+            mission_classes[mission_class] = 1
+    
+    # Create a figure for the mission class distribution
+    p1 = figure(
+        title="Programs by Mission Class",
+        x_range=list(mission_classes.keys()),
+        width=500,
+        height=350,
+        toolbar_location=None,
+        tools="hover",
+        background_fill_color="#f8f9fa",
+        tooltips=[("Mission Class", "@x"), ("Count", "@top")],
+        sizing_mode="scale_width"
+    )
+    
+    # Add bars
+    p1.vbar(
+        x=list(mission_classes.keys()),
+        top=list(mission_classes.values()),
+        width=0.5,
+        color=Category10[10][0:len(mission_classes)],
+        alpha=0.8
+    )
+    
+    # Customize appearance
+    p1.title.text_font_size = '14pt'
+    p1.title.text_color = '#2c3e50'
+    p1.xaxis.axis_label = "Mission Class"
+    p1.yaxis.axis_label = "Number of Programs"
+    p1.xgrid.grid_line_color = None
+    p1.grid.grid_line_alpha = 0.3
+    
+    # Create a figure for program distribution by division
+    divisions = {}
+    for program in data['programs']:
+        division = program.get('division', 'Unknown')
+        if division in divisions:
+            divisions[division] += 1
+        else:
+            divisions[division] = 1
+    
+    # Create a figure for the division distribution
+    p2 = figure(
+        title="Programs by Division",
+        x_range=list(divisions.keys()),
+        width=500,
+        height=350,
+        toolbar_location=None,
+        tools="hover",
+        background_fill_color="#f8f9fa",
+        tooltips=[("Division", "@x"), ("Count", "@top")],
+        sizing_mode="scale_width"
+    )
+    
+    # Add bars
+    p2.vbar(
+        x=list(divisions.keys()),
+        top=list(divisions.values()),
+        width=0.5,
+        color=Category10[10][0:len(divisions)],
+        alpha=0.8
+    )
+    
+    # Customize appearance
+    p2.title.text_font_size = '14pt'
+    p2.title.text_color = '#2c3e50'
+    p2.xaxis.axis_label = "Division"
+    p2.yaxis.axis_label = "Number of Programs"
+    p2.xgrid.grid_line_color = None
+    p2.grid.grid_line_alpha = 0.3
+    
+    # Create a figure for adoption status distribution
+    adoption_statuses = {}
+    total_combinations = 0
+    
+    for program in data['programs']:
+        for combo in program.get('productMaterialCombinations', []):
+            status = combo.get('adoptionStatus', 'Unknown')
+            if status in adoption_statuses:
+                adoption_statuses[status] += 1
+            else:
+                adoption_statuses[status] = 1
+            total_combinations += 1
+    
+    # Calculate percentages for pie chart
+    status_names = list(adoption_statuses.keys())
+    status_counts = list(adoption_statuses.values())
+    status_percentages = [count / total_combinations * 100 for count in status_counts]
+    
+    # Define colors for adoption statuses
+    status_colors = {
+        'Baselined': '#3498db',
+        'Complete': '#27ae60',
+        'In Progress': '#f39c12',
+        'Planned': '#95a5a6',
+        'On Hold': '#9b59b6',
+        'Cancelled': '#e74c3c',
+        'Unknown': '#7f8c8d'
+    }
+    
+    # Get colors for each status
+    colors = [status_colors.get(status, '#7f8c8d') for status in status_names]
+    
+    # Create data source for pie chart
+    pie_data = {
+        'status': status_names,
+        'count': status_counts,
+        'percentage': status_percentages,
+        'angle': [count / total_combinations * 2 * 3.14159 for count in status_counts],
+        'color': colors
+    }
+    
+    # Create pie chart for adoption status distribution with improved sizing
+    p3 = figure(
+        title="Adoption Status Distribution",
+        width=600,
+        height=400,
+        toolbar_location=None,
+        tools="hover",
+        tooltips=[("Status", "@status"), ("Count", "@count"), ("Percentage", "@percentage{0.0}%")],
+        x_range=(-0.7, 1.0),
+        background_fill_color="#f8f9fa",
+        sizing_mode="scale_width"
+    )
+    
+    # Add wedges for pie chart
+    p3.wedge(
+        x=0, y=0, radius=0.5,
+        start_angle=0, end_angle=0,  # Will be updated in a loop
+        line_color="white", fill_color="color",
+        source=pie_data
+    )
+    
+    # Update wedge angles
+    start_angle = 0
+    for i, angle in enumerate(pie_data['angle']):
+        p3.wedge(
+            x=0, y=0, radius=0.5,
+            start_angle=start_angle,
+            end_angle=start_angle + angle,
+            line_color="white",
+            fill_color=pie_data['color'][i],
+            legend_label=f"{pie_data['status'][i]} ({pie_data['count'][i]})"
+        )
+        start_angle += angle
+    
+    # Customize pie chart appearance
+    p3.title.text_font_size = '14pt'
+    p3.title.text_color = '#2c3e50'
+    p3.axis.visible = False
+    p3.grid.grid_line_color = None
+    p3.outline_line_color = None
+    p3.legend.location = "right"
+    p3.legend.background_fill_alpha = 0.7
+    p3.legend.label_text_font_size = "10pt"
+    
+    # Create a timeline of program need dates
+    program_data = []
+    all_dates = []
+    
+    for program in data['programs']:
+        for combo in program.get('productMaterialCombinations', []):
+            if 'needDate' in combo:
+                try:
+                    need_date = datetime.strptime(combo['needDate'], "%Y-%m-%d")
+                    all_dates.append(need_date)
+                    program_data.append({
+                        'program': f"{program['name']} ({program['id']})",
+                        'product': combo.get('productID', 'Unknown'),
+                        'part_name': combo.get('partName', 'Unknown'),
+                        'part_number': combo.get('partNumber', 'Unknown'),
+                        'date': need_date,
+                        'date_str': combo['needDate'],
+                        'status': combo.get('adoptionStatus', 'Unknown')
+                    })
+                except (ValueError, TypeError):
+                    pass
+    
+    # Initialize p6 as None
+    p6 = None
+    
+    if program_data:
+        # Sort by date
+        program_data.sort(key=lambda x: x['date'])
+        
+        # Create a figure for program timeline
+        p6 = figure(
+            title="Program Need Dates Timeline",
+            x_axis_type="datetime",
+            width=1200,
+            height=400,
+            toolbar_location="above",
+            tools="pan,wheel_zoom,box_zoom,reset,save,hover",
+            background_fill_color="#f8f9fa",
+            sizing_mode="fixed",
+            tooltips=[
+                ("Program", "@program"),
+                ("Product", "@product"),
+                ("Part", "@part_name (@part_number)"),
+                ("Need Date", "@date_str"),
+                ("Status", "@status")
+            ]
+        )
+        
+        # Create data source for timeline
+        source = ColumnDataSource(data={
+            'program': [item['program'] for item in program_data],
+            'product': [item['product'] for item in program_data],
+            'part_name': [item['part_name'] for item in program_data],
+            'part_number': [item['part_number'] for item in program_data],
+            'date': [item['date'] for item in program_data],
+            'date_str': [item['date_str'] for item in program_data],
+            'status': [item['status'] for item in program_data],
+            'y': list(range(len(program_data))),
+            'color': [status_colors.get(item['status'], '#7f8c8d') for item in program_data]
+        })
+        
+        # Add points for need dates
+        p6.scatter(
+            x='date',
+            y='y',
+            size=12,
+            color='color',
+            alpha=0.8,
+            source=source
+        )
+        
+        # Add program labels
+        p6.text(
+            x='date',
+            y='y',
+            text='program',
+            text_font_size="9pt",
+            text_baseline="middle",
+            text_align="left",
+            x_offset=10,
+            source=source
+        )
+        
+        # Customize appearance
+        p6.title.text_font_size = '14pt'
+        p6.title.text_color = '#2c3e50'
+        p6.xaxis.axis_label = "Timeline"
+        p6.yaxis.axis_label = "Programs"
+        p6.grid.grid_line_alpha = 0.3
+        p6.yaxis.visible = False
+        
+        # Set x-range based on all dates
+        if all_dates:
+            min_date = min(all_dates)
+            max_date = max(all_dates)
+            # Add some padding (3 months before and after)
+            min_date = min_date - timedelta(days=90)
+            max_date = max_date + timedelta(days=90)
+            p6.x_range.start = min_date
+            p6.x_range.end = max_date
+    else:
+        # Create empty figure if no timeline data
+        p6 = figure(
+            title="Program Need Dates Timeline",
+            width=1200,
+            height=400,
+            toolbar_location=None,
+            background_fill_color="#f8f9fa"
+        )
+        p6.title.text_font_size = '14pt'
+        p6.title.text_color = '#2c3e50'
+    
+    # Create components from all the figures
+    script1, div1 = components(p1)
+    script2, div2 = components(p2)
+    script3, div3 = components(p3)
+    script6, div6 = components(p6) if p6 else ("", "<p>No timeline data available</p>")
+    
+    # Create program list table
+    program_list_html = """
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">ID</th>
+                <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Name</th>
+                <th style="padding: 12px 15px; text-align: center; border-bottom: 2px solid #ddd;">Products</th>
+                <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Division</th>
+                <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Mission Class</th>
+                <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Customer</th>
+                <th style="padding: 12px 15px; text-align: center; border-bottom: 2px solid #ddd;">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    
+    # Count products per program
+    products_per_program = {}
+    for program in data['programs']:
+        products_per_program[program['id']] = 0
+    
+    for product in data['products']:
+        for program_id in product.get('programs', []):
+            if isinstance(program_id, str) and program_id in products_per_program:
+                products_per_program[program_id] += 1
+            elif isinstance(program_id, dict) and program_id.get('programID') in products_per_program:
+                products_per_program[program_id.get('programID')] += 1
+    
+    # Add rows for each program
+    for program in data['programs']:
+        program_id = program['id']
+        program_list_html += f"""
+        <tr>
+            <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{program_id}</td>
+            <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{program['name']}</td>
+            <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">{products_per_program.get(program_id, 0)}</td>
+            <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{program.get('division', 'N/A')}</td>
+            <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{program.get('missionClass', 'N/A')}</td>
+            <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">{program.get('customerName', 'N/A')}</td>
+            <td style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee;">
+                <a href="program_{program_id}.html" style="text-decoration: none; padding: 5px 10px; background-color: #3498db; color: white; border-radius: 4px; font-size: 12px;">View</a>
+            </td>
+        </tr>
+        """
+    
+    program_list_html += """
+        </tbody>
+    </table>
+    """
+    
+    # Build the complete HTML
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Program Summary</title>
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.3.min.js"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }
+            .container {
+                width: 1200px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 25px;
+                box-sizing: border-box;
+            }
+            .header {
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                color: white;
+                padding: 20px;
+                text-align: center;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+            }
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+            .info-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .info-col {
+                flex: 1;
+                min-width: 300px;
+            }
+            .chart-row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            /* Additional styles for Bokeh integration */
+            .bk-root {
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Program Summary</h1>
+                    <div>
+                        <a href="program_distribution.html" class="nav-link">Program Distribution</a>
+                        <a href="../index.html" class="nav-link">Main Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program Distribution</h2>
+                
+                <div class="chart-row">
+                    <div class="info-col">
+                        <h3 style="color: #2c3e50; margin-top: 0; font-size: 18px;">Programs by Mission Class</h3>
+                        {div1}
+                    </div>
+                    <div class="info-col">
+                        <h3 style="color: #2c3e50; margin-top: 0; font-size: 18px;">Programs by Division</h3>
+                        {div2}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3 style="color: #2c3e50; margin-top: 0; font-size: 18px;">Adoption Status Distribution</h3>
+                <div class="chart-row">
+                    {div3}
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3 style="color: #2c3e50; margin-top: 0; font-size: 18px;">Program Need Dates Timeline</h3>
+                <div class="chart-row">
+                    {div6}
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Program List</h2>
+                {program_list_html}
+            </div>
+        </div>
+
+        <!-- Include Bokeh scripts at the end of body -->
+        {script1}
+        {script2}
+        {script3}
+        {script6}
+    </body>
+    </html>
+    """
+    
+    # Write HTML to file
+    with open(os.path.join(program_dir, "program_summary.html"), "w") as f:
+        f.write(html)
+    
+    print("Generated program summary page")
+
+def generate_program_distribution_charts(data, program_dir):
+    """Generate distribution charts for programs"""
+    print("Generating program distribution charts...")
+    
+    # Count products per program
+    products_per_program = {}
+    for program in data['programs']:
+        products_per_program[program['id']] = 0
+    
+    for product in data['products']:
+        for program_id in product.get('programs', []):
+            if isinstance(program_id, str) and program_id in products_per_program:
+                products_per_program[program_id] += 1
+            elif isinstance(program_id, dict) and program_id.get('programID') in products_per_program:
+                products_per_program[program_id.get('programID')] += 1
+    
+    # Create a figure for products per program
+    program_names = []
+    product_counts = []
+    
+    for program_id, count in products_per_program.items():
+        program = next((p for p in data['programs'] if p['id'] == program_id), None)
+        if program:
+            program_names.append(f"{program['name']} ({program_id})")
+            product_counts.append(count)
+    
+    # Sort by count
+    sorted_indices = np.argsort(product_counts)[::-1]  # Descending order
+    program_names = [program_names[i] for i in sorted_indices]
+    product_counts = [product_counts[i] for i in sorted_indices]
+    
+    # Create a figure for products per program
+    p = figure(
+        title="Number of Products per Program",
+        x_range=program_names,
+        width=1200,
+        height=500,
+        toolbar_location="above",
+        tools="pan,wheel_zoom,box_zoom,reset,save",
+        background_fill_color="#f8f9fa",
+        sizing_mode="fixed"
+    )
+    
+    # Add bars
+    p.vbar(
+        x=program_names,
+        top=product_counts,
+        width=0.7,
+        color="#3498db",
+        alpha=0.8
+    )
+    
+    # Customize appearance
+    p.title.text_font_size = '16pt'
+    p.title.text_color = '#2c3e50'
+    p.xaxis.axis_label = "Program"
+    p.yaxis.axis_label = "Number of Products"
+    p.xgrid.grid_line_color = None
+    p.xaxis.major_label_orientation = 45
+    p.grid.grid_line_alpha = 0.3
+    p.grid.grid_line_color = '#95a5a6'
+    
+    # Add hover tool
+    hover = HoverTool()
+    hover.tooltips = [
+        ("Program", "@x"),
+        ("Products", "@top"),
+    ]
+    p.add_tools(hover)
+    
+    # Create components for the figure
+    script, div = components(p)
+    
+    # Get Bokeh resources
+    bokeh_resources = CDN.render()
+    
+    # Build the complete HTML
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Program Distribution</title>
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.css" type="text/css" />
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.4.3.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.4.3.min.js"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }
+            .container {
+                width: 1200px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 25px;
+                box-sizing: border-box;
+            }
+            .header {
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                color: white;
+                padding: 20px;
+                text-align: center;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+            }
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+            .chart-container {
+                margin-top: 20px;
+            }
+            /* Additional styles for Bokeh integration */
+            .bk-root {
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Program Distribution</h1>
+                    <div>
+                        <a href="program_summary.html" class="nav-link">Program Summary</a>
+                        <a href="../index.html" class="nav-link">Main Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 22px;">Products per Program</h2>
+                <p>This chart shows the number of products associated with each program. Programs are sorted by the number of products in descending order.</p>
+                <div class="chart-container">
+                    {div}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Include Bokeh script at the end of body -->
+        {script}
+    </body>
+    </html>
+    """
+    
+    # Write HTML to file
+    with open(os.path.join(program_dir, "program_distribution.html"), "w") as f:
+        f.write(html)
+    
+    print("Generated program distribution charts") 

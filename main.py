@@ -2,6 +2,7 @@ import os
 import json
 import sys
 from datetime import datetime, timedelta
+import random
 
 # Add the current directory to the path so Python can find the modules
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -16,6 +17,7 @@ from modules.relationship_viz import generate_relationship_visualizations
 from modules.network_analysis import generate_advanced_network_analysis
 from modules.progress_tracking import generate_progress_tracking
 from modules.dashboard import generate_dashboard
+from modules.implementation_metrics.metrics import generate_implementation_metrics
 
 # Define status colors for consistency
 STATUS_COLORS = {
@@ -32,7 +34,7 @@ def main():
     print("Generating roadmap visualizations...")
     
     # Load the roadmap data
-    with open('updated_roadmap.json', 'r') as f:
+    with open('roadmap.json', 'r') as f:
         data = json.load(f)
     
     # Map fundingOpps to fundingOpportunities for compatibility
@@ -61,8 +63,11 @@ def main():
     # Generate progress tracking visualizations
     progress_path = generate_progress_tracking(data, output_dir)
     
+    # Generate implementation metrics visualizations
+    implementation_path = generate_implementation_metrics(data, output_dir)
+    
     # Generate the main dashboard
-    generate_dashboard(data, output_dir, network_analysis_path, progress_path)
+    generate_dashboard(data, output_dir, network_analysis_path, progress_path, implementation_path)
     
     print(f"All visualizations generated in the '{output_dir}' directory.")
     print(f"Open '{output_dir}/index.html' in your browser to view the dashboard.")

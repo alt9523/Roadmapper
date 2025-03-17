@@ -22,7 +22,7 @@ The visualization code has been updated to handle these changes and display the 
   - 'Not Started': '#9e9e9e' (Gray)
   - 'On Hold': '#9c27b0' (Purple)
   - 'Delayed': '#e53935' (Red)
-- Changed the input file to use `updated_roadmap.json` instead of `roadmap.json`
+- Changed to use the actual `roadmap.json` file instead of a separate updated file
 
 ### 2. modules/product_viz.py
 
@@ -58,20 +58,17 @@ The visualization code has been updated to handle these changes and display the 
 - Added support for the float and additionalDetails fields
 - Updated the burndown chart to handle the new status values
 - Added floating status and additional details to the task table
+- Replaced simulated data in the planned vs. actual progress visualization with real data from the roadmap
+- Added more detailed information to the planned vs. actual table, including total tasks and completed tasks
 
 ## How to Use
 
-1. Generate the updated roadmap.json file using the `generate_updated_roadmap.py` script:
-   ```
-   python generate_updated_roadmap.py
-   ```
-
-2. Run the visualization code to generate the HTML visualizations:
+1. Run the visualization code to generate the HTML visualizations:
    ```
    python main.py
    ```
 
-3. Open the generated dashboard in your browser:
+2. Open the generated dashboard in your browser:
    ```
    roadmap_visualizations/index.html
    ```
@@ -127,12 +124,9 @@ The business case section now displays the checkbox-based format with three cate
    - Agility in Design and AI&T
    - Digital Spares
 
-### Status Colors
+### Real Data Visualizations
 
-The visualizations now use a consistent color scheme for task status:
-- Complete: Green (#43a047)
-- In Progress: Orange (#ff9800)
-- Planned: Blue (#4a89ff)
-- Not Started: Gray (#9e9e9e)
-- On Hold: Purple (#9c27b0)
-- Delayed: Red (#e53935) 
+All visualizations now use real data from the roadmap.json file:
+- The burndown chart shows actual task completion over time
+- The planned vs. actual progress visualization uses real task data to calculate completion percentages
+- The milestone tracking shows actual milestones from the roadmap 

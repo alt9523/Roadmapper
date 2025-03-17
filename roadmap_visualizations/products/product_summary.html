@@ -1,62 +1,407 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Bokeh Plot</title>
-    <style>
-      html, body {
-        box-sizing: border-box;
-        display: flow-root;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
-    <script type="text/javascript">
-        Bokeh.set_log_level("info");
-    </script>
-  </head>
-  <body>
-    <div id="d4b1cfbf-0476-4e8a-95d8-d4935492c497" data-root-id="p3849" style="display: contents;"></div>
-  
-    <script type="application/json" id="b604bd98-c253-473d-a400-18e3686c67af">
-      {"da5aceeb-5fb6-424a-a400-d53c71f2c501":{"version":"3.6.3","title":"Bokeh Application","roots":[{"type":"object","name":"Column","id":"p3849","attributes":{"children":[{"type":"object","name":"Row","id":"p3844","attributes":{"children":[{"type":"object","name":"Div","id":"p3841","attributes":{"width":1200,"text":"\n    &lt;div style=\"margin-bottom: 20px;\"&gt;\n        &lt;h1 style=\"color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;\"&gt;Product Summary&lt;/h1&gt;\n        &lt;p&gt;This page provides an overview of all products and their distributions.&lt;/p&gt;\n        &lt;p&gt;&lt;a href=\"../index.html\" style=\"color: #3498db; text-decoration: none;\"&gt;Back to Dashboard&lt;/a&gt;&lt;/p&gt;\n    &lt;/div&gt;\n    "}}]}},{"type":"object","name":"Row","id":"p3845","attributes":{"children":[{"type":"object","name":"Div","id":"p3842","attributes":{"width":1200,"text":"\n    &lt;div style=\"background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; margin-bottom: 20px;\"&gt;\n        &lt;h3&gt;Funding Type Legend&lt;/h3&gt;\n        &lt;p&gt;Tasks are colored based on their funding source:&lt;/p&gt;\n        &lt;ul style=\"list-style-type: none; padding-left: 0; display: flex; flex-wrap: wrap;\"&gt;\n    &lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #3498db; margin-right: 10px;\"&gt;&lt;/span&gt;Division IRAD&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #2ecc71; margin-right: 10px;\"&gt;&lt;/span&gt;Sector IRAD&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #e74c3c; margin-right: 10px;\"&gt;&lt;/span&gt;CRAD&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #f39c12; margin-right: 10px;\"&gt;&lt;/span&gt;Planned&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #9b59b6; margin-right: 10px;\"&gt;&lt;/span&gt;Customer&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #1abc9c; margin-right: 10px;\"&gt;&lt;/span&gt;Internal&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #d35400; margin-right: 10px;\"&gt;&lt;/span&gt;External&lt;/li&gt;&lt;li style=\"margin-bottom: 5px; margin-right: 20px;\"&gt;&lt;span style=\"display: inline-block; width: 20px; height: 20px; background-color: #95a5a6; margin-right: 10px;\"&gt;&lt;/span&gt;None&lt;/li&gt;\n        &lt;/ul&gt;\n    &lt;/div&gt;\n    "}}]}},{"type":"object","name":"Row","id":"p3846","attributes":{"children":[{"type":"object","name":"Figure","id":"p3745","attributes":{"height":400,"x_range":{"type":"object","name":"FactorRange","id":"p3755","attributes":{"factors":["4","5","6","7","8",""]}},"y_range":{"type":"object","name":"DataRange1d","id":"p3747"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p3756"},"y_scale":{"type":"object","name":"LinearScale","id":"p3757"},"title":{"type":"object","name":"Title","id":"p3748","attributes":{"text":"Products by Technology Readiness Level (TRL)","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p3774","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p3768","attributes":{"selected":{"type":"object","name":"Selection","id":"p3769","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p3770"},"data":{"type":"map","entries":[["x",["4","5","6","7","8",""]],["top",[1,1,1,1,1,2]],["line_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b"]],["hatch_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b"]],["fill_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b"]]]}}},"view":{"type":"object","name":"CDSView","id":"p3775","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p3776"}}},"glyph":{"type":"object","name":"VBar","id":"p3771","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p3772","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p3773","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p3754"},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p3763","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p3764","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p3765"},"axis_label":"Number of Products","major_label_policy":{"type":"object","name":"AllLabels","id":"p3766"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p3758","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p3759"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p3760"},"axis_label":"TRL","major_label_policy":{"type":"object","name":"AllLabels","id":"p3761"}}}],"center":[{"type":"object","name":"Grid","id":"p3762","attributes":{"axis":{"id":"p3758"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p3767","attributes":{"dimension":1,"axis":{"id":"p3763"}}}]}},{"type":"object","name":"Figure","id":"p3777","attributes":{"height":400,"x_range":{"type":"object","name":"FactorRange","id":"p3787","attributes":{"factors":["Satellite Systems","Launch Vehicles","Missile Defense","Space Exploration","another test program"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p3779"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p3788"},"y_scale":{"type":"object","name":"LinearScale","id":"p3789"},"title":{"type":"object","name":"Title","id":"p3780","attributes":{"text":"Products by Program","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p3806","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p3800","attributes":{"selected":{"type":"object","name":"Selection","id":"p3801","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p3802"},"data":{"type":"map","entries":[["x",["Satellite Systems","Launch Vehicles","Missile Defense","Space Exploration","another test program"]],["top",[2,2,2,1,1]],["line_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"]],["hatch_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"]],["fill_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"]]]}}},"view":{"type":"object","name":"CDSView","id":"p3807","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p3808"}}},"glyph":{"type":"object","name":"VBar","id":"p3803","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p3804","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p3805","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p3786"},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p3795","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p3796","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p3797"},"axis_label":"Number of Products","major_label_policy":{"type":"object","name":"AllLabels","id":"p3798"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p3790","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p3791"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p3792"},"axis_label":"Program","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p3793"}}}],"center":[{"type":"object","name":"Grid","id":"p3794","attributes":{"axis":{"id":"p3790"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p3799","attributes":{"dimension":1,"axis":{"id":"p3795"}}}]}}]}},{"type":"object","name":"Row","id":"p3847","attributes":{"children":[{"type":"object","name":"Figure","id":"p3809","attributes":{"height":400,"x_range":{"type":"object","name":"FactorRange","id":"p3819","attributes":{"factors":["","Division IRAD","CRAD","Sector IRAD","External Task","Planned","Program Funded","Unfunded"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p3811"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p3820"},"y_scale":{"type":"object","name":"LinearScale","id":"p3821"},"title":{"type":"object","name":"Title","id":"p3812","attributes":{"text":"Tasks by Funding Type","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p3838","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p3832","attributes":{"selected":{"type":"object","name":"Selection","id":"p3833","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p3834"},"data":{"type":"map","entries":[["x",["","Division IRAD","CRAD","Sector IRAD","External Task","Planned","Program Funded","Unfunded"]],["top",[29,17,12,9,7,5,5,5]],["line_color",["#999999","#3498db","#e74c3c","#2ecc71","#999999","#f39c12","#999999","#999999"]],["hatch_color",["#999999","#3498db","#e74c3c","#2ecc71","#999999","#f39c12","#999999","#999999"]],["fill_color",["#999999","#3498db","#e74c3c","#2ecc71","#999999","#f39c12","#999999","#999999"]]]}}},"view":{"type":"object","name":"CDSView","id":"p3839","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p3840"}}},"glyph":{"type":"object","name":"VBar","id":"p3835","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p3836","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p3837","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p3818"},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p3827","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p3828","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p3829"},"axis_label":"Number of Tasks","major_label_policy":{"type":"object","name":"AllLabels","id":"p3830"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p3822","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p3823"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p3824"},"axis_label":"Funding Type","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p3825"}}}],"center":[{"type":"object","name":"Grid","id":"p3826","attributes":{"axis":{"id":"p3822"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p3831","attributes":{"dimension":1,"axis":{"id":"p3827"}}}]}}]}},{"type":"object","name":"Row","id":"p3848","attributes":{"children":[{"type":"object","name":"Div","id":"p3843","attributes":{"width":1200,"text":"\n    &lt;div style=\"margin-top: 30px;\"&gt;\n        &lt;h2 style=\"color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;\"&gt;All Products&lt;/h2&gt;\n        &lt;div style=\"overflow-x: auto;\"&gt;\n            &lt;table style=\"width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);\"&gt;\n                &lt;thead&gt;\n                    &lt;tr style=\"background-color: #3498db; color: white;\"&gt;\n                        &lt;th style=\"padding: 12px; text-align: left; border: 1px solid #ddd;\"&gt;Product Name&lt;/th&gt;\n                        &lt;th style=\"padding: 12px; text-align: left; border: 1px solid #ddd;\"&gt;ID&lt;/th&gt;\n                        &lt;th style=\"padding: 12px; text-align: left; border: 1px solid #ddd;\"&gt;TRL&lt;/th&gt;\n                        &lt;th style=\"padding: 12px; text-align: left; border: 1px solid #ddd;\"&gt;Associated Programs&lt;/th&gt;\n                        &lt;th style=\"padding: 12px; text-align: left; border: 1px solid #ddd;\"&gt;Material Systems&lt;/th&gt;\n                    &lt;/tr&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n    \n        &lt;tr style=\"background-color: #f2f9ff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P3.html' style=\"color: #3498db;\"&gt;Interceptor Missile Nozzle&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P3&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;5&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Missile Defense (PRG2)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;LPBF Inconel 718 (MS2)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #ffffff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P5.html' style=\"color: #3498db;\"&gt;Lunar Rover Wheel Structure&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P5&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;4&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Space Exploration (PRG4)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;LPBF AlSi10Mg (MS3)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #f2f9ff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P4.html' style=\"color: #3498db;\"&gt;Reusable Rocket Injector Plate&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P4&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;8&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Launch Vehicles (PRG3)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;LPBF Ti-6Al-4V (MS1)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #ffffff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P1.html' style=\"color: #3498db;\"&gt;SatCom Terminal Housing&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P1&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;7&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Satellite Systems (PRG1), Launch Vehicles (PRG3)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;LPBF Ti-6Al-4V (MS1), LPBF AlSi10Mg (MS3)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #f2f9ff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P2.html' style=\"color: #3498db;\"&gt;Weather Satellite Antenna Mount&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P2&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;6&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Satellite Systems (PRG1)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;LPBF Inconel 718 (MS2)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #ffffff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P007.html' style=\"color: #3498db;\"&gt;test&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P007&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;Missile Defense (PRG2)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;None&lt;/td&gt;\n        &lt;/tr&gt;\n        \n        &lt;tr style=\"background-color: #f2f9ff;\"&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;a href='product_P006.html' style=\"color: #3498db;\"&gt;tester&lt;/a&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;P006&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;another test program (PRG7)&lt;/td&gt;\n            &lt;td style=\"padding: 8px; border-bottom: 1px solid #ddd;\"&gt;test (MS6)&lt;/td&gt;\n        &lt;/tr&gt;\n        \n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    "}}]}}]}}]}}
-    </script>
-    <script type="text/javascript">
-      (function() {
-        const fn = function() {
-          Bokeh.safely(function() {
-            (function(root) {
-              function embed_document(root) {
-              const docs_json = document.getElementById('b604bd98-c253-473d-a400-18e3686c67af').textContent;
-              const render_items = [{"docid":"da5aceeb-5fb6-424a-a400-d53c71f2c501","roots":{"p3849":"d4b1cfbf-0476-4e8a-95d8-d4935492c497"},"root_ids":["p3849"]}];
-              root.Bokeh.embed.embed_items(docs_json, render_items);
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Summary</title>
+        
+        <!-- Include Bokeh scripts -->
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.6.3.min.js"></script>
+        <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.6.3.min.js"></script>
+        
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }
+            .container {
+                width: 1200px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 25px;
+                box-sizing: border-box;
+            }
+            .header {
+                background: linear-gradient(135deg, #3498db, #2c3e50);
+                color: white;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+            }
+            .summary-card {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+            .summary-card h2 {
+                color: #2c3e50;
+                margin-top: 0;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+                font-size: 22px;
+            }
+            .metrics-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .metric-item {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                padding: 20px;
+                text-align: center;
+            }
+            .metric-value {
+                font-size: 28px;
+                font-weight: bold;
+                color: #3498db;
+                margin: 10px 0;
+            }
+            .metric-label {
+                color: #7f8c8d;
+            }
+            .nav-links {
+                margin-top: 15px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                margin: 0 5px;
+                transition: background-color 0.3s;
+                display: inline-block;
+            }
+            .nav-link:hover {
+                background-color: rgba(255,255,255,0.3);
+            }
+            .section-heading {
+                color: #2c3e50;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+                font-size: 18px;
+            }
+            .subsection-heading {
+                color: #2c3e50;
+                font-size: 18px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 5px;
+            }
+            ul {
+                padding-left: 20px;
+                margin-top: 10px;
+            }
+            li {
+                margin-bottom: 5px;
+            }
+            .material-item {
+                display: inline-block;
+                margin: 5px 10px;
+                padding: 5px 10px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                border: 1px solid #ddd;
+            }
+            .funding-legend {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-top: 15px;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .color-box {
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                margin-right: 8px;
+                border-radius: 3px;
+            }
+            .bk-root {
+                width: 100% !important;
+            }
+            .bk-root .bk-plot-wrapper {
+                width: 100% !important;
+            }
+            @media (max-width: 768px) {
+                .metrics-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            @media (max-width: 480px) {
+                .metrics-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header with navigation -->
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Product Summary</h1>
+                    <div>
+                        <a href="../index.html" class="nav-link">Back to Dashboard</a>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="product_material_distribution.html" class="nav-link">View Distribution Charts</a>
+                    <a href="../materials/material_summary.html" class="nav-link">Material Systems</a>
+                    <a href="../programs/program_summary.html" class="nav-link">Programs</a>
+                </div>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-label">Total Products</div>
+                    <div class="metric-value">7</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Total Material Systems</div>
+                    <div class="metric-value">7</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Programs</div>
+                    <div class="metric-value">7</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Total Tasks</div>
+                    <div class="metric-value">89</div>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="summary-card">
+                <h2>Product Distribution</h2>
+                <div class="charts-container">
+                    <!-- First row of charts -->
+                    <div class="chart-wrapper" style="width: 48%;">
+                        <h3 class="section-heading">Products by TRL</h3>
+    <div id="bf544cd9-28e6-44d8-a202-9c16b8f81328" data-root-id="p2696" style="display: contents;"></div>
+                    </div>
+                    <!-- SWAPPED: Now showing Tasks by Funding Type in second position -->
+                    <div class="chart-wrapper" style="width: 48%;">
+                        <h3 class="section-heading">Tasks by Funding Type</h3>
+    <div id="d8cf7c0d-4d74-4ab6-b4c4-25a19ee429f2" data-root-id="p2792" style="display: contents;"></div>
+                    </div>
+                </div>
+                
+                <!-- SWAPPED: Now showing Products by Program in second row -->
+                <div class="chart-wrapper">
+                    <h3 class="section-heading">Products by Program</h3>
+    <div id="fede5437-4076-4c6c-8904-ff470afa2f38" data-root-id="p2744" style="display: contents;"></div>
+                </div>
+            </div>
+            
+            <!-- Product List -->
+            <div class="summary-card">
+                <h2>All Products</h2>
+                <div style="overflow-x: auto;">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>ID</th>
+                                <th>TRL</th>
+                                <th>Associated Programs</th>
+                                <th>Material Systems</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    
+                            <tr>
+                                <td><a href='product_P3.html'>Interceptor Missile Nozzle</a></td>
+                                <td>P3</td>
+                                <td>5</td>
+                                <td>Satellite Systems (PRG1), Launch Vehicles (PRG3), Communications (PRG5)</td>
+                                <td>LPBF Inconel 718 (MS2)</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P5.html'>Lunar Rover Wheel Structure</a></td>
+                                <td>P5</td>
+                                <td>4</td>
+                                <td>Missile Defense (PRG2), Space Exploration (PRG4), another test program (PRG7)</td>
+                                <td>LPBF AlSi10Mg (MS3)</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P4.html'>Reusable Rocket Injector Plate</a></td>
+                                <td>P4</td>
+                                <td>8</td>
+                                <td>Missile Defense (PRG2), Space Exploration (PRG4), test program (PRG6)</td>
+                                <td>LPBF Ti-6Al-4V (MS1)</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P1.html'>SatCom Terminal Housing</a></td>
+                                <td>P1</td>
+                                <td>7</td>
+                                <td>Satellite Systems (PRG1), Launch Vehicles (PRG3), Communications (PRG5), another test program (PRG7)</td>
+                                <td>LPBF Ti-6Al-4V (MS1), LPBF AlSi10Mg (MS3)</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P2.html'>Weather Satellite Antenna Mount</a></td>
+                                <td>P2</td>
+                                <td>6</td>
+                                <td>Missile Defense (PRG2), Space Exploration (PRG4), test program (PRG6)</td>
+                                <td>LPBF Inconel 718 (MS2)</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P007.html'>test</a></td>
+                                <td>P007</td>
+                                <td></td>
+                                <td>None</td>
+                                <td>None</td>
+                            </tr>
+        
+                            <tr>
+                                <td><a href='product_P006.html'>tester</a></td>
+                                <td>P006</td>
+                                <td></td>
+                                <td>None</td>
+                                <td>test (MS6)</td>
+                            </tr>
+        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Bokeh scripts at the end -->
+        <script type="text/javascript">
+        (function() {
+  const fn = function() {
+    Bokeh.safely(function() {
+      (function(root) {
+        function embed_document(root) {
+        const docs_json = '{"f0a1256c-b018-457d-8916-1042e5bbaf5f":{"version":"3.6.3","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p2696","attributes":{"height":400,"sizing_mode":"stretch_width","x_range":{"type":"object","name":"FactorRange","id":"p2706","attributes":{"factors":["4","5","6","7","8","Unknown"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p2698"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p2707"},"y_scale":{"type":"object","name":"LinearScale","id":"p2708"},"title":{"type":"object","name":"Title","id":"p2699","attributes":{"text":"Products by Technology Readiness Level (TRL)","text_color":"#2c3e50","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p2741","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p2732","attributes":{"selected":{"type":"object","name":"Selection","id":"p2733","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p2734"},"data":{"type":"map","entries":[["x",["4","5","6","7","8","Unknown"]],["top",[1,1,1,1,1,2]],["line_color",["#3498db","#3498db","#3498db","#3498db","#3498db","#3498db"]],["fill_color",["#3498db","#3498db","#3498db","#3498db","#3498db","#3498db"]],["hatch_color",["#3498db","#3498db","#3498db","#3498db","#3498db","#3498db"]]]}}},"view":{"type":"object","name":"CDSView","id":"p2742","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p2743"}}},"glyph":{"type":"object","name":"VBar","id":"p2738","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p2739","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p2740","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p2705","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p2719"},{"type":"object","name":"WheelZoomTool","id":"p2720","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p2721","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p2722","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p2728","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p2727","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}},{"type":"object","name":"SaveTool","id":"p2729"},{"type":"object","name":"ResetTool","id":"p2730"},{"type":"object","name":"HelpTool","id":"p2731"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p2714","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p2715","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p2716"},"axis_label":"Number of Products","major_label_policy":{"type":"object","name":"AllLabels","id":"p2717"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p2709","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p2710"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p2711"},"axis_label":"TRL","major_label_policy":{"type":"object","name":"AllLabels","id":"p2712"}}}],"center":[{"type":"object","name":"Grid","id":"p2713","attributes":{"axis":{"id":"p2709"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p2718","attributes":{"dimension":1,"axis":{"id":"p2714"}}}],"background_fill_color":"#f8f9fa"}}]}}';
+        const render_items = [{"docid":"f0a1256c-b018-457d-8916-1042e5bbaf5f","roots":{"p2696":"bf544cd9-28e6-44d8-a202-9c16b8f81328"},"root_ids":["p2696"]}];
+        root.Bokeh.embed.embed_items(docs_json, render_items);
+        }
+        if (root.Bokeh !== undefined) {
+          embed_document(root);
+        } else {
+          let attempts = 0;
+          const timer = setInterval(function(root) {
+            if (root.Bokeh !== undefined) {
+              clearInterval(timer);
+              embed_document(root);
+            } else {
+              attempts++;
+              if (attempts > 100) {
+                clearInterval(timer);
+                console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
               }
-              if (root.Bokeh !== undefined) {
-                embed_document(root);
-              } else {
-                let attempts = 0;
-                const timer = setInterval(function(root) {
-                  if (root.Bokeh !== undefined) {
-                    clearInterval(timer);
-                    embed_document(root);
-                  } else {
-                    attempts++;
-                    if (attempts > 100) {
-                      clearInterval(timer);
-                      console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
-                    }
-                  }
-                }, 10, root)
-              }
-            })(window);
-          });
-        };
-        if (document.readyState != "loading") fn();
-        else document.addEventListener("DOMContentLoaded", fn);
-      })();
+            }
+          }, 10, root)
+        }
+      })(window);
+    });
+  };
+  if (document.readyState != "loading") fn();
+  else document.addEventListener("DOMContentLoaded", fn);
+})();
     </script>
-  </body>
-</html>
+    <script type="text/javascript">
+        (function() {
+  const fn = function() {
+    Bokeh.safely(function() {
+      (function(root) {
+        function embed_document(root) {
+        const docs_json = '{"f4302139-79cc-4aa3-ae73-1fff71c00c34":{"version":"3.6.3","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p2744","attributes":{"height":400,"sizing_mode":"stretch_width","x_range":{"type":"object","name":"FactorRange","id":"p2754","attributes":{"factors":["Missile Defense","Space Exploration","Satellite Systems","Launch Vehicles","Communications","test program","another test program"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p2746"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p2755"},"y_scale":{"type":"object","name":"LinearScale","id":"p2756"},"title":{"type":"object","name":"Title","id":"p2747","attributes":{"text":"Products by Program","text_color":"#2c3e50","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p2789","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p2780","attributes":{"selected":{"type":"object","name":"Selection","id":"p2781","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p2782"},"data":{"type":"map","entries":[["x",["Missile Defense","Space Exploration","Satellite Systems","Launch Vehicles","Communications","test program","another test program"]],["top",[3,3,2,2,2,2,2]],["line_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"]],["fill_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"]],["hatch_color",["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"]]]}}},"view":{"type":"object","name":"CDSView","id":"p2790","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p2791"}}},"glyph":{"type":"object","name":"VBar","id":"p2786","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p2787","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p2788","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p2753","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p2767"},{"type":"object","name":"WheelZoomTool","id":"p2768","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p2769","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p2770","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p2776","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p2775","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}},{"type":"object","name":"SaveTool","id":"p2777"},{"type":"object","name":"ResetTool","id":"p2778"},{"type":"object","name":"HelpTool","id":"p2779"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p2762","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p2763","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p2764"},"axis_label":"Number of Products","major_label_policy":{"type":"object","name":"AllLabels","id":"p2765"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p2757","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p2758"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p2759"},"axis_label":"Program","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p2760"}}}],"center":[{"type":"object","name":"Grid","id":"p2761","attributes":{"axis":{"id":"p2757"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p2766","attributes":{"dimension":1,"axis":{"id":"p2762"}}}],"background_fill_color":"#f8f9fa"}}]}}';
+        const render_items = [{"docid":"f4302139-79cc-4aa3-ae73-1fff71c00c34","roots":{"p2744":"fede5437-4076-4c6c-8904-ff470afa2f38"},"root_ids":["p2744"]}];
+        root.Bokeh.embed.embed_items(docs_json, render_items);
+        }
+        if (root.Bokeh !== undefined) {
+          embed_document(root);
+        } else {
+          let attempts = 0;
+          const timer = setInterval(function(root) {
+            if (root.Bokeh !== undefined) {
+              clearInterval(timer);
+              embed_document(root);
+            } else {
+              attempts++;
+              if (attempts > 100) {
+                clearInterval(timer);
+                console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+              }
+            }
+          }, 10, root)
+        }
+      })(window);
+    });
+  };
+  if (document.readyState != "loading") fn();
+  else document.addEventListener("DOMContentLoaded", fn);
+})();
+    </script>
+    <script type="text/javascript">
+        (function() {
+  const fn = function() {
+    Bokeh.safely(function() {
+      (function(root) {
+        function embed_document(root) {
+        const docs_json = '{"8acf6c6c-71c2-4d1f-ace2-61893c474eff":{"version":"3.6.3","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p2792","attributes":{"width":1200,"height":400,"sizing_mode":"stretch_width","x_range":{"type":"object","name":"FactorRange","id":"p2802","attributes":{"factors":["None","Division IRAD","Sector IRAD","Planned","CRAD"]}},"y_range":{"type":"object","name":"DataRange1d","id":"p2794"},"x_scale":{"type":"object","name":"CategoricalScale","id":"p2803"},"y_scale":{"type":"object","name":"LinearScale","id":"p2804"},"title":{"type":"object","name":"Title","id":"p2795","attributes":{"text":"Tasks by Funding Type","text_color":"#2c3e50","text_font_size":"14pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p2837","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p2828","attributes":{"selected":{"type":"object","name":"Selection","id":"p2829","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p2830"},"data":{"type":"map","entries":[["x",["None","Division IRAD","Sector IRAD","Planned","CRAD"]],["top",[43,5,5,5,3]],["line_color",["#95a5a6","#3498db","#2ecc71","#f39c12","#e74c3c"]],["fill_color",["#95a5a6","#3498db","#2ecc71","#f39c12","#e74c3c"]],["hatch_color",["#95a5a6","#3498db","#2ecc71","#f39c12","#e74c3c"]]]}}},"view":{"type":"object","name":"CDSView","id":"p2838","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p2839"}}},"glyph":{"type":"object","name":"VBar","id":"p2834","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.8},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.8},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.8}}},"nonselection_glyph":{"type":"object","name":"VBar","id":"p2835","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.1},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"VBar","id":"p2836","attributes":{"x":{"type":"field","field":"x"},"width":{"type":"value","value":0.5},"top":{"type":"field","field":"top"},"line_color":{"type":"field","field":"line_color"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"field","field":"fill_color"},"fill_alpha":{"type":"value","value":0.2},"hatch_color":{"type":"field","field":"hatch_color"},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p2801","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p2815"},{"type":"object","name":"WheelZoomTool","id":"p2816","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p2817","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p2818","attributes":{"syncable":false,"line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","handles":{"type":"object","name":"BoxInteractionHandles","id":"p2824","attributes":{"all":{"type":"object","name":"AreaVisuals","id":"p2823","attributes":{"fill_color":"white","hover_fill_color":"lightgray"}}}}}}}},{"type":"object","name":"SaveTool","id":"p2825"},{"type":"object","name":"ResetTool","id":"p2826"},{"type":"object","name":"HelpTool","id":"p2827"}]}},"toolbar_location":null,"left":[{"type":"object","name":"LinearAxis","id":"p2810","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p2811","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p2812"},"axis_label":"Number of Tasks","major_label_policy":{"type":"object","name":"AllLabels","id":"p2813"}}}],"below":[{"type":"object","name":"CategoricalAxis","id":"p2805","attributes":{"ticker":{"type":"object","name":"CategoricalTicker","id":"p2806"},"formatter":{"type":"object","name":"CategoricalTickFormatter","id":"p2807"},"axis_label":"Funding Type","major_label_orientation":45,"major_label_policy":{"type":"object","name":"AllLabels","id":"p2808"}}}],"center":[{"type":"object","name":"Grid","id":"p2809","attributes":{"axis":{"id":"p2805"},"grid_line_color":null}},{"type":"object","name":"Grid","id":"p2814","attributes":{"dimension":1,"axis":{"id":"p2810"}}}],"background_fill_color":"#f8f9fa"}}]}}';
+        const render_items = [{"docid":"8acf6c6c-71c2-4d1f-ace2-61893c474eff","roots":{"p2792":"d8cf7c0d-4d74-4ab6-b4c4-25a19ee429f2"},"root_ids":["p2792"]}];
+        root.Bokeh.embed.embed_items(docs_json, render_items);
+        }
+        if (root.Bokeh !== undefined) {
+          embed_document(root);
+        } else {
+          let attempts = 0;
+          const timer = setInterval(function(root) {
+            if (root.Bokeh !== undefined) {
+              clearInterval(timer);
+              embed_document(root);
+            } else {
+              attempts++;
+              if (attempts > 100) {
+                clearInterval(timer);
+                console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+              }
+            }
+          }, 10, root)
+        }
+      })(window);
+    });
+  };
+  if (document.readyState != "loading") fn();
+  else document.addEventListener("DOMContentLoaded", fn);
+})();
+    </script>
+
+    </body>
+    </html>
+    

@@ -173,8 +173,7 @@ class MaterialModel(BaseModel):
                     pp_display,
                     qm_display,
                     funding_display
-                )
-            )
+                ))
     
     def add_material(self, material=None):
         """Open a window to add a new material system"""
@@ -226,153 +225,248 @@ class MaterialModel(BaseModel):
         mrl_var = tk.StringVar(value=material.get("mrl", "") if material else "")
         ttk.Combobox(basic_frame, textvariable=mrl_var, values=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]).grid(row=4, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
         
-        ttk.Label(basic_frame, text="Qualification:").grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
-        qualification_var = tk.StringVar(value=material.get("qualification", "") if material else "")
-        ttk.Combobox(basic_frame, textvariable=qualification_var, values=["None", "In Progress", "Qualified"]).grid(row=5, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        # Qualification section
+        qualification_frame = ttk.LabelFrame(basic_frame, text="Qualification")
+        qualification_frame.grid(row=5, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
         
-        ttk.Label(basic_frame, text="Qualification Class:").grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
-        qualification_class_var = tk.StringVar(value=material.get("qualificationClass", "") if material else "")
-        ttk.Combobox(basic_frame, textvariable=qualification_class_var, values=["Class 1", "Class 2", "Class 3", "Class 4", "Class 5"]).grid(row=6, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        # Container for qualification entries
+        qual_entries_frame = ttk.Frame(qualification_frame)
+        qual_entries_frame.pack(fill=tk.X, padx=5, pady=5)
         
-        ttk.Label(basic_frame, text="Statistical Basis:").grid(row=7, column=0, sticky=tk.W, padx=10, pady=5)
-        statistical_basis_var = tk.StringVar(value=material.get("statisticalBasis", "") if material else "")
-        ttk.Combobox(basic_frame, textvariable=statistical_basis_var, values=["A-Basis", "B-Basis", "S-Basis", "None"]).grid(row=7, column=1, sticky=tk.W+tk.E, padx=10, pady=5)
+        # List to store qualification entries
+        qual_entries = []
         
-        # Roadmap tab
-        roadmap_frame = ttk.Frame(material_notebook)
-        material_notebook.add(roadmap_frame, text="Roadmap")
-        
-        # Roadmap tasks list
-        ttk.Label(roadmap_frame, text="Roadmap Tasks:", font=("TkDefaultFont", 10, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
-        
-        # Create a frame for the task list
-        tasks_frame = ttk.Frame(roadmap_frame)
-        tasks_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
-        
-        # Add headers for task fields
-        task_header_frame = ttk.Frame(tasks_frame)
-        task_header_frame.pack(fill=tk.X, pady=2)
-        
-        # Add more descriptive headers with bold font and standardized widths
-        ttk.Label(task_header_frame, text="Task Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Start Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="End Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Status", width=12, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Funding Type", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(task_header_frame, text="Float", width=8, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        
-        # Create a frame for task entries
-        task_entries_frame = ttk.Frame(tasks_frame)
-        task_entries_frame.pack(fill=tk.X, pady=2)
-        
-        # List to store task entries
-        task_entries = []
-        
-        # Store the last save date for floating functionality
-        last_save_date = datetime.now()
-        
-        # Function to add a new task entry
-        def add_task_entry(task_data=None):
-            task_frame = ttk.Frame(task_entries_frame)
-            task_frame.pack(fill=tk.X, pady=2)
+        # Function to add a qualification entry
+        def add_qual_entry(qual_data=None):
+            qual_entry_frame = ttk.Frame(qual_entries_frame)
+            qual_entry_frame.pack(fill=tk.X, pady=2)
             
-            # Task name
-            task_var = tk.StringVar(value=task_data.get("task", "") if task_data else "")
-            ttk.Entry(task_frame, textvariable=task_var, width=20).pack(side=tk.LEFT, padx=2)
+            # Qualification Class field
+            ttk.Label(qual_entry_frame, text="Qualification Class:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=2)
+            qual_class_var = tk.StringVar(value=qual_data.get("qualificationClass", "") if qual_data else "")
+            ttk.Combobox(qual_entry_frame, textvariable=qual_class_var, values=["Class 1", "Class 2", "Class 3", "Class 4", "Class 5"]).grid(row=0, column=1, sticky=tk.W+tk.E, padx=5, pady=2)
             
-            # Start date
-            start_date = task_data.get("startDate", "") if task_data else ""
-            start_entry = DateEntry(task_frame, width=15, initial_date=start_date)
-            start_entry.pack(side=tk.LEFT, padx=2)
+            # Qualification field
+            ttk.Label(qual_entry_frame, text="Qualification:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=2)
+            qualification_var = tk.StringVar(value=qual_data.get("qualification", "") if qual_data else "")
+            ttk.Combobox(qual_entry_frame, textvariable=qualification_var, values=["None", "In Progress", "Qualified"]).grid(row=1, column=1, sticky=tk.W+tk.E, padx=5, pady=2)
             
-            # End date
-            end_date = task_data.get("endDate", "") if task_data else ""
-            end_entry = DateEntry(task_frame, width=15, initial_date=end_date)
-            end_entry.pack(side=tk.LEFT, padx=2)
+            # Statistical Basis field
+            ttk.Label(qual_entry_frame, text="Statistical Basis:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=2)
+            stat_basis_var = tk.StringVar(value=qual_data.get("statisticalBasis", "") if qual_data else "")
+            ttk.Combobox(qual_entry_frame, textvariable=stat_basis_var, values=["A-Basis", "B-Basis", "S-Basis", "None"]).grid(row=2, column=1, sticky=tk.W+tk.E, padx=5, pady=2)
             
-            # Status dropdown
-            status_options = ["Not Started", "In Progress", "Complete", "Delayed"]
-            status_var = tk.StringVar(value=task_data.get("status", "") if task_data else "")
-            ttk.Combobox(task_frame, textvariable=status_var, values=status_options, width=12).pack(side=tk.LEFT, padx=2)
+            # Button to remove this qualification entry
+            ttk.Button(qual_entry_frame, text="Remove", 
+                    command=lambda f=qual_entry_frame, e={"qualificationClass": qual_class_var, 
+                                                          "qualification": qualification_var, 
+                                                          "statisticalBasis": stat_basis_var}: 
+                                [f.destroy(), qual_entries.remove(e)]).grid(row=3, column=0, columnspan=2, pady=5)
             
-            # Funding dropdown with updated options
-            funding_options = ["Unfunded", "Division IRAD", "Sector IRAD", "CRAD", "Program Funded", "External Task"]
-            funding_var = tk.StringVar(value=task_data.get("fundingType", "") if task_data else "")
-            ttk.Combobox(task_frame, textvariable=funding_var, values=funding_options, width=15).pack(side=tk.LEFT, padx=2)
-            
-            # Float on roadmap checkbox
-            float_var = tk.BooleanVar(value=task_data.get("floatOnRoadmap", False) if task_data else False)
-            ttk.Checkbutton(task_frame, variable=float_var, width=5).pack(side=tk.LEFT, padx=2)
-            
-            # Hidden variable to store the float date
-            float_date = task_data.get("floatDate", "") if task_data else ""
-            
-            # Button to remove this task
-            remove_btn = ttk.Button(task_frame, text="X", width=2,
-                                  command=lambda f=task_frame: [f.destroy(), task_entries.remove(entry_data)])
-            remove_btn.pack(side=tk.LEFT, padx=2)
-            
-            # Create a frame for additional details
-            details_frame = ttk.Frame(task_entries_frame)
-            details_frame.pack(fill=tk.X, pady=(0, 5))
-            
-            # Add additional details text box
-            ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
-            additional_details_var = tk.StringVar(value=task_data.get("additionalDetails", "") if task_data else "")
-            ttk.Entry(details_frame, textvariable=additional_details_var, width=70).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
-            
-            # Store the entry data
+            # Add to list of qualification entries
             entry_data = {
-                "frame": task_frame,
-                "details_frame": details_frame,
-                "task": task_var,
-                "start_date": start_entry,
-                "end_date": end_entry,
-                "status": status_var,
-                "fundingType": funding_var,
-                "float_on_roadmap": float_var,
-                "float_date": float_date,
-                "additional_details": additional_details_var
+                "qualificationClass": qual_class_var,
+                "qualification": qualification_var,
+                "statisticalBasis": stat_basis_var
             }
-            task_entries.append(entry_data)
+            qual_entries.append(entry_data)
             
             return entry_data
         
-        # Add existing tasks
-        for task in material.get("roadmap", []) if material else []:
-            add_task_entry(task)
+        # Add button for qualification entries
+        ttk.Button(qualification_frame, text="Add Qualification", 
+                command=lambda: add_qual_entry()).pack(pady=5)
         
-        # Add button for tasks
-        add_task_button = ttk.Button(tasks_frame, text="Add Task", command=lambda: add_task_entry())
-        add_task_button.pack(anchor=tk.W, pady=5)
+        # If editing, add existing qualification data
+        if material:
+            # First check if there are multiple qualifications in the material
+            qualifications = material.get("qualifications", [])
+            if qualifications:
+                # Add each qualification entry
+                for qual in qualifications:
+                    add_qual_entry(qual)
+            else:
+                # Add single qualification (old format)
+                single_qual = {
+                    "qualificationClass": material.get("qualificationClass", ""),
+                    "qualification": material.get("qualification", ""),
+                    "statisticalBasis": material.get("statisticalBasis", "")
+                }
+                if single_qual["qualificationClass"] or single_qual["qualification"] or single_qual["statisticalBasis"]:
+                    add_qual_entry(single_qual)
         
-        # Milestones section
-        ttk.Label(roadmap_frame, text="Milestones:", font=("TkDefaultFont", 10, "bold")).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(20, 5))
+        # If no qualification entries were added, add an empty one
+        if not qual_entries:
+            add_qual_entry()
+        
+        # Roadmap tab - renamed to Tasks
+        roadmap_frame = ttk.Frame(material_notebook)
+        material_notebook.add(roadmap_frame, text="Tasks")
+        
+        # Create a notebook for the three task sections
+        tasks_notebook = ttk.Notebook(roadmap_frame)
+        tasks_notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Create the three task sections
+        parameter_dev_frame = ttk.Frame(tasks_notebook)
+        data_gen_frame = ttk.Frame(tasks_notebook)
+        specs_doc_frame = ttk.Frame(tasks_notebook)
+        
+        tasks_notebook.add(parameter_dev_frame, text="Parameter Development")
+        tasks_notebook.add(data_gen_frame, text="Data Generation")
+        tasks_notebook.add(specs_doc_frame, text="Specs and Documentation")
+        
+        # Dictionary to keep track of tasks in each section
+        section_tasks = {
+            "Parameter Development": [],
+            "Data Generation": [],
+            "Specs and Documentation": []
+        }
+        
+        # Function to create task list UI for a section
+        def create_task_list_ui(frame, section_name):
+            # Tasks list label
+            ttk.Label(frame, text=f"{section_name} Tasks:", font=("TkDefaultFont", 10, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
+            
+            # Create a frame for the task list
+            tasks_frame = ttk.Frame(frame)
+            tasks_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
+            
+            # Add headers for task fields
+            task_header_frame = ttk.Frame(tasks_frame)
+            task_header_frame.pack(fill=tk.X, pady=2)
+            
+            # Add more descriptive headers with bold font and standardized widths
+            ttk.Label(task_header_frame, text="Task Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            ttk.Label(task_header_frame, text="Start Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            ttk.Label(task_header_frame, text="End Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            ttk.Label(task_header_frame, text="Status", width=12, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            ttk.Label(task_header_frame, text="Funding", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            ttk.Label(task_header_frame, text="Float", width=5, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+            
+            # Create a frame to hold task entries
+            task_entries_frame = ttk.Frame(tasks_frame)
+            task_entries_frame.pack(fill=tk.X)
+            
+            # Function to add a task entry for this section
+            def add_task_entry_to_section(task_data=None):
+                task_frame = ttk.Frame(task_entries_frame)
+                task_frame.pack(fill=tk.X, pady=2)
+                
+                # Task name
+                task_var = tk.StringVar(value=task_data.get("task", "") if task_data else "")
+                ttk.Entry(task_frame, textvariable=task_var, width=20).pack(side=tk.LEFT, padx=2)
+                
+                # Start date
+                start_date = task_data.get("startDate", "") if task_data else ""
+                start_entry = DateEntry(task_frame, width=15, initial_date=start_date)
+                start_entry.pack(side=tk.LEFT, padx=2)
+                
+                # End date
+                end_date = task_data.get("endDate", "") if task_data else ""
+                end_entry = DateEntry(task_frame, width=15, initial_date=end_date)
+                end_entry.pack(side=tk.LEFT, padx=2)
+                
+                # Status dropdown
+                status_options = ["Not Started", "In Progress", "Complete", "Delayed"]
+                status_var = tk.StringVar(value=task_data.get("status", "") if task_data else "")
+                ttk.Combobox(task_frame, textvariable=status_var, values=status_options, width=12).pack(side=tk.LEFT, padx=2)
+                
+                # Funding dropdown with updated options
+                funding_options = ["Unfunded", "Division IRAD", "Sector IRAD", "CRAD", "Program Funded", "External Task"]
+                funding_var = tk.StringVar(value=task_data.get("fundingType", "") if task_data else "")
+                ttk.Combobox(task_frame, textvariable=funding_var, values=funding_options, width=15).pack(side=tk.LEFT, padx=2)
+                
+                # Float on roadmap checkbox
+                float_var = tk.BooleanVar(value=task_data.get("floatOnRoadmap", False) if task_data else False)
+                ttk.Checkbutton(task_frame, variable=float_var, width=5).pack(side=tk.LEFT, padx=2)
+                
+                # Hidden variable to store the float date
+                float_date = task_data.get("floatDate", "") if task_data else ""
+                
+                # Button to remove this task
+                entry_data = {
+                    "task": task_var,
+                    "start_date": start_entry,
+                    "end_date": end_entry,
+                    "status": status_var,
+                    "funding": funding_var,
+                    "float_on_roadmap": float_var,
+                    "float_date": float_date,
+                    "frame": task_frame,
+                    "section": section_name
+                }
+                
+                section_tasks[section_name].append(entry_data)
+                
+                remove_btn = ttk.Button(task_frame, text="X", width=2,
+                                      command=lambda f=task_frame, e=entry_data: [f.destroy(), section_tasks[section_name].remove(e)])
+                remove_btn.pack(side=tk.LEFT, padx=2)
+                
+                # Create a frame for additional details
+                details_frame = ttk.Frame(task_entries_frame)
+                details_frame.pack(fill=tk.X, pady=(0, 5))
+                
+                # Add additional details text box
+                ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
+                details_var = tk.StringVar(value=task_data.get("additionalDetails", "") if task_data else "")
+                ttk.Entry(details_frame, textvariable=details_var, width=50).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+                
+                # Add details to the task data
+                entry_data["details"] = details_var
+                
+                return entry_data
+            
+            # Add button for adding tasks
+            ttk.Button(frame, text=f"Add {section_name} Task", 
+                    command=lambda: add_task_entry_to_section()).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
+            
+            # If editing, add existing tasks for this section
+            if material and material.get("roadmap"):
+                for task in material["roadmap"]:
+                    # Check if task belongs to this section, default to first section if not specified
+                    task_section = task.get("lane", "Parameter Development")
+                    if task_section == section_name:
+                        add_task_entry_to_section(task)
+            
+            return add_task_entry_to_section
+        
+        # Create task list UI for each section
+        add_param_dev_task = create_task_list_ui(parameter_dev_frame, "Parameter Development")
+        add_data_gen_task = create_task_list_ui(data_gen_frame, "Data Generation")
+        add_specs_doc_task = create_task_list_ui(specs_doc_frame, "Specs and Documentation")
+        
+        # Milestones tab (moved from roadmap tab)
+        milestones_frame = ttk.Frame(material_notebook)
+        material_notebook.add(milestones_frame, text="Milestones")
+        
+        # Milestones list
+        ttk.Label(milestones_frame, text="Milestones:", font=("TkDefaultFont", 10, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
         
         # Create a frame for the milestones list
-        milestones_frame = ttk.Frame(roadmap_frame)
-        milestones_frame.grid(row=3, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
+        ms_frame = ttk.Frame(milestones_frame)
+        ms_frame.grid(row=1, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
         
         # Add headers for milestone fields
-        milestone_header_frame = ttk.Frame(milestones_frame)
-        milestone_header_frame.pack(fill=tk.X, pady=2)
+        ms_header_frame = ttk.Frame(ms_frame)
+        ms_header_frame.pack(fill=tk.X, pady=2)
         
-        # Add more descriptive headers with bold font and standardized widths
-        ttk.Label(milestone_header_frame, text="Milestone Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(milestone_header_frame, text="Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(milestone_header_frame, text="Description", width=30, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
-        ttk.Label(milestone_header_frame, text="Float", width=8, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        # Add headers with standardized widths
+        ttk.Label(ms_header_frame, text="Milestone Name", width=20, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(ms_header_frame, text="Date", width=15, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(ms_header_frame, text="Description", width=30, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
+        ttk.Label(ms_header_frame, text="Float", width=5, font=("TkDefaultFont", 9, "bold")).pack(side=tk.LEFT, padx=2)
         
         # Create a frame for milestone entries
-        milestone_entries_frame = ttk.Frame(milestones_frame)
-        milestone_entries_frame.pack(fill=tk.X, pady=2)
+        ms_entries_frame = ttk.Frame(ms_frame)
+        ms_entries_frame.pack(fill=tk.X, pady=2)
         
         # List to store milestone entries
         milestone_entries = []
         
         # Function to add a new milestone entry
         def add_milestone_entry(milestone_data=None):
-            ms_entry_frame = ttk.Frame(milestone_entries_frame)
+            ms_entry_frame = ttk.Frame(ms_entries_frame)
             ms_entry_frame.pack(fill=tk.X, pady=2)
             
             # Milestone name
@@ -396,41 +490,42 @@ class MaterialModel(BaseModel):
             float_date = milestone_data.get("floatDate", "") if milestone_data else ""
             
             # Button to remove this milestone
-            remove_btn = ttk.Button(ms_entry_frame, text="X", width=2,
-                                  command=lambda f=ms_entry_frame: [f.destroy(), milestone_entries.remove(entry_data)])
-            remove_btn.pack(side=tk.LEFT, padx=2)
-            
-            # Create a frame for additional details
-            details_frame = ttk.Frame(milestone_entries_frame)
-            details_frame.pack(fill=tk.X, pady=(0, 5))
-            
-            # Add additional details text box
-            ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
-            additional_details_var = tk.StringVar(value=milestone_data.get("additionalDetails", "") if milestone_data else "")
-            ttk.Entry(details_frame, textvariable=additional_details_var, width=70).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
-            
-            # Store the entry data
             entry_data = {
-                "frame": ms_entry_frame,
-                "details_frame": details_frame,
                 "name": name_var,
                 "date": date_entry,
                 "description": desc_var,
                 "float_on_roadmap": float_var,
                 "float_date": float_date,
-                "additional_details": additional_details_var
+                "frame": ms_entry_frame
             }
             milestone_entries.append(entry_data)
+            
+            remove_btn = ttk.Button(ms_entry_frame, text="X", width=2,
+                               command=lambda f=ms_entry_frame, e=entry_data: [f.destroy(), milestone_entries.remove(e)])
+            remove_btn.pack(side=tk.LEFT, padx=2)
+            
+            # Create a frame for additional details
+            details_frame = ttk.Frame(ms_entries_frame)
+            details_frame.pack(fill=tk.X, pady=(0, 5))
+            
+            # Add additional details text box
+            ttk.Label(details_frame, text="Additional Details:", width=15).pack(side=tk.LEFT, padx=2)
+            details_var = tk.StringVar(value=milestone_data.get("additionalDetails", "") if milestone_data else "")
+            ttk.Entry(details_frame, textvariable=details_var, width=50).pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
+            
+            # Add details to the milestone data
+            entry_data["details"] = details_var
             
             return entry_data
         
         # Add existing milestones
-        for milestone in material.get("milestones", []) if material else []:
-            add_milestone_entry(milestone)
+        if material and material.get("milestones"):
+            for milestone in material["milestones"]:
+                add_milestone_entry(milestone)
         
         # Add button for milestones
-        add_milestone_button = ttk.Button(milestones_frame, text="Add Milestone", command=lambda: add_milestone_entry())
-        add_milestone_button.pack(anchor=tk.W, pady=5)
+        ttk.Button(milestones_frame, text="Add Milestone", 
+                command=lambda: add_milestone_entry()).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
         
         # Post-Processing and Qualified Machines tab
         processing_frame = ttk.Frame(material_notebook)
@@ -474,14 +569,14 @@ class MaterialModel(BaseModel):
             supplier_entries = []
             
             # Function to add a supplier entry
-            def add_supplier(supplier_id=None):
+            def add_supplier(supplier_id=None, qual_status=None):
                 supplier_frame = ttk.Frame(suppliers_frame)
                 supplier_frame.pack(fill=tk.X, pady=2)
                 
-                # Get post-processing suppliers
+                # Get printing suppliers
                 supplier_options = []
                 supplier_id_to_option = {}
-                for supplier in self.data["postProcessingSuppliers"]:
+                for supplier in self.data["printingSuppliers"]:
                     option = f"{supplier['id']}: {supplier['name']}"
                     supplier_options.append(option)
                     supplier_id_to_option[supplier['id']] = option
@@ -493,17 +588,34 @@ class MaterialModel(BaseModel):
                 supplier_combo = ttk.Combobox(supplier_frame, textvariable=supplier_var, values=supplier_options, width=20)
                 supplier_combo.pack(side=tk.LEFT)
                 
+                # Add qualification status dropdown
+                ttk.Label(supplier_frame, text="Status:").pack(side=tk.LEFT, padx=(5, 0))
+                qual_status_var = tk.StringVar(value=qual_status if qual_status else "")
+                qual_status_combo = ttk.Combobox(supplier_frame, textvariable=qual_status_var, 
+                                               values=["Qualified", "In-Development", "Planned"], width=15)
+                qual_status_combo.pack(side=tk.LEFT, padx=2)
+                
                 # Button to remove this supplier
                 remove_btn = ttk.Button(supplier_frame, text="X", width=2,
-                                      command=lambda f=supplier_frame, s=supplier_var: [f.destroy(), supplier_entries.remove(s)])
+                                      command=lambda f=supplier_frame, s=(supplier_var, qual_status_var): 
+                                              [f.destroy(), supplier_entries.remove(s)])
                 remove_btn.pack(side=tk.LEFT, padx=2)
                 
-                supplier_entries.append(supplier_var)
+                # Store both the supplier and qualification status variables
+                supplier_entries.append((supplier_var, qual_status_var))
             
             # Add existing suppliers if available
             if existing_pp and "Supplier" in existing_pp:
-                for supplier_id in existing_pp["Supplier"]:
-                    add_supplier(supplier_id)
+                for supplier_info in existing_pp["Supplier"]:
+                    if isinstance(supplier_info, dict) and "id" in supplier_info and "qualStatus" in supplier_info:
+                        # New format with qualification status
+                        add_supplier(supplier_info["id"], supplier_info["qualStatus"])
+                    elif isinstance(supplier_info, str):
+                        # Old format with just the supplier ID
+                        add_supplier(supplier_info)
+                    else:
+                        # Fallback
+                        add_supplier()
             else:
                 # Add one supplier by default
                 add_supplier()
@@ -534,17 +646,17 @@ class MaterialModel(BaseModel):
         # Add button for post-processing
         ttk.Button(processing_frame, text="Add Post-Processing Method", command=lambda: add_pp_entry()).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
         
-        # Qualified Machines section
-        ttk.Label(processing_frame, text="Qualified Machines:", font=("TkDefaultFont", 10, "bold")).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(20, 5))
+        # Relevant Machines section (renamed from Qualified Machines)
+        ttk.Label(processing_frame, text="Relevant Machines:", font=("TkDefaultFont", 10, "bold")).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(20, 5))
         
-        # Create a frame for the qualified machines list
+        # Create a frame for the relevant machines list
         qm_frame = ttk.Frame(processing_frame)
         qm_frame.grid(row=4, column=0, columnspan=2, sticky=tk.W+tk.E, padx=10, pady=5)
         
-        # List to store qualified machine entries
+        # List to store machine entries
         qm_entries = []
         
-        # Function to add a new qualified machine entry
+        # Function to add a new machine entry
         def add_qm_entry(existing_qm=None):
             qm_entry_frame = ttk.Frame(qm_frame)
             qm_entry_frame.pack(fill=tk.X, pady=5)
@@ -563,7 +675,7 @@ class MaterialModel(BaseModel):
             supplier_entries = []
             
             # Function to add a supplier entry
-            def add_supplier(supplier_id=None):
+            def add_supplier(supplier_id=None, qual_status=None):
                 supplier_frame = ttk.Frame(suppliers_frame)
                 supplier_frame.pack(fill=tk.X, pady=2)
                 
@@ -582,26 +694,40 @@ class MaterialModel(BaseModel):
                 supplier_combo = ttk.Combobox(supplier_frame, textvariable=supplier_var, values=supplier_options, width=20)
                 supplier_combo.pack(side=tk.LEFT)
                 
+                # Add qualification status dropdown
+                ttk.Label(supplier_frame, text="Status:").pack(side=tk.LEFT, padx=(5, 0))
+                qual_status_var = tk.StringVar(value=qual_status if qual_status else "")
+                qual_status_combo = ttk.Combobox(supplier_frame, textvariable=qual_status_var, 
+                                               values=["Qualified", "In-Development", "Planned"], width=15)
+                qual_status_combo.pack(side=tk.LEFT, padx=2)
+                
                 # Button to remove this supplier
                 remove_btn = ttk.Button(supplier_frame, text="X", width=2,
-                                      command=lambda f=supplier_frame, s=supplier_var: [f.destroy(), supplier_entries.remove(s)])
+                                      command=lambda f=supplier_frame, s=(supplier_var, qual_status_var): 
+                                              [f.destroy(), supplier_entries.remove(s)])
                 remove_btn.pack(side=tk.LEFT, padx=2)
                 
-                supplier_entries.append(supplier_var)
+                # Store both the supplier and qualification status variables
+                supplier_entries.append((supplier_var, qual_status_var))
             
             # Add existing suppliers if available
             if existing_qm and "Supplier" in existing_qm:
-                for supplier_id in existing_qm["Supplier"]:
-                    add_supplier(supplier_id)
-            else:
-                # Add one supplier by default
-                add_supplier()
+                for supplier_info in existing_qm["Supplier"]:
+                    if isinstance(supplier_info, dict) and "id" in supplier_info and "qualStatus" in supplier_info:
+                        # New format with qualification status
+                        add_supplier(supplier_info["id"], supplier_info["qualStatus"])
+                    elif isinstance(supplier_info, str):
+                        # Old format with just the supplier ID
+                        add_supplier(supplier_info)
+                    else:
+                        # Fallback
+                        add_supplier()
             
             # Button to add a supplier
             add_supplier_btn = ttk.Button(suppliers_frame, text="+", width=2, command=lambda: add_supplier())
             add_supplier_btn.pack(anchor=tk.W, pady=2)
             
-            # Button to remove this qualified machine entry
+            # Button to remove this machine entry
             remove_btn = ttk.Button(qm_entry_frame, text="X", width=2,
                                   command=lambda f=qm_entry_frame: [f.destroy(), qm_entries.remove(entry_data)])
             remove_btn.grid(row=0, column=4, padx=5)
@@ -616,12 +742,12 @@ class MaterialModel(BaseModel):
             
             return entry_data
         
-        # Add existing qualified machines
+        # Add existing machines
         for qm in material.get("qualifiedMachines", []) if material else []:
             add_qm_entry(qm)
         
-        # Add button for qualified machines
-        ttk.Button(processing_frame, text="Add Qualified Machine", command=lambda: add_qm_entry()).grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
+        # Add button for machines
+        ttk.Button(processing_frame, text="Add Relevant Machine", command=lambda: add_qm_entry()).grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
         
         # Additional Info tab
         additional_frame = ttk.Frame(material_notebook)
@@ -767,67 +893,72 @@ class MaterialModel(BaseModel):
                 messagebox.showerror("Error", "ID and Name are required fields.")
                 return
             
-            # Collect roadmap tasks
+            # Collect roadmap tasks from all three sections
             roadmap_tasks = []
-            for task_entry in task_entries:
-                if not task_entry["task"].get():  # Skip empty tasks
-                    continue
-                
-                # Get the start and end dates
-                start_date = task_entry["start_date"].get_date()
-                end_date = task_entry["end_date"].get_date()
-                
-                # Check if this task should float on the roadmap
-                float_on_roadmap = task_entry["float_on_roadmap"].get()
-                float_date = task_entry["float_date"]
-                
-                # If floating is enabled, adjust dates based on time elapsed since last save
-                if float_on_roadmap and start_date and end_date:
-                    # If this is the first time floating, store the current date
-                    if not float_date:
-                        float_date = datetime.now().strftime("%Y-%m-%d")
+            for section_name, tasks in section_tasks.items():
+                for task_entry in tasks:
+                    if not task_entry["task"].get():  # Skip empty tasks
+                        continue
                     
-                    # Calculate time elapsed since last float date
-                    try:
-                        last_float = datetime.strptime(float_date, "%Y-%m-%d")
-                        now = datetime.now()
-                        days_elapsed = (now - last_float).days
+                    # Get the start and end dates
+                    start_date = task_entry["start_date"].get_date()
+                    end_date = task_entry["end_date"].get_date()
+                    
+                    # Check if this task should float on the roadmap
+                    float_on_roadmap = task_entry["float_on_roadmap"].get()
+                    float_date = task_entry["float_date"]
+                    
+                    # If floating is enabled, adjust dates based on time elapsed since last save
+                    if float_on_roadmap and start_date and end_date:
+                        # If this is the first time floating, store the current date
+                        if not float_date:
+                            float_date = datetime.now().strftime("%Y-%m-%d")
                         
-                        # Adjust dates if there's been elapsed time
-                        if days_elapsed > 0:
-                            if start_date:
-                                start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
-                                start_date_obj += timedelta(days=days_elapsed)
-                                start_date = start_date_obj.strftime("%Y-%m-%d")
-                                task_entry["start_date"].set_date(start_date)
+                        # Calculate time elapsed since last float date
+                        try:
+                            last_float = datetime.strptime(float_date, "%Y-%m-%d")
+                            now = datetime.now()
+                            days_elapsed = (now - last_float).days
                             
-                            if end_date:
-                                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
-                                end_date_obj += timedelta(days=days_elapsed)
-                                end_date = end_date_obj.strftime("%Y-%m-%d")
-                                task_entry["end_date"].set_date(end_date)
-                        
-                        # Update the float date to now
-                        float_date = now.strftime("%Y-%m-%d")
-                    except (ValueError, TypeError):
-                        # If there's an error parsing dates, just use the current dates
-                        float_date = datetime.now().strftime("%Y-%m-%d")
-                
-                task_data = {
-                    "task": task_entry["task"].get(),
-                    "startDate": start_date,
-                    "endDate": end_date,
-                    "status": task_entry["status"].get(),
-                    "floatOnRoadmap": float_on_roadmap,
-                    "floatDate": float_date,
-                    "additionalDetails": task_entry["additional_details"].get()
-                }
-                
-                # Add funding type if provided
-                if task_entry["fundingType"].get():
-                    task_data["fundingType"] = task_entry["fundingType"].get()
-                
-                roadmap_tasks.append(task_data)
+                            # Adjust dates if there's been elapsed time
+                            if days_elapsed > 0:
+                                if start_date:
+                                    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+                                    start_date_obj += timedelta(days=days_elapsed)
+                                    start_date = start_date_obj.strftime("%Y-%m-%d")
+                                    task_entry["start_date"].set_date(start_date)
+                                
+                                if end_date:
+                                    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+                                    end_date_obj += timedelta(days=days_elapsed)
+                                    end_date = end_date_obj.strftime("%Y-%m-%d")
+                                    task_entry["end_date"].set_date(end_date)
+                            
+                            # Update the float date to now
+                            float_date = now.strftime("%Y-%m-%d")
+                        except (ValueError, TypeError):
+                            # If there's an error parsing dates, just use the current dates
+                            float_date = datetime.now().strftime("%Y-%m-%d")
+                    
+                    task_data = {
+                        "task": task_entry["task"].get(),
+                        "startDate": start_date,
+                        "endDate": end_date,
+                        "status": task_entry["status"].get(),
+                        "lane": section_name,  # Store the section as the lane
+                        "floatOnRoadmap": float_on_roadmap,
+                        "floatDate": float_date
+                    }
+                    
+                    # Add additional details if provided
+                    if "details" in task_entry and task_entry["details"].get():
+                        task_data["additionalDetails"] = task_entry["details"].get()
+                    
+                    # Add funding type if provided
+                    if task_entry["funding"].get():
+                        task_data["fundingType"] = task_entry["funding"].get()
+                    
+                    roadmap_tasks.append(task_data)
             
             # Collect milestones
             milestones = []
@@ -835,47 +966,24 @@ class MaterialModel(BaseModel):
                 if not milestone_entry["name"].get():  # Skip empty milestones
                     continue
                 
-                # Get the milestone date
-                milestone_date = milestone_entry["date"].get_date()
-                
                 # Check if this milestone should float on the roadmap
                 float_on_roadmap = milestone_entry["float_on_roadmap"].get()
                 float_date = milestone_entry["float_date"]
                 
-                # If floating is enabled, adjust date based on time elapsed since last save
-                if float_on_roadmap and milestone_date:
-                    # If this is the first time floating, store the current date
-                    if not float_date:
-                        float_date = datetime.now().strftime("%Y-%m-%d")
-                    
-                    # Calculate time elapsed since last float date
-                    try:
-                        last_float = datetime.strptime(float_date, "%Y-%m-%d")
-                        now = datetime.now()
-                        days_elapsed = (now - last_float).days
-                        
-                        # Adjust date if there's been elapsed time
-                        if days_elapsed > 0:
-                            if milestone_date:
-                                date_obj = datetime.strptime(milestone_date, "%Y-%m-%d")
-                                date_obj += timedelta(days=days_elapsed)
-                                milestone_date = date_obj.strftime("%Y-%m-%d")
-                                milestone_entry["date"].set_date(milestone_date)
-                        
-                        # Update the float date to now
-                        float_date = now.strftime("%Y-%m-%d")
-                    except (ValueError, TypeError):
-                        # If there's an error parsing dates, just use the current date
-                        float_date = datetime.now().strftime("%Y-%m-%d")
+                milestone_date = milestone_entry["date"].get_date()
                 
                 milestone_data = {
                     "name": milestone_entry["name"].get(),
                     "date": milestone_date,
                     "description": milestone_entry["description"].get(),
                     "floatOnRoadmap": float_on_roadmap,
-                    "floatDate": float_date,
-                    "additionalDetails": milestone_entry["additional_details"].get()
+                    "floatDate": float_date
                 }
+                
+                # Add additional details if provided
+                if "details" in milestone_entry and milestone_entry["details"].get():
+                    milestone_data["additionalDetails"] = milestone_entry["details"].get()
+                
                 milestones.append(milestone_data)
             
             # Collect post-processing methods
@@ -883,7 +991,7 @@ class MaterialModel(BaseModel):
             for pp_entry in pp_entries:
                 suppliers = []
                 for supplier_var in pp_entry["suppliers"]:
-                    if supplier_var.get():
+                    if hasattr(supplier_var, "get") and supplier_var.get():
                         # Extract supplier ID from the selection
                         supplier_id = supplier_var.get().split(":")[0].strip()
                         suppliers.append(supplier_id)
@@ -894,21 +1002,36 @@ class MaterialModel(BaseModel):
                 }
                 post_processing.append(pp_data)
             
-            # Collect qualified machines
-            qualified_machines = []
+            # Collect machines
+            machines = []
             for qm_entry in qm_entries:
                 suppliers = []
-                for supplier_var in qm_entry["suppliers"]:
-                    if supplier_var.get():
-                        # Extract supplier ID from the selection
-                        supplier_id = supplier_var.get().split(":")[0].strip()
-                        suppliers.append(supplier_id)
+                for supplier_tuple in qm_entry["suppliers"]:
+                    try:
+                        # Handle the new tuple format
+                        if isinstance(supplier_tuple, tuple):
+                            supplier_var, qual_status_var = supplier_tuple
+                            if supplier_var.get():
+                                supplier_id = supplier_var.get().split(":")[0].strip()
+                                # Create a dictionary with supplier ID and qualification status
+                                supplier_info = {
+                                    "id": supplier_id,
+                                    "qualStatus": qual_status_var.get()
+                                }
+                                suppliers.append(supplier_info)
+                        # Handle the old direct variable format
+                        elif hasattr(supplier_tuple, "get") and supplier_tuple.get():
+                            supplier_id = supplier_tuple.get().split(":")[0].strip()
+                            suppliers.append(supplier_id)
+                    except (AttributeError, ValueError, TypeError) as e:
+                        # Skip invalid entries
+                        print(f"Error processing supplier entry: {e}")
                 
                 qm_data = {
                     "machine": qm_entry["machine"].get(),
                     "Supplier": suppliers
                 }
-                qualified_machines.append(qm_data)
+                machines.append(qm_data)
             
             # Collect NDT methods
             standard_ndt = []
@@ -956,16 +1079,34 @@ class MaterialModel(BaseModel):
                 "process": process_var.get(),
                 "material": material_var.get(),
                 "mrl": int(mrl_var.get()) if mrl_var.get() else None,
-                "qualification": qualification_var.get(),
-                "qualificationClass": qualification_class_var.get(),
-                "statisticalBasis": statistical_basis_var.get(),
                 "roadmap": roadmap_tasks,
                 "milestones": milestones,
                 "postProcessing": post_processing,
-                "qualifiedMachines": qualified_machines,
+                "qualifiedMachines": machines,
                 "standardNDT": standard_ndt,
                 "relatedFundingOpps": related_funding_opps
             }
+            
+            # Add qualification data
+            # Store both single qualification (for backward compatibility) and full array
+            if qual_entries and qual_entries[0]["qualificationClass"].get():
+                new_material["qualification"] = qual_entries[0]["qualification"].get()
+                new_material["qualificationClass"] = qual_entries[0]["qualificationClass"].get()
+                new_material["statisticalBasis"] = qual_entries[0]["statisticalBasis"].get()
+            
+            # Add all qualification entries as an array
+            qualifications = []
+            for qual_entry in qual_entries:
+                if qual_entry["qualificationClass"].get() or qual_entry["qualification"].get() or qual_entry["statisticalBasis"].get():
+                    qual_data = {
+                        "qualificationClass": qual_entry["qualificationClass"].get(),
+                        "qualification": qual_entry["qualification"].get(),
+                        "statisticalBasis": qual_entry["statisticalBasis"].get()
+                    }
+                    qualifications.append(qual_data)
+            
+            if qualifications:
+                new_material["qualifications"] = qualifications
             
             # Determine which key to use
             materials_key = "materials" if "materials" in self.data else "materialSystems"
@@ -1220,8 +1361,7 @@ class MaterialModel(BaseModel):
                         pp_display,
                         qm_display,
                         funding_display
-                    )
-                )
+                    ))
         
         # Update status
         count = len(self.materials_tree.get_children())

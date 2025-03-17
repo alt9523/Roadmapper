@@ -159,8 +159,8 @@ def generate_burndown_charts(data, progress_dir):
                         'status': acceptance.get('status', 'Unknown'),
                         'float': acceptance.get('float', False),
                         'additionalDetails': acceptance.get('additionalDetails', '')
-                    }
-                    all_tasks.append(task_info)
+                }
+                all_tasks.append(task_info)
     
     # Process material system tasks
     for material in data.get('materialSystems', []):
@@ -539,28 +539,93 @@ def generate_planned_vs_actual(data, progress_dir):
     # Set up the output file
     output_file(os.path.join(progress_dir, "planned_vs_actual.html"))
     
-    # Create a simulated comparison of planned vs. actual progress
-    # Since we don't have actual progress data, we'll create a simulation
+    # Extract real data from the roadmap
+    # Count tasks by category and status
+    categories = {
+        "Design Tasks": {"total": 0, "complete": 0},
+        "Manufacturing Tasks": {"total": 0, "complete": 0},
+        "Testing Tasks": {"total": 0, "complete": 0},
+        "Qualification Tasks": {"total": 0, "complete": 0},
+        "Documentation Tasks": {"total": 0, "complete": 0}
+    }
     
-    # Categories for comparison
-    categories = [
-        "Design Tasks",
-        "Manufacturing Tasks",
-        "Testing Tasks", 
-        "Qualification Tasks",
-        "Documentation Tasks"
-    ]
+    # Process all products
+    for product in data.get('products', []):
+        # Process roadmap tasks
+        for task in product.get('roadmap', []):
+            lane = task.get('lane', 'Other')
+            status = task.get('status', '')
+            
+            if lane == 'Design':
+                categories["Design Tasks"]["total"] += 1
+                if status == 'Complete':
+                    categories["Design Tasks"]["complete"] += 1
+            elif lane == 'Manufacturing':
+                categories["Manufacturing Tasks"]["total"] += 1
+                if status == 'Complete':
+                    categories["Manufacturing Tasks"]["complete"] += 1
+            elif lane in ['Testing', 'Test']:
+                categories["Testing Tasks"]["total"] += 1
+                if status == 'Complete':
+                    categories["Testing Tasks"]["complete"] += 1
+            elif lane in ['Qualification', 'Quality']:
+                categories["Qualification Tasks"]["total"] += 1
+                if status == 'Complete':
+                    categories["Qualification Tasks"]["complete"] += 1
+        
+        # Process design tools
+        for tool in product.get('designTools', []):
+            if isinstance(tool, dict):
+                categories["Design Tasks"]["total"] += 1
+                if tool.get('status') == 'Complete':
+                    categories["Design Tasks"]["complete"] += 1
+        
+        # Process documentation
+        for doc in product.get('documentation', []):
+            if isinstance(doc, dict):
+                categories["Documentation Tasks"]["total"] += 1
+                if doc.get('status') == 'Complete':
+                    categories["Documentation Tasks"]["complete"] += 1
+        
+        # Process special NDT (counts as testing)
+        for ndt in product.get('specialNDT', []):
+            if isinstance(ndt, dict):
+                categories["Testing Tasks"]["total"] += 1
+                if ndt.get('status') == 'Complete':
+                    categories["Testing Tasks"]["complete"] += 1
+        
+        # Process part acceptance (counts as qualification)
+        for acceptance in product.get('partAcceptance', []):
+            if isinstance(acceptance, dict):
+                categories["Qualification Tasks"]["total"] += 1
+                if acceptance.get('status') == 'Complete':
+                    categories["Qualification Tasks"]["complete"] += 1
     
-    # Simulated planned percentages
-    planned = [100, 100, 100, 100, 100]
+    # Process material systems
+    for material in data.get('materialSystems', []):
+        for task in material.get('roadmap', []):
+            # Assume material tasks are testing/qualification
+            categories["Testing Tasks"]["total"] += 1
+            if task.get('status') == 'Complete':
+                categories["Testing Tasks"]["complete"] += 1
     
-    # Simulated actual percentages (create some variation)
-    actual = [95, 80, 70, 60, 90]
+    # Calculate percentages
+    category_names = list(categories.keys())
+    planned = [100] * len(category_names)  # 100% is always the plan
+    
+    # Calculate actual percentages
+    actual = []
+    for category in category_names:
+        if categories[category]["total"] > 0:
+            completion_percentage = (categories[category]["complete"] / categories[category]["total"]) * 100
+            actual.append(round(completion_percentage, 1))
+        else:
+            actual.append(0)
     
     # Create a comparison bar chart
     p = figure(
         title="Planned vs. Actual Progress",
-        x_range=categories,
+        x_range=category_names,
         width=800,
         height=400,
         toolbar_location="right",
@@ -569,15 +634,15 @@ def generate_planned_vs_actual(data, progress_dir):
     
     # Create data sources
     source_planned = ColumnDataSource(data=dict(
-        x=categories,
+        x=category_names,
         y=planned,
-        desc=["Planned Progress"] * len(categories)
+        desc=["Planned Progress"] * len(category_names)
     ))
     
     source_actual = ColumnDataSource(data=dict(
-        x=categories,
+        x=category_names,
         y=actual,
-        desc=["Actual Progress"] * len(categories)
+        desc=["Actual Progress"] * len(category_names)
     ))
     
     # Add hover tool
@@ -624,16 +689,20 @@ def generate_planned_vs_actual(data, progress_dir):
     
     # Create a summary table
     summary_data = {
-        'Category': categories,
+        'Category': category_names,
         'Planned': planned,
         'Actual': actual,
         'Difference': [a - p for a, p in zip(actual, planned)],
+        'Total Tasks': [categories[cat]["total"] for cat in category_names],
+        'Completed Tasks': [categories[cat]["complete"] for cat in category_names]
     }
     
     summary_source = ColumnDataSource(data=summary_data)
     
     summary_columns = [
         TableColumn(field="Category", title="Category"),
+        TableColumn(field="Total Tasks", title="Total Tasks"),
+        TableColumn(field="Completed Tasks", title="Completed"),
         TableColumn(field="Planned", title="Planned %"),
         TableColumn(field="Actual", title="Actual %"),
         TableColumn(field="Difference", title="Difference %")
@@ -651,7 +720,7 @@ def generate_planned_vs_actual(data, progress_dir):
         text="""
         <h2>Planned vs. Actual Progress</h2>
         <p>This visualization compares planned progress against actual progress across different categories of tasks.</p>
-        <p><em>Note: This is simulated data for demonstration purposes. In a real implementation, this would be based on actual progress tracking data.</em></p>
+        <p>The data is based on the completion status of tasks in the roadmap.</p>
         """,
         width=800,
         height=100
